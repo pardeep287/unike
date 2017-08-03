@@ -1091,3 +1091,15 @@ function getTaxPercentage($tax_id)
 	}
 	return false;
 }
+
+function getSizePrice($size_id)
+{
+
+	$size_price = (new \App\ProductCost())->where('size_id', $size_id)->first(['price']);
+
+	if($size_price) {
+		return $size_price->price;
+	}
+	return false;
+
+}

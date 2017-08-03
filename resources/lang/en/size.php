@@ -16,7 +16,7 @@ return [
 	'alternate_quantity'=> 'Alt. Quantity',
     'size_in_use'       => 'Size already in use',
     'dim'       		=> 'Dimension in mm ',
-    'dim_value'       		=> 'Dimension in mm ( :Attribute )',
+    'dim_value'       	=> 'Dimension in mm ( :Attribute )',
     'normal_size' 		=> 'Normal Size',
     'master_size' 		=> 'Master Size',
 ];

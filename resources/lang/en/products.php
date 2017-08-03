@@ -55,5 +55,5 @@ return [
 	'e'						=> 'E',
 	'f'						=> 'F',
 	'g'						=> 'G',
-	'dim'						=> 'Dimension',
+	'dim'					=> 'Dimension',
 ];

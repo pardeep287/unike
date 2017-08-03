@@ -17,6 +17,8 @@ return [
     'error_count'       => 'Please select the Right Quantity And/or Size .',
     'items'             => 'Product Size',
     'no_items'          => 'Nothing in Cart',
+    'item_in_cart'      => 'Product Already In Cart',
+    'size_not_exist'    => 'Please Check!,Size Not Exist In Size Master!',
 
 
 

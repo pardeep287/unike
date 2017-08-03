@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 
-
+Auth::routes();
 
 
 /* REGISTER NEW USER for API */
@@ -24,7 +24,7 @@ Route::any('api/v1/register', ['as' => 'users-apiCreate','uses' => 'Api\V1\UserC
 Route::any('api/v1/reset-password', ['as' => 'reset-apiPassword','uses' => 'Api\V1\AuthController@forgotPassword']);
 //Route::any('api/v1/send-push', ['as' => 'api.send-push', 'uses' => 'Api\V1\CommonController@sendPush']);
 
-Auth::routes();
+
 
 Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
 

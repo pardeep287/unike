@@ -24,6 +24,8 @@ class CartProducts extends Model
         'status',
         'created_by',
         'updated_by',
+        'deleted_at',
+        'deleted_by',
     ];
 
     /**
@@ -35,8 +37,6 @@ class CartProducts extends Model
         return $query->where('status', 1);
     }
 
-    
-
     /**
      * @param $inputs
      * @param null $id
@@ -47,9 +47,69 @@ class CartProducts extends Model
         if ($id) {
             $this->find($id)->update($inputs);
 
-        } else {
-            $id = $this->create($inputs)->id;
-            return $id;
         }
+        return $this->create($inputs)->id;
+
+    }
+
+    /**
+     * @param $cart_id
+     * @param null $product_id
+     * @return mixed
+     */
+    public function getCartProduct($cart_id,$product_id=null)
+    {
+        $fields = [
+            'id',
+            'product_id',
+            'cart_id',
+            'status',
+
+        ];
+        //$filter = 1; // default filter if no search
+        $where='';
+        /*if(is_array($search) && count($search) > 0) {
+            $f1  = (isset($search['product_id']) && $search['product_id'] != '') ?
+                " and product_id = '" . $search['product_id'] ."'" : "";
+
+            $filter .= $f1;
+        }*/
+
+        if($product_id) {
+
+            $where = "product_id =". $product_id;
+
+           // $filter .= $where;
+            /*->where('product_id', $product_id)*/
+        }
+
+        //dd($where);
+        return $this
+            ->active()
+            ->where('cart_id', $cart_id)
+            ->whereRaw($where)
+            ->first($fields);
+        //->first($fields);
+    }
+
+    /**
+     * @param $cart_id
+     * @return mixed
+     */
+    public function getCartProductsCount($cart_id)
+    {
+        $fields = [
+            'id',
+            'product_id',
+            'cart_id',
+            'status',
+
+        ];
+        return $this
+            ->active()
+            ->where('cart_id', $cart_id)
+            ->get($fields)
+            ->count();
+
     }
 }

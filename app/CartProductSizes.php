@@ -3,9 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class CartProductSizes extends Model
 {
+    use SoftDeletes;
     /**
      * The database table used by the model.
      *
@@ -27,6 +28,8 @@ class CartProductSizes extends Model
         'status',
         'created_by',
         'updated_by',
+        'deleted_at',
+        'deleted_by',
     ];
 
     /**
@@ -47,13 +50,28 @@ class CartProductSizes extends Model
      */
     public function store($inputs, $id = null)
     {
+
         if ($id) {
+            //dd($id);
             $this->find($id)->update($inputs);
 
         } else {
             $id = $this->create($inputs)->id;
             return $id;
         }
+    }
+
+    /**
+     * @param array $itemIds
+     * @return mixed
+     */
+    public function drop($itemIds)
+    {
+        //dd($itemIds);
+        if( is_array($itemIds)) {
+            return $this->whereIn('id', $itemIds)->delete();
+        }
+        return $this->find($itemIds)->delete();
     }
     public function getCartProductAllSize($cart_id,$product_id)
     {
@@ -68,11 +86,22 @@ class CartProductSizes extends Model
 
         ];
         return $this
+            ->active()
             ->where('cart_id', $cart_id)
             ->where('product_id', $product_id)
             ->get($fields);
             //->first($fields);
 
+
+    }
+    public function countSizeofSameProduct($CartID,$ProductID)
+    {
+
+        return $this
+            ->active()
+            ->where('cart_id', $CartID)
+            ->where('product_id', $ProductID)
+            ->count();
 
     }
 }

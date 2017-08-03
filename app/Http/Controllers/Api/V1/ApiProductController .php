@@ -80,7 +80,7 @@ class ApiProductController extends Controller
         try{
 
             //$product = (new Product)->find($id);
-            //dd($product);
+            //dd($id);
             $productsWithImage= (new Product)->findById($id);
                 if(!$productsWithImage){
                     return apiResponse(false, 404, lang('common.no_result'));

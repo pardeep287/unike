@@ -286,7 +286,7 @@ class Product extends Model
             'tax_id',
         ];
         return $this
-
+            ->active()
             ->where('product_master.id', $product_id)
 
             ->first($fields);
