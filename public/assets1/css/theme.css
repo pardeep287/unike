@@ -1,0 +1,69 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+.text-primary{
+    color: #018264;
+}
+.bg-primary-color-hover:hover{
+    background: #018264 !important;
+}
+.bg-primary-color-hover:hover a{
+    color: #FFFFFF;
+}
+.text-primary-color-hover:hover i,.text-primary-color-hover:hover a{
+    color: #018264  !important;
+}
+.bg-primary{
+    background: #018264 !important;
+}
+.bg-success{
+    background: #449d44 !important;
+}
+.bg-info{
+    background: #5bc0de !important;
+}
+.bg-danger{
+    background: #c9302c !important;
+}
+.bg-default{
+    background: #eeeeee !important;
+    border: 1px solid #CCCCCC;
+}
+.bg-default i,.bg-default h3{
+    color: #222  !important;
+}
+.bg-primary a{
+    color: #FFFFFF;
+}
+.bg-list-primary  li > a:hover{
+    background-color: #018264  !important;
+    color: #fff !important;
+}
+
+.btn-primary {
+    background-color: #018264;
+    border-color: #018264;
+    color: #fff;
+}
+.btn-primary:hover {
+    color: #fff;
+    background-color: #11624f;
+    border-color: #11624f;
+}
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+    background-color: #018264;
+    border-color: #018264;
+    color: #fff;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #018264;
+}
+a:focus, a:hover{
+    color: #11624f;
+}
+.text-yellow{
+    color: #fbb033;
+}

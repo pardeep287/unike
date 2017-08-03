@@ -1,0 +1,1 @@
+ {!! lang('email.body') !!}

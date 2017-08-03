@@ -1,0 +1,1 @@
+{!! lang('email.reset_password_message_one') . '['. $password .']' . lang('email.reset_password_message_second') !!}

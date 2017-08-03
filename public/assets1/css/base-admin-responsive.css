@@ -1,0 +1,474 @@
+/*------------------------------------------------------------------
+Bootstrap Admin Template by EGrappler.com
+------------------------------------------------------------------*/
+@media only screen and (min-width:240px) and (max-width:320px){
+    body{
+
+    }
+    .logo-top-left .logo{
+        height: auto !important;
+    }
+    .wsmobileheader > a{
+
+    }
+    .navbar-inner .container-fluid, .navbar-inner .container-fluid .row{
+        /*padding: 0;*/
+        /*margin: 0;*/
+    }
+    .middle-content .container-fluid, .middle-content .container-fluid .row{
+        /*padding: 0;*/
+        /*margin: 0;*/
+    }
+    .top-time-heading{
+        float: none !important;
+        font-size: 16px;
+        text-align: center;
+    }
+    #login-links li a:focus, #login-links li a:hover, #login-links li a:visited{
+        color: #222222;
+    }
+    /*..account-container .container .row .col-md-4{*/
+        /*padding: 0;*/
+    /*}*/
+    .account-container {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #login-logo-text1{
+        font-size: 27px;
+    }
+    .form-login > p {
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 18px;
+    }
+    .login-fields input {
+        width: 100%;
+    }
+    .navbar-fixed-top{margin-left:0px;margin-right:0px;margin-bottom: 0;}
+    .pwrby-text{
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+    .login-sideboxs {
+        margin: 2em auto 0;
+    }
+
+    /* Inner page css style */
+    #monthlyInvoice{
+        max-height: 100%;
+    }
+    .first-chartbox,.second-chartbox{
+        width: 260px;
+        overflow-x: auto;
+    }
+    .second-chartbox > .datacharts-box-inner{
+        width: 1260px;
+        overflow-x: hidden;
+    }
+    .wsmobileheader > a{
+    }
+    .footer{
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    .logo-top-left{
+        padding-left: 22px;
+    }
+    .navbar-fixed-top .navbar-inner{
+        padding: 0 !important;
+    }
+    .top-subnav-login > li a{
+        font-size: 11px;
+    }
+    .nabr-login-links .top-subnav-login > li > a > i{
+        font-size: 14px;
+    }
+    .top-subnav-login > li a:hover{
+        background: none !important;
+    }
+
+    /* ====== table format style on mobile ===== */
+    table.table-fullbox thead th{
+        min-width: 120px;
+    }
+    table.purchaseo-list-table thead th{
+        min-width: 130px;
+    }
+    table.purchaseo-list-table thead th:nth-child(1){
+        min-width: 50px;
+    }
+    table.purchaseo-list-table thead th:nth-child(4){
+        min-width: 180px;
+    }
+    table.purchaseo-list-table thead th:nth-last-of-type(2){
+        min-width: 180px;
+    }
+    table.purchaseo-list-table thead th:nth-last-of-type(1){
+        min-width: 200px;
+    }
+
+    /* ====== customer invoice table format style on mobile ===== */
+    table.cust-invoice-table.table-fullbox thead th:nth-child(1){
+        min-width: 50px;
+    }
+    table.cust-invoice-table.table-fullbox thead th:nth-child(2){
+        min-width: 150px;
+    }
+    table.cust-invoice-table.table-fullbox thead th:nth-child(3){
+        min-width: 150px;
+    }
+    /* ====== end table format style on mobile ===== */
+
+    .navbar-brand > span {
+        color: #fbb033;
+        display: block;
+        margin-top: 10px;
+    }
+    .logo-top-left .logo {
+        font-size: 22px;
+        line-height: 24px;
+        padding-top: 10px;
+    }
+    .topheading-row{ text-align: center;}
+    .topheading-row .pull-right{
+        float: none !important;
+    }
+    #parent-tree ul:nth-child(n) {
+        margin-bottom: 5px;
+        padding: 5px 10px 5px;
+    }
+    #parent-tree{
+        margin-top: 20px;
+    }
+    #parent-tree ul:nth-child(3){padding-left: 20px;}
+
+    #right-actionbtn-list{
+        margin-top: 10px;
+    }
+    #right-actionbtn-list > a.btn{
+        float: none !important;
+        margin-right: 0 !important;
+        width: 50%;
+        margin-bottom: 5px;
+        width: 48%;
+    }
+
+
+}
+@media only screen and (min-width:321px) and (max-width:533px){
+    body{}
+    .logo-top-left .logo{
+        height: auto !important;
+    }
+    .wsmobileheader > a{}
+    .navbar-inner .container-fluid, .navbar-inner .container-fluid .row{
+        /*padding: 0;*/
+        /*margin: 0;*/
+    }
+    .middle-content .container-fluid, .middle-content .container-fluid .row{
+        /*padding: 0;*/
+        /*margin: 0;*/
+    }
+    .top-time-heading{
+        float: none !important;
+        font-size: 16px;
+        text-align: right;
+    }
+    #login-links li a:focus, #login-links li a:hover, #login-links li a:visited{
+        color: #222222;
+    }
+    /*..account-container .container .row .col-md-4{*/
+    /*padding: 0;*/
+    /*}*/
+    .account-container {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+    #login-logo-text1{
+        font-size: 27px;
+    }
+    .form-login > p {
+        font-size: 16px;
+        font-weight: 900;
+        line-height: 18px;
+    }
+    .login-fields input {
+        width: 100%;
+    }
+    .navbar-fixed-top{margin-left:0px;margin-right:0px;}
+    .pwrby-text{
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+    .login-sideboxs {
+        margin: 2em auto 0;
+    }
+    .login-leftside-img{
+        text-align: center;
+    }
+    .login-leftside-img > img{
+        display: inline-block;
+    }
+
+    /* Inner page css style */
+    #monthlyInvoice{
+        max-height: 100%;
+    }
+    .first-chartbox,.second-chartbox{
+        width: 100%;
+        overflow-x: auto;
+    }
+    .second-chartbox > .datacharts-box-inner{
+        width: 1260px;
+        overflow-x: hidden;
+    }
+    .wsmobileheader > a{
+    }
+    .footer{
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+    .logo-top-left{
+        padding-left: 22px;
+    }
+    .navbar-fixed-top .navbar-inner{
+        padding: 0 !important;
+    }
+    .top-subnav-login > li a:hover{
+        background: none !important;
+    }
+
+    .top-subnav-login > li a{
+        font-size: 11px;
+    }
+    .nabr-login-links .top-subnav-login > li > a > i{
+        font-size: 14px;
+    }
+    table.table-fullbox thead th{
+        min-width: 100px;
+    }
+
+    table.table-fullbox .cust-invoice-table thead th:nth-child(1){
+        min-width: 30px !important;
+    }
+    table.table-fullbox.cust-invoice-table thead th:nth-child(2){
+        min-width: 150px;
+    }
+    .navbar-brand > span {
+        color: #fbb033;
+        display: block;
+        margin-top: 10px;
+    }
+    .logo-top-left .logo {
+        font-size: 20px;
+        padding-top: 10px;
+    }
+    .topheading-row,.top-time-heading{ text-align: center;}
+    .topheading-row .pull-right{
+        float: none !important;
+    }
+
+}
+
+@media only screen and (min-width:534px) and (max-width:675px){
+    .login-sideboxs {
+        margin: 2em auto 0;
+    }
+    .login-leftside-img{
+        text-align: center;
+    }
+    .login-leftside-img > img{
+        display: inline-block;
+    }
+
+
+    /* Inner page css style */
+    #login-links li a:focus, #login-links li a:hover, #login-links li a:visited{
+        color: #202020;
+    }
+    .navbar-fixed-top .navbar-inner{
+        padding: 0 !important;
+    }
+    .top-subnav-login > li a:hover{
+        background: none !important;
+    }
+    .logo-top-left{
+        padding-left: 22px;
+    }
+    .footer{
+        margin: 0 !important;
+    }
+    .topheading-row > .col-xs-12{
+        width: 50%;
+    }
+}
+
+@media only screen and (min-width:676px) and (max-width:767px){
+    .account-container{
+        width: 100%;
+    }
+    .login-container-outer .col-xs-12:first-child{
+        width: 25%;
+    }
+    .login-container-outer .col-xs-12:nth-child(2){
+        width: 50%;
+    }
+    .login-container-outer .col-xs-12:last-child{
+        width: 25%;
+    }
+
+
+    /* Inner page css style */
+    #login-links li a:focus, #login-links li a:hover, #login-links li a:visited{
+        color: #202020;
+    }
+    .navbar-fixed-top .navbar-inner{
+        padding: 0 !important;
+    }
+    .top-subnav-login > li a:hover{
+        background: none !important;
+    }
+    .logo-top-left{
+        padding-left: 22px;
+    }
+    .footer{
+        margin: 0 !important;
+    }
+
+    .topheading-row > .col-xs-12{
+        width: 50%;
+    }
+
+}
+@media only screen and (min-width:768px) and (max-width:980px){
+    .account-container{
+        width: 100%;
+    }
+
+    /* Inner page css style */
+    .nabr-login-links li {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .navbar{
+        min-height: 70px;
+        margin-bottom: 0;
+    }
+    #login-links > li, #login-links > li > a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-top: 15px;
+    }
+
+
+}
+
+
+
+@media only screen and (min-width:768px) and (max-width:799px){
+    .top-right-dropdown .nav > li {
+        float: left;
+    }
+    .subnavbar .mainnav > li{
+        min-width: 60px;
+    }
+    .subnavbar .mainnav > li > a{
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .navbar-fixed-top{
+        margin-bottom: 0 !important;
+    }
+
+    .subnavbar-inner{height: 70px; }
+    .subnavbar .mainnav > li {
+        line-height: 13px;
+        min-width: 80px;
+        width: 80px;
+        height: 70px;
+    }
+}
+@media only screen and (min-width:800px) and (max-width:875px){
+    .top-right-dropdown .nav > li {
+        float: left;
+    }
+    .subnavbar .mainnav > li{
+        min-width: 75px;
+    }
+    .subnavbar .mainnav > li > a{
+        padding-left: 6px;
+        padding-right: 6px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    .navbar-fixed-top{
+        margin-bottom: 0 !important;
+    }
+
+
+    .subnavbar-inner{height: 70px; }
+    .subnavbar .mainnav > li {
+        line-height: 13px;
+        min-width: 80px;
+        width: 82px;
+        height: 70px;
+    }
+}
+
+/* Inner page css style */
+@media only screen and (min-width:876px) and (max-width:979px){
+    .top-right-dropdown .nav > li {
+        float: left;
+    }
+    .subnavbar .mainnav > li > a{
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .navbar-fixed-top{
+        margin-bottom: 0 !important;
+    }
+
+    /* Inner page css style */
+    .subnavbar-inner{height: 70px; }
+    .subnavbar .mainnav > li {
+        line-height: 13px;
+        min-width: 94px;
+        width: 94px;
+        height: 70px;
+        font-size: 12px;
+    }
+}
+@media only screen and (min-width:980px) and (max-width:1023px){
+    .account-container{
+        width: 100%;
+    }
+    .subnavbar .mainnav > li > a{
+        padding-left: 8px;
+        padding-right: 8px;
+        font-size: 12px;
+    }
+}
+@media only screen and (min-width:1024px) and (max-width:1180px){
+    .account-container{
+        width: 100%;
+    }
+    .account-container h1{
+        font-size: 32px;
+    }
+    .form-login > p{
+        font-size: 15px;
+    }
+    .subnavbar .mainnav > li > a{
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+}
+
