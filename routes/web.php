@@ -243,6 +243,7 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('get-cart-details' ,['as' => 'get-cartInfo','uses' => 'Api\V1\CartController@userCartDetail' ] );
     Route::any('add-to-cart' ,['as' => 'add-cartItems','uses' => 'Api\V1\CartController@addToCart' ] );
     Route::any('delete-from-cart' ,['as' => 'delete-cartItems','uses' => 'Api\V1\CartController@deleteFromCart' ] );
+    Route::any('edit-cart' ,['as' => 'edit-cartItems','uses' => 'Api\V1\CartController@editCart' ] );
 
     //Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 

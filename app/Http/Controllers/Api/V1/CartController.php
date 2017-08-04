@@ -43,15 +43,31 @@ class CartController extends Controller
                     $allCartProductSize=(new CartProductSizes())->getCartProductAllSize($cartID,$productId);
                        //dd($allCartProductSize->toArray());
                     $finalSizeData=[];
+                    $tax_Detail='';
                     if($allCartProductSize){
+                        $tax_Detail=getTaxPercentage($ProductDetailsArray->tax_id);
+                       // dd($tax_Detail);
+                        $cgst=$tax_Detail['cgst_rate'];
+                        $sgst=$tax_Detail['sgst_rate'];
+                        $percentage=$cgst+$sgst;
                         $allSizeData=[];
                         foreach ($allCartProductSize as $allSizeData){
                           //  dump( $allSizeData->toArray(),$allCartProductSize->toArray());
+                            $quantity=$allSizeData->quantity;
+                            $price=$allSizeData->price;
+                            $total_price=$quantity*$price;
+
+                            $percentageValue = ($percentage / 100) * $total_price;
+
+
+
                             $finalSizeData[] = [
-                                'cart_size_id'=> $allSizeData->id,
-                                'normal_size' => getSizeName($allSizeData->size_id),
-                                'quantity'    => $allSizeData->quantity,
-                                'price'       => $allSizeData->price,
+                                'cart_size_id'  => $allSizeData->id,
+                                'normal_size'   => getSizeName($allSizeData->size_id),
+                                'quantity'      => $quantity,
+                                'per_quantity_price'         => $price,
+                                'total_price'   => $total_price,
+                                'price_with_tax'=> $total_price+$percentageValue,
                             ];
                         }//foreach ends allSize
                     }//if ends
@@ -63,10 +79,10 @@ class CartController extends Controller
                     $ProductDetailsArrayNew[] = [
                         'cart_product_id'=> $cpData['id'],
                         'product_name'   => $ProductDetailsArray->name,
-                        'product_tax'    => getTaxPercentage($ProductDetailsArray->tax_id),
+                        'product_tax'    => $tax_Detail,
                         'p_image'        => file_exists($dirName.$ProductDetailsArray->p_image)?$ProductDetailsArray->p_image:null,
                         'path'           => $urlName,
-                        'size_Data'      => $finalSizeData,
+                        'size_data'      => $finalSizeData,
                     ];
                 }
                 $result[] = [
@@ -208,7 +224,7 @@ class CartController extends Controller
                 }// foreach ends
                 //dd($cartId,$cartProductId, $inputs,$sizeID,$cartPSizeArray,$cartPSizeData);
                 \DB::commit();
-                return apiResponse(true, 200, lang('messages.added', lang('cart.items')));
+                return apiResponse(true, 200, lang('cart.added', lang('cart.item')));
                 //return apiResponse(true, 200 , null, [], $result);
             }
             else {
@@ -374,6 +390,79 @@ class CartController extends Controller
         /*else {
                 return apiResponse(false, 404, lang('common.no_size_select'));
             }*/
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+
+    }
+
+    public function editCart(Request $request){
+        try {
+            \DB::beginTransaction();
+            $inputs = $request->all();
+            $result = [];
+
+
+            $UserID = (new User)->find($inputs['user_id'])['id'];
+            //dd($inputs);
+            if (!$UserID || $UserID != authUserId()) {
+                return apiResponse(false, 404, lang('user.user_not'));
+            }
+            $CartID = (new Cart)->find($inputs['cart_id'])['id'];
+            if (!$CartID) {
+                //return apiResponse(false, 404, lang('cart.cart'));
+                return apiResponse(false, 404, lang('messages.not_found', lang('cart.cart')));
+            }
+
+            $sizeCount=count($inputs['cart_size_id']);
+            //$priceCount=count($inputs['price']);
+            $quantityCount=count($inputs['quantity']);
+            if($sizeCount!=$quantityCount){
+                return apiResponse(false, 404, lang('cart.error_count'));
+            }
+
+            if(isset($inputs['cart_size_id'])) {
+                $cartSizeDetails = [];
+                foreach ($inputs['cart_size_id'] as $cartSizeIDs) {
+                    $cartSizeDetails[] = (new CartProductSizes)->find($cartSizeIDs);
+                    //$ProductDetails[] = (new CartProducts())->getCartProduct($CartID, $productIds);
+                }
+
+                foreach ($cartSizeDetails as $cartSizeData) {
+                    if (!$cartSizeData) {
+                        return apiResponse(false, 404, lang('messages.not_found', lang('size.size')));
+                    }
+                }
+            }
+
+
+            //check if Product Size Delete Request only
+            if(isset($cartSizeDetails) && count($cartSizeDetails)>0){
+                foreach ($cartSizeDetails as $key=>$pSizeData) {
+                    //$ProductID = $pSizeData->product_id;
+                    //$cart_id = $pSizeData->cart_id;
+                    $cartQuantity = $pSizeData->quantity;
+                    $inputQuantity=$inputs['quantity'][$key];
+                    if($inputQuantity != $cartQuantity) {
+                        $updatePSizeArray = [
+                            'quantity'   => $inputQuantity,
+                            'updated_by' => $UserID
+                        ];
+                        (new CartProductSizes)->store($updatePSizeArray, $pSizeData->id);
+                    }
+                }// first-forLoop($ProductDetails) Ends
+            }//first-if($ProductDetails) ENDS
+
+
+            \DB::commit();
+            return apiResponse(true, 200, lang('messages.updated', lang('products.product')));
+            //return apiResponse(true, 200 , null, [], $result);
+
+            /*else {
+                    return apiResponse(false, 404, lang('common.no_size_select'));
+                }*/
         }
         catch (Exception $exception) {
             \DB::rollBack();
