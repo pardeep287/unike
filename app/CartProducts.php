@@ -110,4 +110,20 @@ class CartProducts extends Model
             ->count();
 
     }
+
+    public function getCartProducts($cart_id)
+    {
+        $fields = [
+            'id',
+            'product_id',
+            'cart_id',
+            'status',
+
+        ];
+        return $this
+            ->active()
+            ->where('cart_id', $cart_id)
+            ->get($fields);
+
+    }
 }

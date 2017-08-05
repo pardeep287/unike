@@ -77,6 +77,7 @@ class UserController extends Controller
                 'username' => $inputs['username'],
                 'password' => $password,
                 'email' => $inputs['email'],
+                'company_id' => loggedInCompanyId(),
                 'role_id' => $role_id,
                 'created_by' => 0,
 

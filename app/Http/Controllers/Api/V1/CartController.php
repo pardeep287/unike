@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Cart;
 use App\CartProducts;
 use App\CartProductSizes;
+use App\Order;
+use App\OrderProducts;
+use App\OrderProductSizes;
 use App\Product;
 use App\ProductCost;
 use App\ProductSizes;
@@ -14,25 +17,26 @@ use App\Http\Controllers\Controller;
 
 class CartController extends Controller
 {
-    public function userCartDetail(Request $request)
+    public function userCartDetail($id = null)
     {
         try{
-            $inputs = $request->all();
+            //$inputs = $request->all();
             $result = [];
-            $UserID = (new User)->find($inputs['user_id'])['id'];
+            $UserID = (new User)->find($id)['id'];
 
             if(!$UserID || $UserID!=authUserId()){
                 return apiResponse(false, 404, lang('user.user_not'));
             }
             //dd($UserID);
             
-            $cartID = (new Cart)->findByUserId($inputs['user_id'])['id'];
+            $cartID = (new Cart)->findByUserId($id)['id'];
             //$cartID=null;
             if($cartID) {
                 $cartPData=CartProducts::where('cart_id',$cartID)->where('status',1)->get(['id','product_id']);
 
                 $ProductDetailsArray=[];
                 $ProductDetailsArrayNew=[];
+                $total_price =  $Subtotal= $Subtotal_cgst= $Subtotal_sgst= $Subtotal_igst=0;
                 foreach ($cartPData as $key=>$cpData)
                 {
                     $productId=$cpData['product_id'];
@@ -44,20 +48,25 @@ class CartController extends Controller
                        //dd($allCartProductSize->toArray());
                     $finalSizeData=[];
                     $tax_Detail='';
+                    $total_amount =$total_cgst_amount = $total_sgst_amount= $total_igst_amount=0;
                     if($allCartProductSize){
                         $tax_Detail=getTaxPercentage($ProductDetailsArray->tax_id);
                        // dd($tax_Detail);
                         $cgst=$tax_Detail['cgst_rate'];
                         $sgst=$tax_Detail['sgst_rate'];
-                        $percentage=$cgst+$sgst;
+                        $igst=$tax_Detail['igst_rate'];
+
                         $allSizeData=[];
+
                         foreach ($allCartProductSize as $allSizeData){
                           //  dump( $allSizeData->toArray(),$allCartProductSize->toArray());
                             $quantity=$allSizeData->quantity;
                             $price=$allSizeData->price;
                             $total_price=$quantity*$price;
+                            $cgst_price=($cgst / 100) * $total_price;
+                            $sgst_price=($sgst / 100) * $total_price;
+                            $igst_price=($igst / 100) * $total_price;
 
-                            $percentageValue = ($percentage / 100) * $total_price;
 
 
 
@@ -67,27 +76,48 @@ class CartController extends Controller
                                 'quantity'      => $quantity,
                                 'per_quantity_price'         => $price,
                                 'total_price'   => $total_price,
-                                'price_with_tax'=> $total_price+$percentageValue,
+                               // 'cgst'   => $cgst_price,
+                               // 'sgst'   => $sgst_price,
+                                //'igst'   => $igst_price,
+                                //'price_with_tax'=> $total_price+$cgst_price+$sgst_price,
                             ];
+                            $total_amount += $total_price;
+                            $total_cgst_amount += $cgst_price;
+                            $total_sgst_amount += $sgst_price;
+                            $total_igst_amount += $igst_price;
                         }//foreach ends allSize
                     }//if ends
                     // dd($finalSizeData);
 
                     //check if exists in folder
+                    $Subtotal += $total_amount;
+                    $Subtotal_cgst += $total_cgst_amount;
+                    $Subtotal_sgst += $total_sgst_amount;
+                    $Subtotal_igst += $total_igst_amount;
+
                     $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$ProductDetailsArray->product_id.'/';
                     $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$ProductDetailsArray->product_id.'/'.$ProductDetailsArray->p_image);
                     $ProductDetailsArrayNew[] = [
                         'cart_product_id'=> $cpData['id'],
                         'product_name'   => $ProductDetailsArray->name,
-                        'product_tax'    => $tax_Detail,
+                        //'product_tax'    => $tax_Detail,
                         'p_image'        => file_exists($dirName.$ProductDetailsArray->p_image)?$ProductDetailsArray->p_image:null,
                         'path'           => $urlName,
                         'size_data'      => $finalSizeData,
+
                     ];
                 }
-                $result[] = [
+                $SubtotalN= number_format(round($Subtotal* 2, 0)/2,2);
+                $round_off_value= $SubtotalN-$Subtotal;
+                $result = [
                     'cart_id' => $cartID,
                     'cart_product_details' => $ProductDetailsArrayNew,
+                    'subtotal'          => $SubtotalN,
+                    'round_off_value'   => number_format($round_off_value,2),
+                    //'subtotal_cgst'   => $Subtotal_cgst,
+                    //'subtotal_sgst'   => $Subtotal_sgst,
+                   // 'subtotal_igst'   => $Subtotal_igst,
+                   // 'nettotal'   => $Subtotal+$Subtotal_cgst+$Subtotal_sgst,
 
                 ];
                 //dd($cartPData->toArray(),$cartID,$UserID,$ProductDetailsarray);
@@ -117,12 +147,19 @@ class CartController extends Controller
     {
         try {
             \DB::beginTransaction();
-            $inputs = $request->all();
+                $inputs = $request->all();
             $result = [];
+
+            $validator = ( new Cart)->validate($inputs);
+            //$validator = (new SaleOrder)->validateSaleOrder($inputs, null, true, true);
+            if ($validator->fails()) {
+                return apiResponse(false, 406, errorMessages($validator->messages()));
+            }
 
             $UserID = (new User)->find($inputs['user_id'])['id'];
             //dd($inputs,$UserDetails);
-            if (!$UserID) {
+
+            if (!$UserID || $UserID != authUserId()) {
                 return apiResponse(false, 404, lang('user.user_not'));
             }
             $ProductID = (new Product)->find($inputs['product_id'])['id'];
@@ -186,7 +223,7 @@ class CartController extends Controller
                     ];
                     $cartProductId = (new CartProducts)->store($cartProductData);
                 }
-            }//if cart eds
+            }//if cart ends
 
             //check if any product size has been selected
             if (isset($inputs['size_id']) && count($inputs['size_id']) > 0) 
@@ -458,6 +495,181 @@ class CartController extends Controller
 
             \DB::commit();
             return apiResponse(true, 200, lang('messages.updated', lang('products.product')));
+            //return apiResponse(true, 200 , null, [], $result);
+
+            /*else {
+                    return apiResponse(false, 404, lang('common.no_size_select'));
+                }*/
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+
+    }
+
+    public function checkOutCart(Request $request){
+        try {
+            \DB::beginTransaction();
+            $inputs = $request->all();
+            $result = [];
+            $validator = ( new Order)->validate($inputs);
+            //$validator = (new SaleOrder)->validateSaleOrder($inputs, null, true, true);
+            if ($validator->fails()) {
+                return apiResponse(false, 406, errorMessages($validator->messages()));
+            }
+
+            $UserID = (new User)->find($inputs['user_id'])['id'];
+            //dd($inputs);
+            if (!$UserID || $UserID != authUserId()) {
+                return apiResponse(false, 404, lang('user.user_not'));
+            }
+            $cartDetails = (new Cart)->findByUserId($UserID);
+            //$cartDetails = (new Cart)->findByUserId($inputs['cart_id']);
+            //dd($cartDetails);
+
+            if (!$cartDetails) {
+                //return apiResponse(false, 404, lang('cart.cart'));
+                return apiResponse(false, 404, lang('messages.not_found', lang('cart.cart')));
+            }
+            if($cartDetails->status==1 ){
+                return apiResponse(false, 404, lang('cart.already_ordered', lang('cart.cart')));
+            }
+            $CartID=$cartDetails->id;
+
+
+            //fill orderMaster
+            $orderNumber=(new Order())->getOrderNumber();
+            //if($orderNumber) {
+                $cartMasterData = [
+                    'user_id' => $UserID,
+                    'cart_id' => $CartID,
+                    'company_id' => loggedInCompanyId(),
+                    'financial_year_id' => financialYearId(),
+                    'order_number' => $orderNumber,
+                    'order_date' => currentDate(true),
+                    //'gross_amount' => '',
+                    //'net_amount'=> '',
+                    //'round_off' => '',
+                    //'status'    => 1,
+                    //'remarks'   => '',
+                    'created_by' => $UserID,
+                ];
+                //dd($cartMasterData);
+                $orderId = (new Order)->store($cartMasterData);
+            
+            //}
+
+
+            if($CartID && $orderId)
+            {
+
+                
+                //get cart Products where status 1
+                $cartProductIdArray=(new CartProducts)->getCartProducts($CartID);
+                //dd($cartProductIdArray);
+                //insert to Order Products
+                $Subtotal=$Subtotal_cGst= $Subtotal_sGst= $Subtotal_iGst=0;
+                if(count($cartProductIdArray)>0){
+                    foreach ($cartProductIdArray as $key=>$cartPData)
+                    {
+                        $cGst = $sGst = $iGst = '';
+                        $ProductID = $cartPData->product_id;
+                        $orderProductData = [
+                            'product_id'=> $ProductID,
+                            'order_id'  => $orderId,
+                            'created_by'=> $UserID,
+                        ];
+                        $orderProductId = (new OrderProducts)->store($orderProductData);
+
+                        //get Tax Percentage
+                        $ProductDetailsArray=(new Product)->getProductDetailOnly($ProductID);
+                        if($ProductDetailsArray){
+                            $tax_Detail=getTaxPercentage($ProductDetailsArray->tax_id);
+                            // dd($tax_Detail);
+                            $cGst=$tax_Detail['cgst_rate'];
+                            $sGst=$tax_Detail['sgst_rate'];
+                            $iGst=$tax_Detail['igst_rate'];
+
+                        }
+                        //get cart Product Sizes where status 1
+                        $cartPSizeArray=(new CartProductSizes)->getCartProductAllSize($CartID,$ProductID);
+                        //insert to Order Products
+
+                        $total_amount =$total_cgst_amount = $total_sgst_amount= $total_igst_amount=0;
+                        if(count($cartPSizeArray)>0 && isset($orderProductId)){
+                            foreach ($cartPSizeArray as $key2=>$cartSizeData)
+                            {
+                                //dd($cartSizeData->toArray());
+                                $total_price = $cGst_price = $sGst_price = $iGst_price = 0;
+                                $quantity=$cartSizeData->quantity;
+                                $price=$cartSizeData->price;
+                                $total_price = $quantity*$price;
+                                $cGst_price  = ($cGst / 100) * $total_price;
+                                $sGst_price  = ($sGst / 100) * $total_price;
+                                $iGst_price  = ($iGst / 100) * $total_price;
+                                $ProductID   = $cartSizeData->product_id;
+                                $orderSizeData = [
+                                    'order_id'   => $orderId,
+                                    'product_id' => $ProductID,
+                                    'order_product_id' => $orderProductId,
+                                    'cgst'       => $cGst,
+                                    'cgst_amount'=> numberFormat($cGst_price),
+                                    'sgst'       => $sGst,
+                                    'sgst_amount'=> numberFormat($sGst_price),
+                                    'igst'       => $iGst,
+                                    'igst_amount'=> numberFormat($iGst_price),
+                                    'size_id'    => $cartSizeData->size_id,
+                                    'quantity'   => $quantity,
+                                    'price'      => $price,
+                                    //'status'     => $ProductID,
+                                    'total_price'=> $total_price,
+                                    'created_by' => $UserID,
+                                ];
+                                $total_amount += $total_price;
+                                $total_cgst_amount += $cGst_price;
+                                $total_sgst_amount += $sGst_price;
+                                $total_igst_amount += $iGst_price;
+                                //dd($orderSizeData);
+                                $orderProductId = (new OrderProductSizes)->store($orderSizeData);
+                            }// for ends
+                        }//if ends
+
+                        $Subtotal += $total_amount;
+                        $Subtotal_cGst += $total_cgst_amount;
+                        $Subtotal_sGst += $total_sgst_amount;
+                        $Subtotal_iGst += $total_igst_amount;
+
+                    }// for ends
+                }//if ends
+                else{
+                    dd('No Product Found in Cart');
+                }
+
+                //update the Order Master With Total
+                $SubtotalN= number_format(round($Subtotal* 2, 0)/2,2);
+                $round_off_value= $SubtotalN-$Subtotal;
+
+                $OrderUpdateArray=[
+                    'gross_amount'   => $SubtotalN,
+                    'round_off'      => number_format($round_off_value,2),
+                    //'subtotal_cgst'   => $Subtotal_cgst,
+                    //'subtotal_sgst'   => $Subtotal_sgst,
+                    // 'subtotal_igst'   => $Subtotal_igst,
+                    'net_amount'     => $Subtotal+$Subtotal_cGst+$Subtotal_sGst,
+                ];
+                //dd($OrderUpdateArray,$orderId,$cartMasterData);
+                (new Order)->store($OrderUpdateArray,$orderId);
+
+                //change Status in CartMaster to 1 of that CartID
+                $updateCartMaster=[
+                    'status' => 1,
+                ];
+                (new Cart)->store($updateCartMaster,$CartID);
+            }//if cart ends
+
+            \DB::commit();
+            return apiResponse(true, 200, lang('cart.ordered', lang('cart.cart')));
             //return apiResponse(true, 200 , null, [], $result);
 
             /*else {

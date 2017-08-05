@@ -104,4 +104,24 @@ class CartProductSizes extends Model
             ->count();
 
     }
+   /* public function getSizeCartWise($cart_id)
+    {
+        $fields = [
+            'id',
+            'cart_id',
+            'product_id',
+            'size_id',
+            'quantity',
+            'price',
+            'status',
+
+        ];
+        return $this
+            ->active()
+            ->where('cart_id', $cart_id)
+            ->get($fields);
+        //->first($fields);
+
+
+    }*/
 }

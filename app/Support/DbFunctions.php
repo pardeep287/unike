@@ -15,6 +15,7 @@ use App\Menu;
  */
 function loggedInCompanyId()
 {
+
     return authUser()->company_id;
 }
 

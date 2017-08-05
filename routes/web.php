@@ -225,6 +225,31 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
     Route::any('menu/sorter/{page?}', ['as' => 'menu.sorter','uses' => 'MenuController@sortingMenu']);
     Route::any('menu/toggle/{id?}', ['as' => 'menu.toggle','uses' => 'MenuController@menuToggle']);
 
+
+    // Invoice Routes
+    Route::resource('invoice', 'InvoiceController',
+        ['names' => [
+            'index'     => 'invoice.index',
+            'create'    => 'invoice.create',
+            'store'     => 'invoice.store',
+            'edit'      => 'invoice.edit',
+            'update'    => 'invoice.update'
+        ],
+            'except' => ['show', 'destroy']
+        ]);
+    Route::any('invoice/paginate/{page?}', ['as' => 'invoice.paginate',
+        'uses' => 'InvoiceController@InvoicePaginate']);
+    Route::any('invoice/invoice-print/{id?}', ['as' => 'invoice.invoice-print',
+        'uses' => 'InvoiceController@invoicePrint']);
+    Route::any('invoice/invoice-pdf/{id?}', ['as' => 'invoice.invoice-pdf',
+        'uses' => 'InvoiceController@generatePdfInvoice']);
+    Route::get('invoice/drop/{id?}/{id2?}', ['as' => 'invoice.drop',
+        'uses' => 'InvoiceController@drop']);
+    Route::any('invoice/send-email/{id}', ['as' => 'invoice.send-email',
+        'uses' => 'InvoiceController@sendEmail']);
+    Route::any('invoice/item-detail/{id?}', ['as' => 'invoice.item-detail',
+        'uses' => 'InvoiceController@invoiceItemDetail']);
+
 });
 
 
@@ -240,10 +265,12 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 
     /* CART API */
-    Route::any('get-cart-details' ,['as' => 'get-cartInfo','uses' => 'Api\V1\CartController@userCartDetail' ] );
+    Route::any('get-cart-details/{id}' ,['as' => 'get-cartInfo','uses' => 'Api\V1\CartController@userCartDetail' ] );
     Route::any('add-to-cart' ,['as' => 'add-cartItems','uses' => 'Api\V1\CartController@addToCart' ] );
     Route::any('delete-from-cart' ,['as' => 'delete-cartItems','uses' => 'Api\V1\CartController@deleteFromCart' ] );
     Route::any('edit-cart' ,['as' => 'edit-cartItems','uses' => 'Api\V1\CartController@editCart' ] );
+    Route::any('check-out-cart' ,['as' => 'checkout-cart','uses' => 'Api\V1\CartController@checkOutCart' ] );
+
 
     //Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 

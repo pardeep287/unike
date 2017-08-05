@@ -44,6 +44,29 @@ class Cart extends Model
         return $query->where('company_id', loggedInCompanyId());
     }
 
+    public function  validate( $inputs, $id = null)
+    {
+
+        if($id)
+        {
+            // $rules['name'] = 'required|unique:brand,name,' . $id .',id,deleted_at,NULL,company_id,'.loggedInCompanyId();
+            $rules['user_id'] = 'required';
+            $rules['product_id'] = 'required';
+            $rules['size_id'] = 'required';
+            $rules['quantity'] = 'required';
+        }
+        else {
+            // $rules['name'] = 'required|unique:brand,name,NULL,id,deleted_at,NULL,company_id,'.loggedInCompanyId();
+            $rules['user_id'] = 'required';
+            $rules['product_id'] = 'required';
+            $rules['size_id'] = 'required';
+            $rules['quantity'] = 'required';
+
+        }
+
+        return \Validator::make($inputs, $rules);
+    }
+
     /**
      * @param $inputs
      * @param null $id
@@ -60,7 +83,7 @@ class Cart extends Model
         }
     }
 
-    public function findByUserId($product_id)
+    public function findByUserId($user_id)
     {
         $fields = [
             'id',
@@ -68,12 +91,15 @@ class Cart extends Model
             'status',
 
         ];
+
         return $this
-            ->where('cart_master.user_id', $product_id)
+            ->where('cart_master.user_id', $user_id)
             ->where('cart_master.status', 0)
             //->get($fields);
             ->first($fields);
 
 
     }
+
+    
 }

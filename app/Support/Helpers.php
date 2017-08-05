@@ -1103,3 +1103,27 @@ function getSizePrice($size_id)
 	return false;
 
 }
+
+/**
+ * @param $value
+ * @return float
+ */
+function getRoundedAmount($value)
+{
+	$setting = getCompanySetting();
+	if ($setting->round_off_type == 1) {
+		$decimal = explode('.', $value);
+		if (isset($decimal[1]) && $decimal[1] == 5) {
+			return $value;
+		} else {
+			return round($value, 2);
+		}
+	} else {
+		$decimal = explode('.', $value);
+		if (isset($decimal[1]) && $decimal[1] == 5) {
+			return $value;
+		} else {
+			return round($value);
+		}
+	}
+}
