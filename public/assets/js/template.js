@@ -156,6 +156,7 @@ $('body').on('click', 'a.dEdit', function(event) { //due to ajax data request wi
     //path of the route
     var route = $(this).data("route");
     var realod = $(this).data("realod");
+
     //alert(realod);
     //confirm message
     var message = $(this).data("message");
@@ -184,7 +185,8 @@ $('body').on('click', 'a.dEdit', function(event) { //due to ajax data request wi
             if (realod == 1) {
                 window.location.reload();
             }
-            else{
+
+            else if( realod.length > 5){
                 window.location.href = realod;
             }
         } else {

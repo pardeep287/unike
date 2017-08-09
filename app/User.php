@@ -171,7 +171,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         if ($id) {
             $rules['username'] = 'required|unique:users,username,' . $id . ',id,deleted_at,NULL';
             $rules['email'] = 'required|unique:users,email,' . $id . ',id,deleted_at,NULL';
-            $rules['password'] = 'min:5';
+            if(isset($inputs['password'])){
+            $rules['password'] = 'min:5';}
         } else {
             $rules['username'] = 'required|unique:users,username,NULL,id,deleted_at,NULL';
             $rules['email'] = 'required|unique:users,email,NULL,id,deleted_at,NULL';

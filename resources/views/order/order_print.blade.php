@@ -3,48 +3,6 @@
 <head>
     <style type="text/css">
 
-        @if($setting->invoice_format == 1)
-            body{
-                background:none;
-                font-family: arial;
-                font-size: 13px;
-                -webkit-print-color-adjust: exact;
-                margin: 0 0 0 30px;
-            }
-
-            @media all {
-                .page-break, .hide  { display: none; }
-            }
-            @page
-            {
-                /*size: 8.7in 11in;*/
-                /*margin : 15mm 15mm 25mm 15mm;*/
-                page-break-inside: avoid;
-                page-break-after: always;
-            }
-        @elseif($setting->invoice_format == 2)
-            body{
-                -webkit-print-color-adjust: exact;
-                background:#ffffff;
-                font-size:15px;
-                margin:0px;
-                text-align:center;
-                padding:0px;
-                font-family:Arial;
-
-            }
-
-            @media all {
-                .page-break, .hide  { display: none; }
-            }
-            @page
-            {
-                /*size: 8.7in 11in;*/
-                /*margin : 15mm 15mm 25mm 15mm;*/
-                page-break-inside: avoid;
-                page-break-after: always;
-            }
-        @elseif($setting->invoice_format == 3)
             @media all {
                 .page-break, .hide {
                     display: none;
@@ -81,17 +39,18 @@
                 page-break-inside: avoid;
                 page-break-after: always;
             }
-        @endif
+
     </style>
 </head>
 <body onload="window.print()" style="background:none;font-family: arial;font-size: 13px;-webkit-print-color-adjust: exact;margin: 0 0 0 30px;">
     @if(isset($pdf))
         @include('invoice.invoice-common'. $setting->invoice_format, ['copy' => 1])
     @else
-        @foreach($printOptions as $copy)
-            @include('invoice.invoice-common'. $setting->invoice_format, ['copy' => $copy])
+        {{--@foreach($printOptions as $copy)--}}
+            {{--@include('invoice.invoice-common'. $setting->invoice_format, ['copy' => $copy])--}}
+            @include('order.order-common')
             <div style="page-break-before: always;"></div>
-        @endforeach
+        {{--@endforeach--}}
     @endif
 </body>
 </html>

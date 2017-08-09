@@ -209,6 +209,29 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
         'uses' => 'UserController@drop']);
 
 
+    // Customer Routes
+    Route::resource('customer', 'CustomerController',
+        ['names' => [
+            'index'     => 'customer.index',
+            'create'    => 'customer.create',
+            'store'     => 'customer.store',
+            'edit'      => 'customer.edit',
+            'update'    => 'customer.update'
+        ],
+            'except' => ['show', 'destroy']
+        ]);
+
+    Route::any('customer/paginate/{page?}', ['as' => 'customer.paginate',
+        'uses' => 'CustomerController@customerPaginate']);
+    Route::any('customer/action', ['as' => 'customer.action',
+        'uses' => 'CustomerController@customerAction']);
+
+    Route::any('customer/toggle/{id?}', ['as' => 'customer.toggle',
+        'uses' => 'CustomerController@customerToggle']);
+
+    Route::get('customer/drop/{id?}', ['as' => 'customer.drop',
+        'uses' => 'CustomerController@drop']);
+
     // Menu Routes
     Route::resource('menu', 'MenuController',
         ['names' => [
@@ -226,29 +249,29 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
     Route::any('menu/toggle/{id?}', ['as' => 'menu.toggle','uses' => 'MenuController@menuToggle']);
 
 
-    // Invoice Routes
-    Route::resource('invoice', 'InvoiceController',
+    // Orders Routes
+    Route::resource('order', 'OrderController',
         ['names' => [
-            'index'     => 'invoice.index',
-            'create'    => 'invoice.create',
-            'store'     => 'invoice.store',
-            'edit'      => 'invoice.edit',
-            'update'    => 'invoice.update'
+            'index'     => 'order.index',
+            'create'    => 'order.create',
+            'store'     => 'order.store',
+            'edit'      => 'order.edit',
+            'update'    => 'order.update'
         ],
             'except' => ['show', 'destroy']
         ]);
-    Route::any('invoice/paginate/{page?}', ['as' => 'invoice.paginate',
-        'uses' => 'InvoiceController@InvoicePaginate']);
-    Route::any('invoice/invoice-print/{id?}', ['as' => 'invoice.invoice-print',
-        'uses' => 'InvoiceController@invoicePrint']);
-    Route::any('invoice/invoice-pdf/{id?}', ['as' => 'invoice.invoice-pdf',
-        'uses' => 'InvoiceController@generatePdfInvoice']);
-    Route::get('invoice/drop/{id?}/{id2?}', ['as' => 'invoice.drop',
-        'uses' => 'InvoiceController@drop']);
-    Route::any('invoice/send-email/{id}', ['as' => 'invoice.send-email',
-        'uses' => 'InvoiceController@sendEmail']);
-    Route::any('invoice/item-detail/{id?}', ['as' => 'invoice.item-detail',
-        'uses' => 'InvoiceController@invoiceItemDetail']);
+    Route::any('order/paginate/{page?}', ['as' => 'order.paginate',
+        'uses' => 'OrderController@orderPaginate']);
+    Route::any('order/order-print/{id?}', ['as' => 'order.order-print',
+        'uses' => 'OrderController@orderPrint']);
+    Route::any('order/order-pdf/{id?}', ['as' => 'order.order-pdf',
+        'uses' => 'OrderController@generatePdfOrder']);
+    Route::get('order/drop/{id?}/{id2?}', ['as' => 'order.drop',
+        'uses' => 'OrderController@drop']);
+    Route::any('order/send-email/{id}', ['as' => 'order.send-email',
+        'uses' => 'OrderController@sendEmail']);
+    Route::any('order/item-detail/{id?}', ['as' => 'order.item-detail',
+        'uses' => 'OrderController@orderItemDetail']);
 
 });
 
@@ -270,6 +293,9 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('delete-from-cart' ,['as' => 'delete-cartItems','uses' => 'Api\V1\CartController@deleteFromCart' ] );
     Route::any('edit-cart' ,['as' => 'edit-cartItems','uses' => 'Api\V1\CartController@editCart' ] );
     Route::any('check-out-cart' ,['as' => 'checkout-cart','uses' => 'Api\V1\CartController@checkOutCart' ] );
+
+    /*Check For Market Agent*/
+    
 
 
     //Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);

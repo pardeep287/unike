@@ -21,7 +21,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Support\Facades\Mail;
 
-class InvoiceController extends Controller
+class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -30,7 +30,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        return view('invoice.index');
+        return view('order.index');
     }
 
     /**
@@ -291,8 +291,8 @@ class InvoiceController extends Controller
 
 
 
-        //dd($items->toArray(),$result->toArray(),$products->toArray());
-        return view('invoice.edit', compact('result', 'items', 't', 'a' , 'products','itemCountProductWise'));
+       // dd($items->toArray(),$result->toArray(),$products->toArray());
+        return view('order.edit', compact('result', 'items', 't', 'a' , 'products','itemCountProductWise'));
     }
 
     /**
@@ -630,7 +630,7 @@ class InvoiceController extends Controller
      * @param int $pageNumber
      * @return \Illuminate\Http\Response
      */
-    public function invoicePaginate($pageNumber = null)
+    public function orderPaginate($pageNumber = null)
     {
         if (!\Request::isMethod('post') && !\Request::ajax()) {
             return lang('messages.server_error');
@@ -660,7 +660,7 @@ class InvoiceController extends Controller
             $total = $total->total;
         }
         //dd($data->toArray(),$total);
-        return view('invoice.load_data', compact('inputs', 'data', 'total', 'page', 'perPage'));
+        return view('order.load_data', compact('inputs', 'data', 'total', 'page', 'perPage'));
     }
 
     /**
@@ -775,25 +775,64 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function invoicePrint($id)
+    public function orderPrint($id)
     {
-        $result = (new Invoice)->company()->find($id);
+        /*$result = (new Order)->find($id);
+
         if (!$result) {
             abort(401);
         }
         $companyId = loggedInCompanyId();
-        $company = (new Company)->getCompanyDetails($companyId);
-        $setting = getCompanySetting();
-        $printOptions = explode(',', $setting->print_options);
-        $bank = Bank::find($result->bank_id);
-        $party = (new Account)->getAccountDetail($result->account_id);
+        $company = (new Company)->getCompanyInfo($companyId);
+        $setting = '';
+        //$setting = getCompanySetting();
+        $printOptions = '';
+        //$printOptions = explode(',', $setting->print_options);
+        //$bank = Bank::find($result->bank_id);
+        $bank = '';
+        //$party = (new Account)->getAccountDetail($result->account_id);
+        $party = (new Customer)->find($result->user_id);
+        dd($result->toArray(),$party->toArray());
 
         $items = (new Invoice)->getInvoiceItemDetail($id, $result);
         $orderItems = $items['orderItem'];
         $taxes = $items['taxes'];
 
-        return view('invoice.invoice_print', compact('id', 'party', 'result', 'orderItems',
-            'company' , 'bank', 'taxes', 'setting', 'printOptions'));
+        return view('order.order_print', compact('id', 'party', 'result', 'orderItems',
+            'company' , 'bank', 'taxes', 'setting', 'printOptions'));*/
+
+
+        $result = (new Order)->getInvoiceDetail($id);
+        if (!$result) {
+            abort(404);
+        }
+
+        //$bank = (new Bank)->getBankService();
+        $products = (new OrderProducts)->getProductsByOrderId($id);
+        //$products = (new OrderProducts)->getProductsService();
+        $orderItems = (new OrderProductSizes)->getInvoiceItems(['order_id' => $id]);
+        $itemCountProductWise=[];
+        foreach($products as $product){
+            $count=0;
+            foreach ($orderItems as $item){
+                if($item['product_id']==$product['product_id']){
+                    $count++;
+                }
+            }
+            $itemCountProductWise[$product['product_id']]=$count;
+        }
+        $companyId = loggedInCompanyId();
+        $company = (new Company)->getCompanyInfo($companyId);
+        $party = (new Customer)->find($result->user_id);
+        //dd($result->toArray(),$party->toArray(),$orderItems->toArray()  ,$company->toArray());
+
+
+
+        // dd($items->toArray(),$result->toArray(),$products->toArray());
+        //return view('order.edit', compact('result', 'items', 't', 'a' , 'products','itemCountProductWise'));
+        return view('order.order_print', compact('id', 'result', 'orderItems', 'products','itemCountProductWise','company','party'));
+
+
     }
 
     /**

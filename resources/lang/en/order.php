@@ -1,25 +1,25 @@
 <?php
 /**
- * :: Invoice Language File ::
- * To manage invoice related language phrases.
+ * :: Order Language File ::
+ * To manage order related language phrases.
  *
  **/
 
 return [
-    'invoice_detail'     => 'Invoice Detail',
-    'invoice'            => 'Invoice',
-    'invoices'           => 'Invoices',
-    'invoice_status'     => 'Invoice Status',
-    'invoice_list'       => 'Invoice List',
-    'invoice_name'       => 'Invoice Name',
-    'invoice_code'       => 'Invoice Code',
+    'order_detail'     => 'Order Detail',
+    'order'            => 'Order',
+    'orders'           => 'Orders',
+    'order_status'     => 'Order Status',
+    'order_list'       => 'Order List',
+    'order_name'       => 'Order Name',
+    'order_code'       => 'Order Code',
     'net_amount'              => 'Net Amount',
     'amount'                  => 'Amount',
     'i'                     => 'I-',
-    'invoice_number'          => 'Invoice Number:',
-    'inv_number'          => 'Invoice Number',
-    'inv_date'            => 'Invoice Date',
-    'invoice_date'            => 'Invoice Date:',
+    'order_number'          => 'Order Number:',
+    'ord_number'          => 'Order Number',
+    'ord_date'            => 'Order Date',
+    'order_date'            => 'Order Date:',
     'delivery_date'           => 'Delivery Date:',
     'product'                 => 'Product',
     'quantity'                => 'Quantity',
@@ -33,18 +33,18 @@ return [
     'status'                    => 'Status',
     'total_sale_amount'         => 'Total Sale Amount',
     'enter_remarks'             => 'Enter Remarks',
-    'latest_invoice'            => 'Latest Sale Invoice',
+    'latest_order'            => 'Latest Sale Order',
     'gross_amount'              => 'Gross Amount',
-    'order_item'                => 'invoice item',
+    'order_item'                => 'Order item',
     'bill_amount'               => 'Bill Amount',
     'customer_email_not_found'  => 'Party email not found, please update party email address.',
-    'no_invoice'                => 'No invoice found.',
-    'empty_invoice_item_id'     => 'Invoice item id is empty.',
+    'no_order'                => 'No order found.',
+    'empty_order_item_id'     => 'Order item id is empty.',
     'mobile'                    => 'Mobile:',
     'consignee'                 => 'Consignee:',
     'date'                      => 'Date:',
-    'order_number'              => 'Order Number:',
-    'invoice_no'                => 'Invoice No.:',
+
+    'order_no'                => 'Order No.:',
     's_no'                      => 'S.NO.',
     'item_code'                 => 'ITEM CODE',
     'description'               => 'DESCRIPTION',
@@ -64,8 +64,7 @@ return [
     'pdf'                       => 'PDF',
     'print'                     => 'Print',
     'od_number'                 => 'Order Number:',
-    'order_date'                => 'Order Date:',
-    'total_monthly_invoices'    => 'Total Sale Invoices',
+    'total_monthly_orders'    => 'Total Sale Orders',
     'message'                   => 'Message',
     'carriage'                  => 'Carriage:',
     'through'                   => 'Through:',

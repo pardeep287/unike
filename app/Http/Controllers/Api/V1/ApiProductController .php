@@ -90,20 +90,35 @@ class ApiProductController extends Controller
             $productDimensions = (new ProductDimensions)->getProductDimension($id);
             //dd($productDimensions->toArray());
             $sizeDimensionValue = (new ProductSizeDimensionsValue)-> getProductDimensionValue($id);
+
+            $thumbsImages=(explode(',',$productsWithImage->images));
+            $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $productsWithImage->id . '/';
+            $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/'.$productsWithImage->p_image);
+            $urlNameImages = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/' );
+            foreach($thumbsImages as $key=>$thumbImages){
+                $imagesThumb[] = [
+                    'images' => file_exists($dirName . $thumbImages) ? $urlNameImages.'/'.$thumbImages : null,
+                ];
+
+                   }
+
+
             //dd($productSizePrice->toArray());
             if(count($productsWithImage) > 0) {
                 //$images=$productsWithImage->images;
 //                dd($productsWithImage[0]['images']);
-                $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $productsWithImage->id . '/';
+                /*$dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $productsWithImage->id . '/';
                 $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/'.$productsWithImage->p_image);
-                $urlNameImages = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/' );
+                $urlNameImages = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/' );*/
                 $productDetail = [
                     'id' => $productsWithImage->id,
                     'name' => $productsWithImage->name,
                     'description' => $productsWithImage->description,
                     'p_image' => file_exists($dirName . $productsWithImage->p_image) ? $productsWithImage->p_image : null,
-                    'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
+                    //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
                     'path' => $urlName,
+                    'thumb_images' => $imagesThumb,
+
 
                 ];
                 $productSizePriceArray=[];

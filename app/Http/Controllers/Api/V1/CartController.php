@@ -149,6 +149,8 @@ class CartController extends Controller
             \DB::beginTransaction();
                 $inputs = $request->all();
             $result = [];
+            //dd($inputs,authUser());
+
 
             $validator = ( new Cart)->validate($inputs);
             //$validator = (new SaleOrder)->validateSaleOrder($inputs, null, true, true);
@@ -160,7 +162,13 @@ class CartController extends Controller
             //dd($inputs,$UserDetails);
 
             if (!$UserID || $UserID != authUserId()) {
-                return apiResponse(false, 404, lang('user.user_not'));
+                //Check for MR Agent
+                if(authUser()->role_id== 3){
+                    $mrId=authUserId();
+                }
+                else {
+                    return apiResponse(false, 404, lang('user.user_not'));
+                }
             }
             $ProductID = (new Product)->find($inputs['product_id'])['id'];
             if (!$ProductID) {
@@ -183,7 +191,7 @@ class CartController extends Controller
                     'user_id'   => $inputs['user_id'],
                     'cart_date' => currentDate(true),
                     'status'    => 0,
-                    'created_by'=> $UserID,
+                    'created_by'=> authUserId(),
                 ];
                 //dd($cartMasterData);
                 $cartId = (new Cart)->store($cartMasterData);
@@ -209,7 +217,7 @@ class CartController extends Controller
                             $cartProductData = [
                                 'product_id' => $ProductID,
                                 'cart_id' => $cartId,
-                                'created_by' => $UserID,
+                                'created_by' => authUserId(),
                             ];
                             $cartProductId = (new CartProducts)->store($cartProductData);
                         }
@@ -219,7 +227,7 @@ class CartController extends Controller
                     $cartProductData = [
                         'product_id' => $ProductID,
                         'cart_id' => $cartId,
-                        'created_by' => $UserID,
+                        'created_by' => authUserId(),
                     ];
                     $cartProductId = (new CartProducts)->store($cartProductData);
                 }
@@ -246,7 +254,7 @@ class CartController extends Controller
                                 'quantity' => $inputs['quantity'][$key],
                                 'price' => getSizePrice($inputs['size_id'][$key]),
                                 //'price' => $inputs['price'][$key],
-                                'created_by' => $UserID,
+                                'created_by' => authUserId(),
                             ];
                             (new CartProductSizes)->store($cartPSizeData);
                             //}
@@ -680,6 +688,10 @@ class CartController extends Controller
             \DB::rollBack();
             return apiResponse(false, 500, lang('messages.server_error'));
         }
+
+    }
+
+    public function allCustomers(Request $request){
 
     }
 }

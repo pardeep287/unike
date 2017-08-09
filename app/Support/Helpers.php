@@ -991,7 +991,7 @@ function getModelByRouteName($routeName) {
 		[
 			'route_name' => 'customer.create',
 			'model' => 'App\Customer',
-			'rows' => 5,
+			'rows' => 100,
 			'redirect_route' => 'customer.index'
 		],
 		[
@@ -1126,4 +1126,10 @@ function getRoundedAmount($value)
 			return round($value);
 		}
 	}
+}
+
+function orderNumberInc($orderNumber){
+	$number = substr($orderNumber, strrpos($orderNumber, '/') + 1);
+	$incNumber = paddingLeft(substr($orderNumber, strrpos($orderNumber, '/') + 1) + 1);
+	return $text = str_replace($number, $incNumber, $orderNumber);
 }

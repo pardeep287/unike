@@ -61,11 +61,16 @@ class OrderProducts extends Model
      */
     public function getProductsByOrderId($order_id)
     {
+        $fields = [
+            'order_products.*',
+            'product_master.name',
+            ];
         
         $filter = 1;
         return $this
+            ->join('product_master','order_products.product_id','product_master.id')
             ->where('order_id',$order_id)
             ->active()
-            ->get();
+            ->get($fields);
     }
 }

@@ -83,7 +83,7 @@
                                         </label>
                                     </div>
                                 </div>
-                                @if(loggedInCompanyId() == 1 || isSuperAdmin())
+                                @if( isSuperAdmin())
                                     <div class="form-group">
                                         {!! Form::label('is_super_admin', lang('user.is_super_admin') . '&nbsp;', array('class' => 'col-sm-4 control-label')) !!}
                                         <div class="col-sm-8">
