@@ -35,7 +35,7 @@
                                     </td>
                                     <td style="text-align: center; font-weight: 600; font-size: 1.3em !important;
                                                                             border-color: #555555; border-style: solid;border-width:1px 0px 0px 1px;" width="52%" bgcolor="#ffffa8">
-                                        {!! 'UNK'.$result->order_number !!}
+                                        {!! 'UNK - '.$result->order_number !!}
                                     </td>
                                 </tr>
                                 </tbody>

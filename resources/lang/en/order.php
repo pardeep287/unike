@@ -84,5 +84,6 @@ return [
     'sgst_amount'               => 'SGST Amount',
     'igst_amount'               => 'IGST Amount',
     'dispatch_to'               => 'Dispatch To',
-    'header_text'               => 'Dealers In: HARDWARE GOODS & MILLS SOTRE. '
+    'header_text'               => 'Dealers In: HARDWARE GOODS & MILLS SOTRE. ',
+    'admin_access'		=> 'Sorry! Only Admin Have Access',
 ];

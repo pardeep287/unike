@@ -1103,6 +1103,17 @@ function getSizePrice($size_id)
 	return false;
 
 }
+function getUsername($user_id)
+{
+
+	$name = (new \App\Customer())->where('user_id', $user_id)->first(['customer_name']);
+
+	if($name) {
+		return $name->customer_name;
+	}
+	return false;
+
+}
 
 /**
  * @param $value

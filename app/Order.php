@@ -23,6 +23,7 @@ class Order extends Model
 
         'user_id',
         'cart_id',
+        'user_buyer_id',
         'company_id',
         'financial_year_id',
         'order_number',
@@ -84,6 +85,70 @@ class Order extends Model
         return \Validator::make($inputs, $rules);
     }
 
+    /**
+     * @param $user_id
+     * @return Model|null|static
+     */
+    public function findByUserId($user_id = null, $skip, $perPage)
+    {
+        trimInputs();
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $fields = [
+            'order_master.id',
+            'order_master.user_id',
+            'mrCustomer.customer_name as mr_name',
+            'user_buyer_id',
+            'customers.customer_name',
+            'cart_id',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            'order_master.status',
+
+        ];
+
+        return $this
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            ->leftJoin('customers as mrCustomer', 'order_master.user_id', '=', 'mrCustomer.user_id')
+            ->where('order_master.user_id', $user_id)
+            ->where('order_master.status', 1)
+            ->skip($skip)->take($take)
+            ->get($fields);
+
+
+    }
+
+    /**
+     * @param $user_id
+     * @return Model|null|static
+     */
+    public function findByOrderId($order_id )
+    {
+
+        $fields = [
+            'order_master.id',
+            'order_master.user_id',
+            'mrCustomer.customer_name as mr_name',
+            'user_buyer_id',
+            'customers.customer_name',
+            'cart_id',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            'order_master.status',
+
+        ];
+
+        return $this
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            ->leftJoin('customers as mrCustomer', 'order_master.user_id', '=', 'mrCustomer.user_id')
+            ->where('order_master.id', $order_id)
+            ->where('order_master.status', 1)
+            ->first($fields);
+
+
+    }
+
 
     /**
      * @return string
@@ -118,7 +183,7 @@ class Order extends Model
         }
     }
 
-    public function getInvoices($search = null, $skip, $perPage)
+    public function getOrders($search = null, $skip, $perPage)
     {
         trimInputs();
         $take = ((int)$perPage > 0) ? $perPage : 20;
@@ -155,6 +220,7 @@ class Order extends Model
         }
 
         $filter = $this->getFilters($search);
+      // dd($filter);
         return $this->financialyear()->company()
             ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
             ->whereRaw($filter)
@@ -167,7 +233,7 @@ class Order extends Model
      * @param array $search
      * @return mixed
      */
-    public function totalInvoices($search = null)
+    public function totalOrders($search = null)
     {
         trimInputs();
         $filter = $this->getFilters($search);
@@ -185,23 +251,28 @@ class Order extends Model
      */
     public function getFilters($search = [])
     {
+        //dump($search);
         $filter = 1;
         if (is_array($search) && count($search) > 0)
         {
             $keyword = (array_key_exists('keyword', $search) && $search['keyword'] != "") ?
-                " AND (invoice_number LIKE '%" .addslashes(trim($search['keyword'])) . "%'" .
-                " OR account_name LIKE '%" .addslashes(trim($search['keyword'])) . "%')"
+                " AND (order_number LIKE '%" .addslashes(trim($search['keyword'])) . "%'" .
+                " OR customer_name LIKE '%" .addslashes(trim($search['keyword'])) . "%'" .
+                " OR order_date LIKE '%" .addslashes(trim($search['keyword'])) . "%')"
                 : "";
 
             $f1 = (array_key_exists('financial_year', $search) && $search['financial_year'] != "") ? " and financial_year_id = " .
                 addslashes(trim($search['financial_year'])) : "";
 
-            $f2 = (array_key_exists('account', $search) && $search['account'] != "") ? " AND invoice_master.account_id = '" .
-                addslashes(trim($search['account'])) . "' " : "";
+            $f2 = (array_key_exists('customer_id', $search) && $search['customer_id'] != "") ? " AND order_master.user_id = '" .
+                addslashes(trim($search['customer_id'])) . "' " : "";
+
+            $f3 = (array_key_exists('order_date', $search) && $search['order_date'] != "") ? " AND order_master.order_date = '" .
+                addslashes(trim($search['order_date'])) . "' " : "";
 
             if (array_key_exists('from_date', $search) && $search['from_date'] != ""  && $search['to_date'] == "") {
                 $date = $search['from_date'] . ' 00:00:00';
-                $filter .= " and " . \DB::raw('DATE_FORMAT(invoice_date, "%Y-%m-%d")') . " = '" . convertToLocal($date, 'Y-m-d') . "' ";
+                $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y-%m-%d")') . " = '" . convertToUtc($date, 'Y-m-d') . "' ";
             }
 
             if (array_key_exists('from_date', $search) && $search['from_date'] != "" &&
@@ -209,14 +280,13 @@ class Order extends Model
             )
             {
                 $fromDate = $search['from_date'] . ' 00:00:00';
-                $toDate = $search['to_date'] . ' 00:00:00';
-                $filter .= " and " . \DB::raw('DATE_FORMAT(invoice_date, "%Y-%m-%d")') . " between '" . convertToLocal($fromDate, 'Y-m-d') . "' and
-              '" . convertToLocal($toDate, 'Y-m-d') . "'";
+                $toDate = $search['to_date'] . ' 23:59:59';
+                $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y-%m-%d")') . " between '" . convertToUtc($fromDate, 'Y-m-d') . "' and '" . convertToUtc($toDate, 'Y-m-d') . "'";
             }
 
-            if (array_key_exists('invoice_date', $search) && $search['invoice_date'] != "") {
-                $date = $search['invoice_date'] . ' 00:00:00';
-                $filter .= " and " . \DB::raw('DATE_FORMAT(invoice_date, "%Y-%m-%d")') . " = '" . convertToLocal($date, 'Y-m-d') . "' ";
+            if (array_key_exists('order_date', $search) && $search['order_date'] != "") {
+                $date = $search['order_date'] . ' 00:00:00';
+                $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y-%m-%d")') . " = '" . convertToUtc($date, 'Y-m-d') . "' ";
 
             }
 
@@ -224,7 +294,7 @@ class Order extends Model
             if(array_key_exists('product', $search) && $search['product'] != "") {
                 $filter.=" and " . \DB::raw('invoice_master_items.product_id') . " = " . $search['product'];
             }
-            $filter.= $keyword . $f1 . $f2;
+            $filter.= $keyword . $f1 . $f2 . $f3;
         }
 
 
@@ -235,7 +305,7 @@ class Order extends Model
      * @param $id
      * @return mixed
      */
-    public function getInvoiceDetail($id)
+    public function getOrderDetail($id)
     {
         $fields = [
             'order_master.*',
@@ -247,5 +317,135 @@ class Order extends Model
             //->leftJoin('account_master as ledger_account', 'invoice_master.ledger_id', ' = ', 'ledger_account.id')
             ->where('order_master.id', $id)
             ->company()->first($fields);
+    }
+
+    /**
+     * @param array $search
+     * @return null
+     */
+    public function saleOrderReport($search = [])
+    {
+        $fields = [
+            'order_master.id',
+            'customers.customer_name',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            //'net_amount',
+        ];
+        $filter = 1;
+
+        if(array_key_exists('form-search', $search)) {
+            if (is_array($search) && count($search) > 0) {
+
+                $f1 = (array_key_exists('product', $search) && $search['product'] != "") ? " AND (product.id = " .
+                    addslashes(trim($search['product'])) . ")" : "";
+
+                $f2 = (array_key_exists('customer_name', $search) && $search['customer_name'] != "") ? " AND (customers.id = " .
+                    addslashes(trim($search['customer_name'])) . ")" : "";
+
+                if (array_key_exists('from_date', $search) && $search['from_date'] != "" && $search['to_date'] == "" && $search['report_type'] == '1') {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y-%m-%d")') . " = '" . convertToLocal($search['from_date'], 'Y-m-d') . "'";
+                }
+
+                if (array_key_exists('from_date', $search) && $search['from_date'] != "" &&
+                    array_key_exists('to_date', $search) && $search['to_date'] != "" && $search['report_type'] == '1'
+                )
+                {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y-%m-%d")') . " between '" . convertToLocal($search['from_date'], 'Y-m-d') . "' and
+                    '" . convertToLocal($search['to_date'], 'Y-m-d') . "'";
+                }
+
+                if (array_key_exists('month', $search) && $search['month'] != "" && $search['report_type'] == '2') {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%m")') . " = '" . paddingLeft($search['month']) . "' and financial_year_id = '" . financialYearId() . "'";
+                }
+
+                if (array_key_exists('year', $search) && $search['year'] != "" && $search['report_type'] == '3') {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%Y")') . " = '" . $search['year'] . "' ";
+                }
+
+                $filter .= $f1 . $f2;
+                return $this->leftJoin('customers', 'customers.id', '=', 'order_master.user_id')
+                    ->whereRaw($filter)
+                    ->company()
+                    ->get($fields);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param array $search
+     * @return null
+     */
+    public function monthWiseMrOrderCount($search = [])
+    {
+
+        $filter = 1;
+
+            if (is_array($search) && count($search) > 0) {
+
+                if (array_key_exists('month', $search) && $search['month'] != ""    ) {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%m")') . " = '" . paddingLeft($search['month']) . "' and financial_year_id = '" . financialYearId() . "'";
+                }
+
+                //dd($filter);
+                return $this
+                    //->leftJoin('users', 'users.id', '=', 'order_master.user_id')
+                    ->whereRaw($filter)
+                    ->where('user_buyer_id','!=',null)
+                    ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as orders_count')
+                    ->company()
+                    ->first();
+                    //->get($fields);
+                   // ->count();
+            }
+
+        return null;
+    }
+
+    /**
+     * @param array $search
+     * @return null
+     */
+    public function monthWiseMrOrder($search = [])
+    {
+        $fields = [
+            //'order_master.id',
+            //'users.name',
+            //'order_number',
+            //'order_date',
+            //'gross_amount',
+            // 'customers.customer_name',
+            //'net_amount',
+            //\DB::raw('sum(gross_amount) as total_amount'),
+            //\DB::raw('count(gross_amount) as count'),
+            //\DB::raw('count(gross_amount) as count'),
+          // \DB::raw('max(order_master.user_id) as max_user_id'),
+          // \DB::raw('customer_name'),
+        ];
+        $filter = 1;
+
+
+            if (is_array($search) && count($search) > 0) {
+
+                if (array_key_exists('month', $search) && $search['month'] != ""    ) {
+                    $filter .= " and " . \DB::raw('DATE_FORMAT(order_date, "%m")') . " = '" . paddingLeft($search['month']) . "' and financial_year_id = '" . financialYearId() . "'";
+                }
+
+                //dd($filter);
+                return $this
+                     ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as count,order_master.user_id ')
+                     ->leftJoin('customers', 'customers.user_id', '=', 'order_master.user_id')
+                    ->whereRaw($filter)
+                    ->whereNotNull('user_buyer_id')
+                    ->groupby('order_master.user_id')
+                    //->orderby('order_master.user_id')
+                    ->orderBy('order_master.user_id', 'DESC')
+                    ->company()
+                    ->get($fields);
+            }
+
+        return null;
     }
 }

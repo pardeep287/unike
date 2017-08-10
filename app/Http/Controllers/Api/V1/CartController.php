@@ -28,7 +28,7 @@ class CartController extends Controller
                 return apiResponse(false, 404, lang('user.user_not'));
             }
             //dd($UserID);
-            
+
             $cartID = (new Cart)->findByUserId($id)['id'];
             //$cartID=null;
             if($cartID) {
@@ -111,6 +111,7 @@ class CartController extends Controller
                 $round_off_value= $SubtotalN-$Subtotal;
                 $result = [
                     'cart_id' => $cartID,
+                    'total_cart_items' => 5,
                     'cart_product_details' => $ProductDetailsArrayNew,
                     'subtotal'          => $SubtotalN,
                     'round_off_value'   => number_format($round_off_value,2),
@@ -234,7 +235,7 @@ class CartController extends Controller
             }//if cart ends
 
             //check if any product size has been selected
-            if (isset($inputs['size_id']) && count($inputs['size_id']) > 0) 
+            if (isset($inputs['size_id']) && count($inputs['size_id']) > 0)
             {
                 $cartPSizeData=[];
                 foreach($inputs['size_id'] as $key=>$sizeID) {
@@ -532,6 +533,14 @@ class CartController extends Controller
             if (!$UserID || $UserID != authUserId()) {
                 return apiResponse(false, 404, lang('user.user_not'));
             }
+            if(authUser()->role_id==3){
+
+                if(!isset($inputs['user_buyer_id']) || $inputs['user_buyer_id']== ""){
+
+                    return apiResponse(false, 404, lang('cart.no_buyer_id'));
+                }
+            }
+
             $cartDetails = (new Cart)->findByUserId($UserID);
             //$cartDetails = (new Cart)->findByUserId($inputs['cart_id']);
             //dd($cartDetails);
@@ -551,6 +560,7 @@ class CartController extends Controller
             //if($orderNumber) {
                 $cartMasterData = [
                     'user_id' => $UserID,
+                    'user_buyer_id' => isset($inputs['user_buyer_id'])?$inputs['user_buyer_id']:null,
                     'cart_id' => $CartID,
                     'company_id' => loggedInCompanyId(),
                     'financial_year_id' => financialYearId(),
@@ -561,18 +571,18 @@ class CartController extends Controller
                     //'round_off' => '',
                     //'status'    => 1,
                     //'remarks'   => '',
-                    'created_by' => $UserID,
+                    'created_by' => authUserId(),
                 ];
                 //dd($cartMasterData);
                 $orderId = (new Order)->store($cartMasterData);
-            
+
             //}
 
 
             if($CartID && $orderId)
             {
 
-                
+
                 //get cart Products where status 1
                 $cartProductIdArray=(new CartProducts)->getCartProducts($CartID);
                 //dd($cartProductIdArray);
@@ -586,7 +596,7 @@ class CartController extends Controller
                         $orderProductData = [
                             'product_id'=> $ProductID,
                             'order_id'  => $orderId,
-                            'created_by'=> $UserID,
+                            'created_by'=> authUserId(),
                         ];
                         $orderProductId = (new OrderProducts)->store($orderProductData);
 
@@ -622,17 +632,17 @@ class CartController extends Controller
                                     'product_id' => $ProductID,
                                     'order_product_id' => $orderProductId,
                                     'cgst'       => $cGst,
-                                    'cgst_amount'=> numberFormat($cGst_price),
+                                    'cgst_amount'=> round($cGst_price,2),
                                     'sgst'       => $sGst,
-                                    'sgst_amount'=> numberFormat($sGst_price),
+                                    'sgst_amount'=> round($sGst_price,2),
                                     'igst'       => $iGst,
-                                    'igst_amount'=> numberFormat($iGst_price),
+                                    'igst_amount'=> round($iGst_price,2),
                                     'size_id'    => $cartSizeData->size_id,
                                     'quantity'   => $quantity,
                                     'price'      => $price,
                                     //'status'     => $ProductID,
                                     'total_price'=> $total_price,
-                                    'created_by' => $UserID,
+                                    'created_by' => authUserId(),
                                 ];
                                 $total_amount += $total_price;
                                 $total_cgst_amount += $cGst_price;
@@ -655,24 +665,29 @@ class CartController extends Controller
                 }
 
                 //update the Order Master With Total
-                $SubtotalN= number_format(round($Subtotal* 2, 0)/2,2);
-                $round_off_value= $SubtotalN-$Subtotal;
+                $SubtotalN= round($Subtotal* 2, 0)/2;
+                $round_off_value= round($Subtotal-$SubtotalN,2);
+                //dd($SubtotalN,$Subtotal,$round_off_value,);
+
 
                 $OrderUpdateArray=[
                     'gross_amount'   => $SubtotalN,
-                    'round_off'      => number_format($round_off_value,2),
+                    'round_off'      => $round_off_value,
                     //'subtotal_cgst'   => $Subtotal_cgst,
                     //'subtotal_sgst'   => $Subtotal_sgst,
                     // 'subtotal_igst'   => $Subtotal_igst,
-                    'net_amount'     => $Subtotal+$Subtotal_cGst+$Subtotal_sGst,
+                    'net_amount'     => round(($Subtotal+$Subtotal_cGst+$Subtotal_sGst),2),
+                    //'net_amount'     => number_format($Subtotal+$Subtotal_cGst+$Subtotal_sGst,2),
                 ];
                 //dd($OrderUpdateArray,$orderId,$cartMasterData);
                 (new Order)->store($OrderUpdateArray,$orderId);
 
-                //change Status in CartMaster to 1 of that CartID
+                //change Status in CartMaster to 1 of that CartID and Set Mr Id
                 $updateCartMaster=[
-                    'status' => 1,
+                    'status'        => 1,
+                    'user_buyer_id' => isset($inputs['user_buyer_id'])?$inputs['user_buyer_id']:null,
                 ];
+                //dd($updateCartMaster,$CartID);
                 (new Cart)->store($updateCartMaster,$CartID);
             }//if cart ends
 
@@ -691,7 +706,5 @@ class CartController extends Controller
 
     }
 
-    public function allCustomers(Request $request){
 
-    }
 }

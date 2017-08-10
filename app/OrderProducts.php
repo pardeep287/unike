@@ -64,12 +64,33 @@ class OrderProducts extends Model
         $fields = [
             'order_products.*',
             'product_master.name',
+            'product_master.p_image',
             ];
         
         $filter = 1;
         return $this
             ->join('product_master','order_products.product_id','product_master.id')
             ->where('order_id',$order_id)
+            ->active()
+            ->get($fields);
+    }
+    /**
+     * @return null
+     */
+    public function getProductsByOrderIdUnique($order_id)
+    {
+        $fields = [
+            'order_products.*',
+            'product_master.name',
+            'product_master.p_image',
+        ];
+
+        $filter = 1;
+        return $this
+            ->join('product_master','order_products.product_id','product_master.id')
+            ->where('order_id',$order_id)
+            ->where('order_id',$order_id)
+            ->distinct()
             ->active()
             ->get($fields);
     }

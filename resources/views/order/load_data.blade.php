@@ -37,10 +37,10 @@
     <td>
     @if(hasMenuRoute('order.edit') || isAdmin())
      <a title="{!! lang('common.view') !!}" href="{!! route('order.edit', [$detail->id]) !!}">
-      {!! $detail->order_number !!}
+      {!! 'UNK - '.$detail->order_number !!}
      </a>
     @else
-     {!! $detail->order_number !!}
+     {!! 'UNK - '.$detail->order_number !!}
     @endif
     </td>
     <td>{!! convertToLocal($detail->order_date, 'd.m.Y') !!}</td>
@@ -70,7 +70,7 @@
             <i class="fa fa-print"></i>
         </a>
 
-        <a title="{!! lang('common.edit') !!}" class="btn btn-xs btn-primary" href="{{ route('order.edit', [$detail->id]) }}">
+            <a title="{!! lang('common.edit') !!}" class="btn btn-xs btn-primary" href="{{ route('order.edit', [$detail->id]) }}">
             <i class="fa fa-edit"></i>
         </a>
 

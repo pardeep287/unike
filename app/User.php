@@ -226,8 +226,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             'username',
             'users.name',
             'role.name as role',
+            'role.id as role_id',
             'users.status',
-            'company.company_name'
+            //'company.company_name'
         ];
         /* Sorting operation */
         $sortBy = [
@@ -255,7 +256,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         }
 
         return $this->leftJoin('role', 'role.id', '=', 'users.role_id')
-                    ->leftJoin('company', 'company.id', '=', 'users.company_id')
+                    //->leftJoin('company', 'company.id', '=', 'users.company_id')
                     ->whereRaw($filter)
                     ->company()
                     ->orderBy($orderEntity, $orderAction)

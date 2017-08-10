@@ -245,6 +245,57 @@ class Customer extends Model
         }
         return $this->select(\DB::raw('count(*) as total'))->whereRaw($filter)->get()->first();
     }
+
+    public function findByUserId($user_id)
+    {
+        $fields = [
+            'id',
+            'customer_name',
+            'customer_code',
+            'user_id',
+            // 'contact_person',
+            'email',
+            'mobile_no',
+            'address',
+            'status',
+
+        ];
+
+        return $this
+            ->where('customers.user_id', $user_id)
+            //->get($fields);
+            ->first($fields);
+
+
+    }
+    /**
+     * @param array $search
+     * @return array
+     */
+    public function getCustomerService($search = [])
+    {
+        $filter = 1; // if no search add where
+        // when search
+        if (is_array($search) && count($search) > 0) {
+            $f1 = (array_key_exists('t', $search) && $search['t'] != "") ? " AND (customer_name LIKE '%" .
+                addslashes(trim($search['t'])) . "%' OR customer_code LIKE '%" .
+                addslashes(trim($search['t'])) . "%')" : "";
+            $filter .= $f1;
+        }
+        $data = $this->active()
+            ->whereRaw($filter)
+            //->where('role_id',2)
+            ->company()
+            ->orderBy('id','DESC')
+            //->take(10)
+            ->get([\DB::raw("concat(customer_name, ' (', customer_code) as name"), 'id','user_id']);
+        $result = [];
+        foreach($data as $detail) {
+            $result[$detail->user_id] = $detail->name .')';
+        }
+        
+        return ['' => '-Select Customer-'] + $result;
+    }
 }
 
 

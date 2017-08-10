@@ -5,7 +5,7 @@
 		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 			<h1 class="page-header margintop10"> {!! lang('order.order') !!} </h1>
 		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 hide">
 			@if(hasMenuRoute('order.create') || isAdmin())
 				<a class="btn btn-sm btn-danger pull-right margintop10 marginbottom10" href="{!! route('order.create') !!}">
 					<i class="fa fa-plus fa-fw"></i>
@@ -18,17 +18,17 @@
     {{-- for message rendering --}}
     @include('layouts.messages')
     <div class="row">
-		<div class="col-md-12">
+		<div class="col-md-12 hide">
 			{!! Form::open(array('method' => 'POST', 'route' => array('order.paginate'), 'id' => 'ajaxForm')) !!}
 			<div class="row">
-				<div class="ol-lg-2 col-md-2 col-sm-12 col-xs-12">
+				<div class="ol-lg-2 col-md-2 col-sm-12 col-xs-12 ">
 					<div class="form-group">
 						{!! Form::label('order_date', lang('order.order_date'), array('class' => 'control-label')) !!}
 						{!! Form::text('order_date', (isset($inputs['order_date'])) ? $inputs['order_date'] : '', array('class' => 'form-control padding0 date-picker')) !!}
 					</div>
 				</div>
 
-				<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 margintop20">
+				<div class="col-lg-3 col-md-3 col-sm-12 col-xs-12 margintop20 ">
 					<div class="form-group">
 						{!! Form::hidden('form-search', 1) !!}
 						{!! Form::submit(lang('common.filter'), array('class' => 'btn btn-danger')) !!}

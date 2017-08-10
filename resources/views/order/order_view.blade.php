@@ -22,12 +22,12 @@
             {!! lang('order.print') !!}
         </a>
         @endif
-        @if( hasMenuRoute('order.order-pdf') || isAdmin() )
+       {{-- @if( hasMenuRoute('order.order-pdf') || isAdmin() )
         <a title="{!! lang('common.generate_pdf') !!}" class="btn btn-xs pull-right marginright10 btn-info" target="_blank" href="{{ route('order.order-pdf', [$result->id]) }}">
             <i class="fa fa-file-pdf-o"></i>
             {!! lang('order.pdf') !!}
         </a>
-        @endif
+        @endif--}}
 
        {{-- @if( hasMenuRoute('order.send-email') || isAdmin() )
             <a data-title="{!! lang('common.send_email') !!}" class="btn btn-xs pull-right dEdit marginright10 btn-success" href="javascript:void(0)" data-route="{!! route('order.send-email', [$result->id]) !!}">
@@ -53,7 +53,7 @@
                 </div>--}}
                 {!! Form::label('order_number', lang('order.order_number'), array('class' => 'col-sm-2 control-label')) !!}
                 <div class="col-sm-1 paddingtop10">
-                    <p>{!! $result->order_number !!}</p>
+                    <p>{!! 'UNK - '. $result->order_number !!}</p>
                 </div>
 
                 {{--{!! Form::label('order_date', lang('order.order_date'), array('class' => 'col-sm-2 control-label')) !!}

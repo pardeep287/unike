@@ -267,7 +267,7 @@ class OrderController extends Controller
      */
     public function edit($id, $itemId = null)
     {
-        $result = (new Order)->getInvoiceDetail($id);
+        $result = (new Order)->getOrderDetail($id);
         $t = \Input::get('t');
         $a = \Input::get('a');
         if (!$result) {
@@ -276,7 +276,7 @@ class OrderController extends Controller
 
         //$bank = (new Bank)->getBankService();
         $products = (new OrderProducts)->getProductsByOrderId($id);
-        //$products = (new OrderProducts)->getProductsService();        
+        //$products = (new OrderProducts)->getProductsService();
         $items = (new OrderProductSizes)->getInvoiceItems(['order_id' => $id]);
         $itemCountProductWise=[];
         foreach($products as $product){
@@ -449,7 +449,7 @@ class OrderController extends Controller
       }
       // dd($result);
       $grossTotal = $result['gross_amount'];
-      
+
       $items = (new InvoiceItems)->getInvoiceItem(['id' => $itemId]);
       if (!$items) {
             return redirect()->route('invoice.edit', $id)
@@ -651,12 +651,12 @@ class OrderController extends Controller
         if (isset($inputs['form-search']) && $inputs['form-search'] != '') {
             // $inputs = array_filter($inputs);
             unset($inputs['_token']);
-            $data = (new Order)->getInvoices($inputs, $start, $perPage);
-            $total = (new Order)->totalInvoices($inputs);
+            $data = (new Order)->getOrders($inputs, $start, $perPage);
+            $total = (new Order)->totalOrders($inputs);
             $total = $total->total;
         } else {
-            $data = (new Order)->getInvoices($inputs, $start, $perPage);
-            $total = (new Order)->totalInvoices($inputs);
+            $data = (new Order)->getOrders($inputs, $start, $perPage);
+            $total = (new Order)->totalOrders($inputs);
             $total = $total->total;
         }
         //dd($data->toArray(),$total);
@@ -802,15 +802,18 @@ class OrderController extends Controller
             'company' , 'bank', 'taxes', 'setting', 'printOptions'));*/
 
 
-        $result = (new Order)->getInvoiceDetail($id);
+        $result = (new Order)->getOrderDetail($id);
         if (!$result) {
             abort(404);
         }
 
+
         //$bank = (new Bank)->getBankService();
         $products = (new OrderProducts)->getProductsByOrderId($id);
+
         //$products = (new OrderProducts)->getProductsService();
         $orderItems = (new OrderProductSizes)->getInvoiceItems(['order_id' => $id]);
+
         $itemCountProductWise=[];
         foreach($products as $product){
             $count=0;
@@ -821,9 +824,11 @@ class OrderController extends Controller
             }
             $itemCountProductWise[$product['product_id']]=$count;
         }
+
         $companyId = loggedInCompanyId();
         $company = (new Company)->getCompanyInfo($companyId);
-        $party = (new Customer)->find($result->user_id);
+        $party = (new Customer)->findByUserId($result->user_id);
+        //dd($company,$party,$result->user_id);
         //dd($result->toArray(),$party->toArray(),$orderItems->toArray()  ,$company->toArray());
 
 

@@ -10,6 +10,8 @@ use App\CartProducts;
 use App\Http\Controllers\Controller;
 use App\Customer;
 
+use App\Order;
+use App\OrderProducts;
 use App\Product;
 use App\ProductCost;
 use App\ProductDimensions;
@@ -260,6 +262,84 @@ class ApiProductController extends Controller
             else {
                 return apiResponse(false, 404, lang('auth.customer_not_accessible'));
             }
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function topSelling(Request $request)
+    {
+        try {
+            $result = $orders= [];
+            $inputs = \Input::all();
+
+
+            $page = 1;
+            $perPage = 20;
+            $start = ($page - 1) * $perPage;
+            $orders = (new Order())->findByUserId(authUserId(), $start, $perPage);
+
+            $topSellingPData=[];
+            if(count($orders) > 0) {
+
+                foreach ($orders as $orderMaster){
+                    $orderId=$orderMaster->id;
+                    $orderProductDetails=(new OrderProducts)->getProductsByOrderIdUnique($orderId);
+
+                    foreach ($orderProductDetails as $orderProductDetail){
+                        //dd($orderProductDetail->toArray());
+                        if($orderProductDetails) {
+
+                            $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$orderProductDetail->product_id.'/'.$orderProductDetail->p_image);
+                            //dd($orders->toArray(), $orderId, $orderProductDetail->product_id);
+                            $topSellingPData[] = [
+                                'product_id' => $orderProductDetail->product_id,
+                                'name'       => $orderProductDetail->name,
+                                'p_image'    => $orderProductDetail->p_image,
+                                'image_path' => $urlName,
+                            ];
+                        }//if ends
+                    }//for loop ends
+                }//outer loop ends
+            }//if ends
+            else{
+                $products = (new Product)->getProduct([],0,20,true);
+                if(count($products) > 0) {
+                    foreach( $products as $product ) {
+                        $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
+                        $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
+                        $topSellingPData[] = [
+                            'id'             => $product->id,
+                            'name'           => $product->name,
+                            'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
+                            'path'           => $urlName,
+                        ];
+                    }
+                }
+            }//else ends
+
+            $temp_array = array();
+            $key='product_id';
+
+            foreach ($topSellingPData as &$v) {
+
+                if (!isset($temp_array[$v[$key]]))
+
+                    $temp_array[$v[$key]] =& $v;
+
+            }
+
+            $result = array_values($temp_array);
+
+
+
+            return apiResponse(true, 200 , null, [], $result);
         }
         catch (Exception $exception) {
             \DB::rollBack();

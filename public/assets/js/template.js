@@ -182,13 +182,18 @@ $('body').on('click', 'a.dEdit', function(event) { //due to ajax data request wi
         {
             var imgsrc = obj.data;
             $this.html("<img src='" + path + imgsrc + "' />");
+
             if (realod == 1) {
                 window.location.reload();
             }
 
-            else if( realod.length > 5){
+            else if(realod.length > 5){
                 window.location.href = realod;
             }
+            else{
+                window.location.reload();
+            }
+
         } else {
             alert('Internal server error.');
             window.location.reload();

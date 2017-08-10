@@ -7,11 +7,11 @@
             <h1 class="page-header margintop10">
                 <span class="@if($t == 'edit') hidden @endif panel-view">
                     {!! lang('common.view_heading', lang('order.order')) !!}
-                    #{!! $result->order_number !!}
+                    #{!! 'UNK - '.$result->order_number !!}
                 </span>
                 <span class="@if($t != 'edit') hidden @endif panel-edit">
                     {!! lang('common.edit_heading', lang('order.order')) !!}
-                    #{!! $result->order_number !!}
+                    #{!! 'UNK - '. $result->order_number !!}
                 </span>
             </h1>
         </div>
@@ -19,7 +19,7 @@
             <a class="btn btn-sm btn-default pull-right margintop10 marginbottom10 _back" href="javascript:void(0)"> <i class="fa fa-arrow-left fa-fw"></i> {!! lang('common.back') !!} </a>
             &nbsp;&nbsp;
             @if(hasMenuRoute('order.create') || isAdmin())
-                <a class="btn btn-sm btn-danger pull-right marginright10 margintop10 marginbottom10" href="{!! route('order.create') !!}">
+                <a class="btn btn-sm btn-danger pull-right marginright10 margintop10 marginbottom10 hide" href="{!! route('order.create') !!}">
                     <i class="fa fa-plus fa-fw"></i>
                     {!! lang('common.create_heading', lang('order.order')) !!}
                 </a>

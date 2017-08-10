@@ -1,0 +1,52 @@
+<?php 
+/**
+ * :: Reports Language File ::
+ * To manage reports related language phrases.
+ *
+ **/
+
+return [
+	'filter'			=> 'Filter',
+	'reset_filter'		=> 'Reset Filter',
+	'stock_summary' 	=> 'Stock Summary',
+	'cost_report' 		=> 'Cost Report',
+	'sale_report' 		=> 'Sale Report',
+	'bank_statement_report' => 'Bank Statement Report',
+	'sr_no'				=> 'Sr. No',
+	'in_transit'		=> 'In Transit',
+	'stock'				=> 'In Hand Stock',
+	'report' 			=> 'Report',
+	'stock_in_hand'		=> 'Stock',
+	'order_number'		=> 'Order Number ',
+	'order_date'		=> 'Date',
+	'from_date'			=> 'From Date',
+	'to_date'			=> 'To Date',
+	'cost'				=> 'Cost',
+	'total_cost'		=> 'Total Cost',
+	'total'				=> 'Total',
+	'mrp'               => 'M.R.P',
+	'profit'			=> 'Profit',
+	'total_value'		=> 'Total Value',
+	'description'		=> 'Description',
+	'month'				=> 'Month',
+	'year'				=> 'Year',
+	'report_type'		=> 'Report Type',
+	'date'				=> 'Date',
+	'narrative'			=> 'Narrative',
+	'debit_amount'		=> 'Debit Amount',
+	'credit_amount'		=> 'Credit Amount',
+	'bank_account_group'=> 'Bank Head',
+	'bank'              => 'Bank',
+    'no_report_data'    => 'No report data is available',
+    'gst'               => 'GST',
+    'net_sale_amount'   => 'Net Sale Amount',
+    'sale_amount'       => 'Sale Amount',
+    'account_statement'	=> 'Account Statement Party Wise',
+    'account_group_statement'	=> 'Account Statement Group Wise',
+	'dr_amount'			=> 'DR (Amount)',
+	'cr_amount'			=> 'CR (Amount)',
+	'balance'			=> 'Closing Bal.',
+	'narration'			=> 'Narration',
+	'dr_cr'				=> 'DR/CR',
+	'voucher_bill_no'	=> 'Voucher/Bill No',
+];

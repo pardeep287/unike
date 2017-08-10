@@ -22,6 +22,7 @@ return [
     'added'             => ':attribute successfully added to Cart',
     'ordered'          	=> ':attribute successfully Ordered',
     'already_ordered'   => ':attribute Already Ordered',
+    'no_buyer_id'       => 'Please Select the Buyer User',
 
 
 

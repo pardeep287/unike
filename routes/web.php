@@ -273,6 +273,12 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
     Route::any('order/item-detail/{id?}', ['as' => 'order.item-detail',
         'uses' => 'OrderController@orderItemDetail']);
 
+    // Sale Report
+    //Route::any('report/account-statement/{page?}', ['as' => 'report.account-statement','uses' => 'ReportController@accountStatement']);
+    Route::any('report/sale-report/{page?}', ['as' => 'report.sale-report','uses' => 'ReportController@saleReport']);
+    Route::any('report/sale-report-paginate', ['as' => 'report.sale-report-paginate',
+        'uses' => 'ReportController@saleReport']);
+
 });
 
 
@@ -284,6 +290,8 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
 
     /* CUSTOMERS API */
     Route::any('customer-dashboard/{id}', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@customerDashboard']);
+    Route::any('top-selling-product', ['as' => 'get-top-selling-products','uses' => 'Api\V1\ApiProductController@topSelling']);
+
     //Route::any('get-products', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@getProducts']);
     Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 
@@ -294,12 +302,17 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('edit-cart' ,['as' => 'edit-cartItems','uses' => 'Api\V1\CartController@editCart' ] );
     Route::any('check-out-cart' ,['as' => 'checkout-cart','uses' => 'Api\V1\CartController@checkOutCart' ] );
 
-    /*Check For Market Agent*/
-    
+    /*Check Orders*/
+    Route::any('get-all-orders/{page}' ,['as' => 'get-allOrders','uses' => 'Api\V1\ApiOrderController@getAllOrders' ] );
+    Route::any('get-order-details/{id}' ,['as' => 'get-orderDetails','uses' => 'Api\V1\ApiOrderController@getOrderDetails' ] );
 
+    /*Get All Customers*/
+    Route::any('all-customers', ['as' => 'all-customer','uses' => 'Api\V1\UserController@listUser']);
 
-    //Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
-
+    /*For Admin Only*/
+        /*Current Month Total Order of Mr Agents Counts*/
+        Route::any('get_total_order_count', ['as' => 'all-customer','uses' => 'Api\V1\ApiOrderController@totalOrderCount']);
+    /*For Admin Only*/
 
 });
 

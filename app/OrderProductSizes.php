@@ -104,4 +104,26 @@ class OrderProductSizes extends Model
         }
         return null;
     }
+
+    public function getOrderProductAllSize($cart_id,$product_id)
+    {
+        $fields = [
+            'id',
+            'cart_id',
+            'product_id',
+            'size_id',
+            'quantity',
+            'price',
+            'status',
+
+        ];
+        return $this
+            ->active()
+            ->where('cart_id', $cart_id)
+            ->where('product_id', $product_id)
+            ->get($fields);
+        //->first($fields);
+
+
+    }
 }

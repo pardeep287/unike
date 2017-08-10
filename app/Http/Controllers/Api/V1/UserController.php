@@ -18,27 +18,31 @@ class UserController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-   public function listUser(Request $request){
+   public function listUser(){
        try {
-            $inputs = $request->all();
+
             $result = [];
-            $users = (new User)->getUsers($inputs);
+            $users = (new User)->getUsers([],0,500);
             if(count($users) == 0) {
                 return apiResponse(false, 404, lang('messages.not_found', lang('user.user')));
             }
 
             foreach ($users as $user) {
-                $result[] = [
-                    'user_id' => $user->id,
-                    'name' => $user->name,
-                    'username' => $user->username,
-                    'email' => $user->email,
-                    'dob' => ($user->dob == '')?null:dateFormat('d-m-Y', $user->dob),
-                    'address' => $user->address,
-                    'mobile' => $user->mobile,
-                    'phone' => $user->phone,
-                    'is_approved' => ($user->status == 0)?'Not approved':'Approved'
-                ];
+                if($user->role_id !=1  && $user->role_id !=3) {
+
+                    $result[] = [
+                        'user_id' => $user->id,
+                        'name' => $user->name,
+                        'username' => $user->username,
+                        'role_id' => $user->role_id,
+                        /*'email' => $user->email,
+                        'dob' => ($user->dob == '')?null:dateFormat('d-m-Y', $user->dob),
+                        'address' => $user->address,
+                        'mobile' => $user->mobile,
+                        'phone' => $user->phone,
+                        'is_approved' => ($user->status == 0)?'Not approved':'Approved'*/
+                    ];
+                }
             }
            return apiResponse(true, 200 , null, [], $result);
        }
