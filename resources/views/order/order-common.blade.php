@@ -85,7 +85,7 @@
                                 {!! $party->state !!} {!! ' - ' . $party->pin_code !!} <br>
                             @endif
 
-                            <br/> MOBILE: {!! $party->mobile_no !!} | Phone: {!! $party->landline_no !!}
+                            <br/> MOBILE: {!! $party->mobile_no !!} @if($party->landline_no != "")| Phone: {!! $party->landline_no !!}@endif
                            {{-- <br/> GST NO: {!! $party->gst_number !!}--}}
                            {{-- @if($party->pan_number != "")
                                 <br> PAN NO: {!! $party->pan_number !!}
@@ -110,9 +110,10 @@
                         <td colspan="4">{!! $company->address !!}{!! '  ' .$company->state !!}{!!  ', ' .$company->city !!}{!! '  ' .$company->pincode !!} </td>
                     </tr>
                     <tr>
+                        @if($company->gst_number != "")
                             <td bgcolor="#ffffa8" style="padding-top:0;padding-bottom: 0;">Gst :</td>
                             <td colspan="4">{!! $company->gst_number !!} </td>
-
+                        @endif
                      </tr>
 
                     </tbody>
@@ -160,6 +161,7 @@
                     <tbody>
                     <?php $i = $PageBreak = 1; $subTotal = 0; $totalQuantity = $cgstAmount = $sgstAmount = $igstAmount = 0;
                     $totalRecords = count($orderItems); $addBr = 18;
+                    $total=0;
                     ?>
                     @foreach($orderItems as $detail)
                         <tr style="border-top:0;border-bottom:0;font-size:1.1em" data-rowcount="{!! $PageBreak !!}">
@@ -189,13 +191,15 @@
                                 </td>--}}
 
                             <td style="text-align:right;border-top:0;border-bottom:0;border-right:0;">
-
-                                {!! numberFormat( $detail->quantity*$detail->price) !!}
+                            <?php $total_amount=$detail->quantity*$detail->price;?>
+                                {!! numberFormat($total_amount) !!}
+                                {{--{!! numberFormat( $detail->quantity*$detail->price) !!}--}}
                             </td>
                         </tr>
 
                         <?php
-                        $total = $detail->total_price;
+                        $total += $total_amount;
+                        //$total = $detail->total_price;
 
                             $cgstAmount += $detail->cgst_amount;
                             $sgstAmount += $detail->sgst_amount;
@@ -206,6 +210,9 @@
                         $subTotal += $totalPrice;
                         ?>
                     @endforeach
+                    <?php
+                    $totalAmount= $total;
+                    ?>
 
                     @for($i = 1; $i <= (15 - $totalRecords); $i++)
                         <tr style="border-top:0;border-bottom:0;" data-totalrecordcount="2">
@@ -262,7 +269,8 @@
                             style="text-align:right;vertical-align:middle;font-weight: 600;border-right:0;border-bottom:0">
                             Total
                         </td>
-                        <td style="border-right:0;border-bottom:0;text-align: right;">{!! $result->gross_amount !!}</td>
+                        {{--<td style="border-right:0;border-bottom:0;text-align: right;">{!! $result->gross_amount !!}</td>--}}
+                        <td style="border-right:0;border-bottom:0;text-align: right;">{!!  numberFormat($totalAmount) !!}</td>
                     </tr>
 
                         <tr>

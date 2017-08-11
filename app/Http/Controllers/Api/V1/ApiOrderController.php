@@ -46,6 +46,7 @@ class ApiOrderController extends Controller
                     //dd($ProductDetailsArray);
                     //get size price and quantity based on CartId and ProductID
                     $allCartProductSize=(new OrderProductSizes)->getInvoiceItems(['order_id' => $order_id]);
+                   // dd($allCartProductSize);
                     $finalSizeDataProductWise=[];
                     if($allCartProductSize){
                         foreach ($allCartProductSize as $allSizeData){
@@ -56,7 +57,7 @@ class ApiOrderController extends Controller
                                     'order_size_id' => $allSizeData->id,
                                     'normal_size' => getSizeName($allSizeData->size_id),
                                     'quantity' => $allSizeData->quantity,
-                                    'hsn_code' => '2525',
+                                    'hsn_code' => $allSizeData->hsn_code,
                                     'per_quantity_price' => $allSizeData->price,
                                     'total_price' => $allSizeData->total_price,
                                      //'cgst'   => $allSizeData->cgst_amount,
@@ -176,6 +177,7 @@ class ApiOrderController extends Controller
             //dd($currentMonth);
             $orders = (new Order)->monthWiseMrOrderCount(['month'=>$currentMonth]);
             $mrWiseOrder = (new Order)->monthWiseMrOrder(['month'=>$currentMonth]);
+           // dd($mrWiseOrder->toArray());
             foreach ($mrWiseOrder as $order){
                 $final[]=[
                     'user_id'       => $order->user_id,
@@ -187,9 +189,9 @@ class ApiOrderController extends Controller
             //dd($mrWiseOrder->toArray(),$final);
 
             $result=[
-                'total_amount' =>$orders['total_amount'],
-                'orders_count' =>$orders['orders_count'],
-                'current_month_mr_orders' =>$final,
+                'total_amount' => $orders['total_amount'],
+                'orders_count' => $orders['orders_count'],
+                'current_month_mr_orders' => $final,
             ];
             return apiResponse(true, 200 , null, [], $result);
         }

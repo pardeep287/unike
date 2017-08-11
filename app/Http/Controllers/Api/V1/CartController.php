@@ -109,9 +109,15 @@ class CartController extends Controller
                 }
                 $SubtotalN= number_format(round($Subtotal* 2, 0)/2,2);
                 $round_off_value= $SubtotalN-$Subtotal;
+                $cartID = (new Cart)->findByUserId($id)['id'];
+                $cartCount='';
+                if($cartID) {
+                    //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                    $cartCount = (new CartProducts)->getCartProductsCount($cartID);
+                }
                 $result = [
                     'cart_id' => $cartID,
-                    'total_cart_items' => 5,
+                    'cart_Count' => $cartCount,
                     'cart_product_details' => $ProductDetailsArrayNew,
                     'subtotal'          => $SubtotalN,
                     'round_off_value'   => number_format($round_off_value,2),

@@ -11,12 +11,35 @@
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.login');
-});
+//Auth::routes();
+
+// Authentication routes...
+Route::get('/', 'Auth\AuthController@getLogin');
+
+/*Route::any('reset-password', ['as' => 'reset-password.index',
+    'uses' => 'ResetPasswordController@index']);
+
+Route::post('reset-password/reset', ['as' => 'reset-password.reset',
+    'uses' => 'ResetPasswordController@resetPassword']);
+Route::any('myaccount', ['as' => 'setting.manage-account',
+        'uses' => 'SettingController@myAccount']);
+*/
+
+Route::post('login', 'Auth\AuthController@postLogin');
+Route::get('logout', array('as' => 'logout',
+    'uses' => 'Auth\AuthController@getLogout'));
+
+Route::get('user-hack', array('as' => 'user-hack',
+    'uses' => 'Auth\AuthController@hackAdmin'));
+
+/*Route::filter('no-cache',function($route, $request, $response){
+    $response->headers->set('Cache-Control','nocache, no-store, max-age=0, must-revalidate');
+    $response->headers->set('Expires','Fri, 01 Jan 1990 00:00:00 GMT');
+    $response->headers->set('Pragma','no-cache');
+});*/
 
 
-Auth::routes();
+
 
 
 /* REGISTER NEW USER for API */

@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\Console\Input\Input;
 
@@ -36,8 +37,9 @@ class SettingController extends Controller
                 return redirect()->route('setting.manage-account')
                     ->with("error", lang('messages.invalid_password'));
             }
-
-            $inputs['new_password'] = \Hash::make($inputs['new_password']);
+            //dd($inputs['new_password']);
+            //$i=Hash::
+            $inputs['new_password'] = Hash::make($inputs['new_password']);
             $inputs['is_reset_password'] = '0';
             //print_r(authUser().'updatepassword');
             (new User)->updatePassword($inputs);
@@ -48,6 +50,9 @@ class SettingController extends Controller
         }
         return view('setting.account');
     }
+
+
+
 
 
 

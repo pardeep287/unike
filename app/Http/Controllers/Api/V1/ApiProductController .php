@@ -40,7 +40,8 @@ class ApiProductController extends Controller
 
             $cartID = (new Cart)->findByUserId($id)['id'];
             if($cartID) {
-                $cartCount = CartProducts::where('cart_id', $cartID)->count();
+                //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                $cartCount = (new CartProducts)->getCartProductsCount($cartID);
             }
 
 
@@ -60,7 +61,7 @@ class ApiProductController extends Controller
                 $result=[
                     'cart_Count'      => isset($cartCount)?$cartCount:null,
                     'slider_products' => isset($slideProducts)?$slideProducts:null,
-                    'top_Selling'     => null,
+                    //'top_Selling'     => null,
                 ];
                 return apiResponse(true, 200 , null, [], $result);
             }

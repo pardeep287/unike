@@ -53,7 +53,7 @@
 
                             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
 
-                                <input class="form-control" placeholder="Username" name="username" type="text" autofocus>
+                                <input class="form-control" placeholder="Username" name="email" type="text" autofocus>
                                 @if ($errors->has('email'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('email') }}</strong>

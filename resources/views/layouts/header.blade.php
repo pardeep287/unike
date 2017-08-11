@@ -246,7 +246,7 @@
                     <i class="fa fa-sign-out fa-fw"></i> Logout
                 </a>
 
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
                     {{ csrf_field() }}
                 </form>
             </li>
