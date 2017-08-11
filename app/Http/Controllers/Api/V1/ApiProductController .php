@@ -348,14 +348,11 @@ class ApiProductController extends Controller
         }
     }
 
-    public function productListing(Request $request)
+    public function productListing($page =1 )
     {
         try {
             $result = $orders= [];
             $inputs = \Input::all();
-
-
-            $page = 1;
             $perPage = 20;
             $start = ($page - 1) * $perPage;
             //$orders = (new Order())->findByUserId(authUserId(), $start, $perPage);
@@ -370,9 +367,13 @@ class ApiProductController extends Controller
                         'id'             => $product->id,
                         'name'           => $product->name,
                         'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
-                        'path'           => $urlName,
+                        'path'           => file_exists($dirName.$product->p_image)?$urlName:null,
                     ];
                 }
+            }
+            else{
+                return apiResponse(false, 404, lang('messages.not_found', lang('products.product')));
+
             }
 
             $result=$allProductData;

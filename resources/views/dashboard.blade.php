@@ -12,22 +12,28 @@
         {{--<div class="col-lg-12">
             <h1 class="page-header">Dashboard</h1>
         </div>--}}
-        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-            <h1 class="page-header margintop10">
-                {!! lang('common.dashboard') !!}
-            </h1>
-        </div>
-        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
-            <h1 class="page-header margintop10">
-                <div class="pull-right headind-right top-time-heading">
-                    <i class="fa fa-clock-o"></i> <span id="time"></span>
+        <div class="col-md-12">
+            <div class="page-header margintop8">
+                <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                    <h1 class=" margintop10">
+                        {!! lang('common.dashboard') !!}
+                    </h1>
                 </div>
-            </h1>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+                    <h1 class=" margintop10">
+                        <div class="pull-right headind-right top-time-heading">
+                            <i class="fa fa-clock-o"></i> <span id="time"></span>
+                        </div>
+                    </h1>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
         </div>
         <!-- /.col-lg-12 -->
     </div>
-    <!-- /.row -->
-    <div class="row">
+    <!-- /.igw -->
+    <div class="row hide">
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -120,7 +126,7 @@
     <!-- /.row -->
     <div class="row">
         <div class="col-md-12">
-            {!! dump(authUser()->toArray()) !!}
+            {{--{!! dump(authUser()->toArray()) !!}--}}
 
         </div>
     </div>

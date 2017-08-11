@@ -307,7 +307,7 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('customer-dashboard/{id}', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@customerDashboard']);
     Route::any('top-selling-product', ['as' => 'get-top-selling-products','uses' => 'Api\V1\ApiProductController@topSelling']);
 
-    Route::any('get-products-listing', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@productListing']);
+    Route::any('get-products-listing/{page}', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@productListing']);
     Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 
     /* CART API */
