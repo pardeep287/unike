@@ -39,7 +39,7 @@ class SettingController extends Controller
             }
             //dd($inputs['new_password']);
             //$i=Hash::
-            $inputs['new_password'] = Hash::make($inputs['new_password']);
+            $inputs['new_password'] = \Hash::make($inputs['new_password']);
             $inputs['is_reset_password'] = '0';
             //print_r(authUser().'updatepassword');
             (new User)->updatePassword($inputs);

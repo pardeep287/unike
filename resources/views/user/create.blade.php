@@ -80,7 +80,7 @@
 
                                 <div class="col-sm-12 margintop5 clearfix text-center">
                                     <div class="form-group margin0">
-                                        {!! Form::submit(lang('common.save'), array('class' => 'btn btn-primary')) !!}
+                                        {!! Form::submit(lang('common.save'), array('class' => 'btn btn-danger')) !!}
                                     </div>
                                 </div>
                             </div>

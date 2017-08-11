@@ -87,23 +87,38 @@ class ReportController extends Controller
 	{
 		//$products = (new Product)->getProductsService();
 		$customer = (new Customer)->getCustomerService();
-		$products = [];
+		//$products = [];
 		$inputs = \Input::all();
         if(count($inputs) > 1) {
             Session::flash('inputs', $inputs);
         }
 		if (\Request::isMethod('post') && \Request::ajax())
 		{
-			unset($inputs['_token']);
-			/*unset($inputs['page']);
+			/*unset($inputs['_token']);
+			unset($inputs['page']);
 			unset($inputs['keyword']);
 			unset($inputs['perpage']);*/
 
-			$data = (new Order)->getOrders($inputs,$inputs['page'],$inputs['perpage']);
+			// dd($inputs);
+			$page = 1;
+			if (isset($inputs['page']) && (int)$inputs['page'] > 0) {
+				$page = $inputs['page'];
+			}
+
+			$perPage = 20;
+			if (isset($inputs['perpage']) && (int)$inputs['perpage'] > 0) {
+				$perPage = $inputs['perpage'];
+			}
+
+			$start = ($page - 1) * $perPage;
+
+
+			$data = (new Order)->getOrders($inputs, $start, $perPage);
+			//dd($data->toArray());
 			//$data = (new Order)->saleOrderReport($inputs);
 			return view('reports.sale_report_load_data', compact('data', 'inputs', 'setting'));
 		}
-		return view('reports.sale-report', compact('products', 'customer'));
+		return view('reports.sale-report', compact('customer'));
 	}
 
 	/**

@@ -286,7 +286,7 @@ class ApiProductController extends Controller
             $start = ($page - 1) * $perPage;
             $orders = (new Order())->findByUserId(authUserId(), $start, $perPage);
 
-            $topSellingPData=[];
+            $topSellingPData=$allPData=[];
             if(count($orders) > 0) {
 
                 foreach ($orders as $orderMaster){
@@ -308,14 +308,29 @@ class ApiProductController extends Controller
                         }//if ends
                     }//for loop ends
                 }//outer loop ends
+                $temp_array = array();
+                $key='product_id';
+                //dd($topSellingPData);
+                if(isset($topSellingPData) && count($topSellingPData)>0) {
+                    foreach ($topSellingPData as &$v) {
+
+                        if (!isset($temp_array[$v[$key]]))
+
+                            $temp_array[$v[$key]] =& $v;
+
+                    }
+
+                    $result = array_values($temp_array);
+                }
             }//if ends
             else{
+
                 $products = (new Product)->getProduct([],0,20,true);
                 if(count($products) > 0) {
                     foreach( $products as $product ) {
                         $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
                         $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
-                        $topSellingPData[] = [
+                        $allPData[] = [
                             'id'             => $product->id,
                             'name'           => $product->name,
                             'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
@@ -323,23 +338,44 @@ class ApiProductController extends Controller
                         ];
                     }
                 }
+                $result=$allPData;
             }//else ends
+              return apiResponse(true, 200 , null, [], $result);
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
 
-            $temp_array = array();
-            $key='product_id';
+    public function productListing(Request $request)
+    {
+        try {
+            $result = $orders= [];
+            $inputs = \Input::all();
 
-            foreach ($topSellingPData as &$v) {
 
-                if (!isset($temp_array[$v[$key]]))
+            $page = 1;
+            $perPage = 20;
+            $start = ($page - 1) * $perPage;
+            //$orders = (new Order())->findByUserId(authUserId(), $start, $perPage);
 
-                    $temp_array[$v[$key]] =& $v;
-
+            $allProductData=[];
+            $products = (new Product)->getProduct([],$start, $perPage,true);
+            if(count($products) > 0) {
+                foreach( $products as $product ) {
+                    $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
+                    $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
+                    $allProductData[] = [
+                        'id'             => $product->id,
+                        'name'           => $product->name,
+                        'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
+                        'path'           => $urlName,
+                    ];
+                }
             }
 
-            $result = array_values($temp_array);
-
-
-
+            $result=$allProductData;
             return apiResponse(true, 200 , null, [], $result);
         }
         catch (Exception $exception) {

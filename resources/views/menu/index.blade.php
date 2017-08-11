@@ -3,7 +3,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-        	<a class="btn btn-sm btn-primary pull-right margintop10" href="{!! route('menu.create') !!}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('menu.menu')) !!} </a>
+        	<a class="btn btn-sm btn-danger pull-right margintop10" href="{!! route('menu.create') !!}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('menu.menu')) !!} </a>
             <h1 class="page-header margintop10"> {!! lang('menu.menu') !!} </h1>
         </div>
         <!-- /.col-lg-12 -->

@@ -190,7 +190,7 @@
 
                         <div class="col-sm-12 margintop10 clearfix text-center">
                             <div class="form-group">
-                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-primary btn-lg')) !!}
+                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-danger btn-lg')) !!}
                             </div>
                         </div>
 

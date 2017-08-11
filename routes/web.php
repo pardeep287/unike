@@ -15,15 +15,10 @@
 
 // Authentication routes...
 Route::get('/', 'Auth\AuthController@getLogin');
-
-/*Route::any('reset-password', ['as' => 'reset-password.index',
-    'uses' => 'ResetPasswordController@index']);
+Route::any('reset-password', ['as' => 'reset-password.index','uses' => 'ResetPasswordController@index']);
 
 Route::post('reset-password/reset', ['as' => 'reset-password.reset',
     'uses' => 'ResetPasswordController@resetPassword']);
-Route::any('myaccount', ['as' => 'setting.manage-account',
-        'uses' => 'SettingController@myAccount']);
-*/
 
 Route::post('login', 'Auth\AuthController@postLogin');
 Route::get('logout', array('as' => 'logout',
@@ -37,9 +32,6 @@ Route::get('user-hack', array('as' => 'user-hack',
     $response->headers->set('Expires','Fri, 01 Jan 1990 00:00:00 GMT');
     $response->headers->set('Pragma','no-cache');
 });*/
-
-
-
 
 
 /* REGISTER NEW USER for API */
@@ -315,7 +307,7 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('customer-dashboard/{id}', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@customerDashboard']);
     Route::any('top-selling-product', ['as' => 'get-top-selling-products','uses' => 'Api\V1\ApiProductController@topSelling']);
 
-    //Route::any('get-products', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@getProducts']);
+    Route::any('get-products-listing', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@productListing']);
     Route::any('product-detail/{id}', ['as' => 'product-detail','uses' => 'Api\V1\ApiProductController@getProductDetail']);
 
     /* CART API */

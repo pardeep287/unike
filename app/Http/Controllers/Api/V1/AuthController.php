@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use League\Flysystem\Exception;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {

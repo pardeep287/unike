@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col-lg-12">
         @if(hasMenuRoute('company.create') || isSuperAdmin())
-        	<a class="btn btn-sm btn-primary pull-right margintop10" href="{!! route('company.create') !!}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('company.company')) !!} </a>
+        	<a class="btn btn-sm btn-danger pull-right margintop10" href="{!! route('company.create') !!}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('company.company')) !!} </a>
     	@endif
             <h1 class="page-header margintop10"> {!! lang('company.company') !!} </h1>
         </div>

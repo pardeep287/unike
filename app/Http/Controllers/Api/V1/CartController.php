@@ -297,7 +297,11 @@ class CartController extends Controller
             $inputs = $request->all();
             $result = [];
 
-
+            $validator = ( new Cart)->validateCartDeleteItems($inputs);
+            //$validator = (new SaleOrder)->validateSaleOrder($inputs, null, true, true);
+            if ($validator->fails()) {
+                return apiResponse(false, 406, errorMessages($validator->messages()));
+            }
             $UserID = (new User)->find($inputs['user_id'])['id'];
             //dd($inputs);
             if (!$UserID || $UserID != authUserId()) {
@@ -308,7 +312,7 @@ class CartController extends Controller
                 //return apiResponse(false, 404, lang('cart.cart'));
                 return apiResponse(false, 404, lang('messages.not_found', lang('cart.cart')));
             }
-            if(isset($inputs['cart_product_id'])) {
+            if(isset($inputs['cart_product_id']) && is_array($inputs['cart_product_id'])) {
                 $ProductDetails = [];
                 foreach ($inputs['cart_product_id'] as $productIds) {
                     $ProductDetails[] = (new CartProducts())->find($productIds);
@@ -321,7 +325,8 @@ class CartController extends Controller
                     }
                 }
             }
-            if(isset($inputs['cart_size_id'])) {
+
+            if(isset($inputs['cart_size_id']) && is_array($inputs['cart_size_id'])) {
                 $cartSizeDetails = [];
                 foreach ($inputs['cart_size_id'] as $cartSizeIDs) {
                     $cartSizeDetails[] = (new CartProductSizes)->find($cartSizeIDs);

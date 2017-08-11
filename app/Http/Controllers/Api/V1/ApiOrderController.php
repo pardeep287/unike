@@ -178,6 +178,7 @@ class ApiOrderController extends Controller
             $orders = (new Order)->monthWiseMrOrderCount(['month'=>$currentMonth]);
             $mrWiseOrder = (new Order)->monthWiseMrOrder(['month'=>$currentMonth]);
            // dd($mrWiseOrder->toArray());
+            $final=[];
             foreach ($mrWiseOrder as $order){
                 $final[]=[
                     'user_id'       => $order->user_id,
@@ -189,7 +190,7 @@ class ApiOrderController extends Controller
             //dd($mrWiseOrder->toArray(),$final);
 
             $result=[
-                'total_amount' => $orders['total_amount'],
+                'total_amount' => isset($orders['total_amount'])?$orders['total_amount']:0,
                 'orders_count' => $orders['orders_count'],
                 'current_month_mr_orders' => $final,
             ];

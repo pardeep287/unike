@@ -185,6 +185,7 @@ class Order extends Model
 
     public function getOrders($search = null, $skip, $perPage)
     {
+        // dd($search, $skip, $perPage);
         trimInputs();
         $take = ((int)$perPage > 0) ? $perPage : 20;
         $fields = [
@@ -220,7 +221,7 @@ class Order extends Model
         }
 
         $filter = $this->getFilters($search);
-      // dd($filter);
+      //dd($filter,$skip,$take,$orderEntity, $orderAction);
         return $this->financialyear()->company()
             ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
             ->whereRaw($filter)

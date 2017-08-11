@@ -6,7 +6,7 @@ Bootstrap Admin Template by EGrappler.com
 
 
 /** Base Body Styles **/
-body{ background: url(../img/body-bg.png); color:#838383; font: 13px/1.7em 'Open Sans';}
+body{ background: url(../img/redi.jpg); color:#838383; font: 13px/1.7em 'Open Sans';}
 
 .text-yellow{
 	color: #fcbf22;
@@ -22,9 +22,10 @@ body{ background: url(../img/body-bg.png); color:#838383; font: 13px/1.7em 'Open
 	font-size: 25px;
 }
 .account-container {
-	width: 380px; 
+	/*width: 380px; */
 	display: block;
-	margin: 100px auto 50px auto;
+	/*margin: 100px auto 50px auto;*/
+	margin: 11px 0 6px;
 	
 	background: #f9f9f9;
 	
@@ -282,7 +283,7 @@ span.login-checkbox > input[type='checkbox']:checked + label {
 .login-extra > a{
 	text-decoration: underline;
 }
-.btn-primary{
+/*.btn-primary{
 	 color: #fff;
 	 background-color: #fbb033;
 	 border-color: #e49c25;
@@ -296,7 +297,7 @@ span.login-checkbox > input[type='checkbox']:checked + label {
 	color: #fff;
 	background-color: #11624f;
 	border-color: #11624f;
-}
+}*/
 a:focus, a:hover{
 	color: #11624f;
 }

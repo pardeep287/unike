@@ -8,7 +8,7 @@
 
 		<div class="col-lg-6 col-md-6 col-sm-3 col-xs-12">
 			@if(hasMenuRoute('role.create')  || isSuperAdmin())
-				<a class="btn btn-sm btn-primary pull-right margintop10 marginbottom10" href="{{ route('role.create') }}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('role.role')) !!} </a>
+				<a class="btn btn-sm btn-danger pull-right margintop10 marginbottom10" href="{{ route('role.create') }}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('role.role')) !!} </a>
 			@endif
 		</div>
         <!-- /.col-lg-12 -->

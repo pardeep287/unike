@@ -10,6 +10,7 @@
     <meta name="author" content="">
 
     <title>{!! \Config::get('constants.PANEL_NAME') !!} </title>
+    {{--<title>:: {!! Config::get('app.appname') . ' - ' .  Config::get('app.slogan') !!} ::</title>--}}
 
     <!-- Bootstrap Core CSS -->
     <link href="{!! URL::asset('assets/css/bootstrap.min.css') !!}" rel="stylesheet">
@@ -75,11 +76,15 @@
                             </div>--}}
                             <!-- Change this to a button or input when using this as a form
                             <a href="{{--{!! route('password.request') !!}--}}" class="btn btn-lg btn-success btn-block">Login</a> -->
+
                             <button type="submit" class="btn btn-lg btn-success btn-block theme-color">
                                 Login
                             </button>
                         </fieldset>
                     {!! Form::close() !!}
+                    <div class="login-extra reset-pw">
+                        <a href="{!! route('reset-password.index') !!}"> <i class="fa fa-refresh"></i> Reset Password</a>
+                    </div> <!-- /login-extra -->
                 </div>
             </div>
         </div>

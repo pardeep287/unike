@@ -45,6 +45,12 @@ class Cart extends Model
         return $query->where('company_id', loggedInCompanyId());
     }
 
+    /**
+     * @param $inputs
+     * @param null $id
+     * @return \Illuminate\Validation\Validator
+     */
+
     public function  validate( $inputs, $id = null)
     {
 
@@ -66,6 +72,44 @@ class Cart extends Model
         }
 
         return \Validator::make($inputs, $rules);
+    }
+
+    /**
+     * @param $inputs
+     * @param null $id
+     * @return \Illuminate\Validation\Validator
+     */
+    public function  validateCartDeleteItems( $inputs, $id = null)
+    {
+
+        if($id)
+        {
+            // $rules['name'] = 'required|unique:brand,name,' . $id .',id,deleted_at,NULL,company_id,'.loggedInCompanyId();
+            $rules['user_id'] = 'required';
+            $rules['cart_id'] = 'required';
+            $rules['cart_product_id'] = 'required_without_all:cart_size_id|array';
+            $rules['cart_size_id'] = 'required_without_all:cart_product_id|array';
+        }
+        else {
+            // $rules['name'] = 'required|unique:brand,name,NULL,id,deleted_at,NULL,company_id,'.loggedInCompanyId();
+            $rules['user_id'] = 'required';
+            $rules['cart_id'] = 'required';
+            $rules['cart_product_id'] = 'required_without_all:cart_size_id|array';
+            $rules['cart_size_id'] = 'required_without_all:cart_product_id|array';
+
+        }
+
+
+        $message = array(
+            'cart_product_id' => 'The cart_product_id field is required when none of cart_size_id are present.',
+            'cart_size_id' => 'The cart_size_id field is required when none of cart_product_id are present.',
+        );
+
+
+        $validator = \Validator::make($inputs, $rules, $message);
+
+        return $validator;
+        //return \Validator::make($inputs, $rules);
     }
 
     /**

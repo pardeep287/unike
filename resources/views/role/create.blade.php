@@ -55,7 +55,7 @@
 
                         <div class="col-sm-12 margintop20 clearfix text-center">
                             <div class="form-group">
-                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-primary')) !!}
+                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-danger')) !!}
                             </div>
                         </div>
 
