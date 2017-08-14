@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,23 +24,43 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $totalOrderMonthWise=(new Order)->getOrders([], 0, 200);
+        $grossTotal=0;
+        foreach ($totalOrderMonthWise as $amount){
+            $grossTotal += $amount->gross_amount;
+        }
+        $currentMonth=date("m",strtotime(currentDate()));
+        $monthWiseLatestOrder=(new Order)->monthWiseLatestOrder(['month' => $currentMonth],10);
+        //dd($monthWiseLatestOrder, $currentMonth);
+        $final=(new Order)->monthWiseMrOrder(['month' => $currentMonth]);
+        //dd($final);
+        $monthWiseTotalOrderMrAgent=[];
+        foreach ($final as $order){
+            $monthWiseTotalOrderMrAgent[]=[
+                'id'       => $order->user_id,
+                'user_name'     => getUsername($order->user_id),
+                'total_amount'  => $order->total_amount,
+                'count'         => $order->count,
+            ];
+        }
+       // dd($monthWiseTotalOrderMrAgent);
+        return view('dashboard',compact('totalOrderMonthWise','grossTotal','monthWiseLatestOrder','monthWiseTotalOrderMrAgent'));
     }
 
     /**
      * used to display change password form
      * @return \Illuminate\View\View
      */
-    public function changePasswordForm()
+    /*public function changePasswordForm()
     {
         return view('changepassword');
-    }
+    }*/
 
     /**
      * update password
      * @return $this|\Illuminate\Http\RedirectResponse
      */
-    public function changePassword()
+    /*public function changePassword()
     {
         $inputs = \Input::all();
         $password = \Auth::user()->password;
@@ -61,5 +82,7 @@ class HomeController extends Controller
             return redirect()->route('changepassword')
                 ->withErrors("Internal Server Error");
         }
-    }
+    }*/
+
+
 }

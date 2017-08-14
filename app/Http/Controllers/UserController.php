@@ -68,6 +68,7 @@ class UserController extends Controller
                 ->withErrors($validator);
         }
 
+
         try {
             $password = $inputs['password'];
             $role = $inputs['role'];
@@ -93,7 +94,8 @@ class UserController extends Controller
 
                 $section = [
                     'user_id' => $userId,
-                    'menu_id' => (isset($uniqueValues) && count($uniqueValues) > 0) ? $menuId : null,
+                    'menu_id' => (isset($uniqueValues) && count($uniqueValues) > 0) ? $menuId : 0,
+                    //'menu_id' => (isset($uniqueValues) && count($uniqueValues) > 0) ? $menuId : null,
                     'created_by' => authUserId(),
                     'created_at' => convertToUtc()
                 ];

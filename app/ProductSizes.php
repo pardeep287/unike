@@ -138,6 +138,37 @@ class ProductSizes extends Model
 
     }
 
+    /*public function findByProductID($productId)
+    {
+        $fields = [
+            'product_sizes.id as product_sizes_id',
+            'size_master_id',
+            'dimension_name',
+            'dimension_value',
+            'product_sizes.status as product_sizes_status',
+            'size_master.name as normal_size',
+            //'product_cost.price as price',
+            //'product_sizes.status'
+            //'product_size_dimensions_value.value',
+        ];
+        return $this
+            ->leftJoin('size_master', 'product_sizes.size_master_id', '=', 'size_master.id')
+            //->leftJoin('product_cost', 'product_sizes.id', '=', 'product_cost.size_id')
+           // ->leftJoin('product_size_dimensions_value', 'product_sizes.id', '=', 'product_size_dimensions_value.product_size_id')
+            //->whereNull('product_sizes.deleted_at')
+            //->whereIn('product_type_id', [4])
+            ->where('product_sizes.product_id', $productId)
+            //->where('size_master.status', 1)
+            //->where('product_cost.status', 1)
+            //->where('sizes.id', '!=', "")
+            //->whereRaw($filter)
+            //->orderBy('product_id', 'ASC')
+           // ->orderBy('size_master_id', 'ASC')
+            //->skip($skip)->take($take)
+            ->first($fields);
+
+    }*/
+
 
     
 

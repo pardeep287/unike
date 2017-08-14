@@ -43,7 +43,13 @@ Route::any('api/v1/reset-password', ['as' => 'reset-apiPassword','uses' => 'Api\
 
 Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
 
+    //DashBoard
     Route::any('dashboard', 'HomeController@index')->name('home');
+
+    
+
+
+
 
     // Setting Routes
     Route::any('myaccount', ['as' => 'setting.manage-account',
@@ -326,7 +332,12 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
 
     /*For Admin Only*/
         /*Current Month Total Order of Mr Agents Counts*/
-        Route::any('get_total_order_count', ['as' => 'all-customer','uses' => 'Api\V1\ApiOrderController@totalOrderCount']);
+        Route::any('get_total_order_count', ['as' => 'get-totalOrder','uses' =>  'Api\V1\ApiOrderController@totalOrderCount']);
+        Route::any('get_all_mr', ['as' => 'get-mr','uses' => 'Api\V1\UserController@listMR']);
+        /*Check Orders*/
+        Route::any('filter-order', ['as' => 'filter-order','uses' => 'Api\V1\ApiOrderController@filterOrder']);
+
+
     /*For Admin Only*/
 
 });

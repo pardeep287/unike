@@ -431,15 +431,15 @@ class ProductsController extends Controller
             $product_id = $inputs['product_id'];
 
 
-
-            $dim_name=(new ProductSizes)->findByProductID($product_id)['dimension_name'];
+            //dd($inputs);
+            //$dim_name=(new ProductSizes)->findByProductID($product_id)['dimension_name'];
             //dd($inputs,$dim_name);
             /* check if size has values */
             if (isset($inputs['size_master_id']) && $inputs['size_master_id'] != "") {
                 $productSizesArray = [
                     'size_master_id'=> $inputs['size_master_id'],
                     'product_id'    => $product_id,
-                    'dimension_name'=> $dim_name,
+                    //'dimension_name'=> $dim_name,
                     'status'        => 1,
                     'created_by'    => authUserId(),
                 ];

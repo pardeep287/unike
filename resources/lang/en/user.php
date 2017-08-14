@@ -7,6 +7,7 @@
 
 return [
 	'user' 			=> 'User',
+	'mr' 			=> 'MR',
 	'registered'    => 'You have been successfully registered.',
 	'user_detail'	=> 'User Detail',
 	'user_permissions'	=> 'User Permissions',
@@ -20,6 +21,7 @@ return [
 	'company'		=> 'Company',
 	'name'			=> 'Name',
 	'is_super_admin'        => 'super admin(?)',
-	'user_not' => 'User Not Authenticated'
+	'user_not' => 'User Not Authenticated',
+	'user_not_allowed' => 'Access Denied! User Not Allowed'
 
 ];

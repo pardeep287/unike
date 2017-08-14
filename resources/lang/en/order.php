@@ -86,4 +86,5 @@ return [
     'dispatch_to'               => 'Dispatch To',
     'header_text'               => 'Dealers In: HARDWARE GOODS & MILLS SOTRE. ',
     'admin_access'		=> 'Sorry! Only Admin Have Access',
+    'ord_count'		=> 'Total Orders',
 ];

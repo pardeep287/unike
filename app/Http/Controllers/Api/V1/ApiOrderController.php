@@ -88,7 +88,7 @@ class ApiOrderController extends Controller
 
             }
             else{
-                dd('No Product Found');
+                return apiResponse(false, 404, lang('order.no_order', lang('product.product')));
             }
 
             $result = [
@@ -137,10 +137,11 @@ class ApiOrderController extends Controller
 
             $start = ($page - 1) * $perPage;
             $orders = (new Order)->findByUserId(authUserId(), $start, $perPage);
+            //dd($orders->toArray());
             if(count($orders) == 0) {
                 return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
             }
-            //dd($orders->toArray());
+
 
             foreach ($orders as $order) {
                 $result[] = [
@@ -194,6 +195,43 @@ class ApiOrderController extends Controller
                 'orders_count' => $orders['orders_count'],
                 'current_month_mr_orders' => $final,
             ];
+            return apiResponse(true, 200 , null, [], $result);
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
+
+    public function filterOrder(){
+        try {
+
+            $result = [];
+            $inputs = \Input::all();
+
+
+            /*$page = 1;
+            if (isset($inputs['page']) && (int)$inputs['page'] > 0) {
+                $page = $inputs['page'];
+            }
+
+            $perPage = 20;
+            if (isset($inputs['perpage']) && (int)$inputs['perpage'] > 0) {
+                $perPage = $inputs['perpage'];
+            }
+
+            $start = ($page - 1) * $perPage;*/
+
+
+            $data = (new Order)->getOrders($inputs, 0, 500);
+            //dd($inputs,$data);
+
+            if(isset($data) && count($data) > 0) {
+                $result = $data;
+            }
+
+            dd($result);
+            //$result[]=count($data)>0?$data:'';
             return apiResponse(true, 200 , null, [], $result);
         }
         catch (Exception $exception) {

@@ -12,6 +12,8 @@ use App\User;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\Console\Input\Input;
+
 class UserController extends Controller
 {
 
@@ -22,7 +24,9 @@ class UserController extends Controller
        try {
 
             $result = [];
-            $users = (new User)->getUsers([],0,500);
+           $inputs= \Input::all();
+
+            $users = (new User)->getUsers($inputs, 0, 500);
             if(count($users) == 0) {
                 return apiResponse(false, 404, lang('messages.not_found', lang('user.user')));
             }
@@ -44,6 +48,7 @@ class UserController extends Controller
                     ];
                 }
             }
+
            return apiResponse(true, 200 , null, [], $result);
        }
        catch (Exception $exception) {
@@ -273,5 +278,46 @@ class UserController extends Controller
         }
     }
 
-    
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listMR(){
+        try {
+
+            $result = [];
+           /* if(!isAdmin()){
+                return apiResponse(false, 404,  lang('user.user_not_allowed'));
+            }*/
+            $inputs= \Input::all();
+
+            $mrData = (new User)->getMRs($inputs,0,500);
+            if(count($mrData) == 0) {
+                return apiResponse(false, 404, lang('messages.not_found', lang('user.mr')));
+            }
+
+            foreach ($mrData as $user) {
+
+
+                    $result[] = [
+                        'mr_id' => $user->id,
+                        'mr_name' => $user->name,
+                        'username' => $user->username,
+                        'role_id' => $user->role_id,
+                        /*'email' => $user->email,
+                        'dob' => ($user->dob == '')?null:dateFormat('d-m-Y', $user->dob),
+                        'address' => $user->address,
+                        'mobile' => $user->mobile,
+                        'phone' => $user->phone,
+                        'is_approved' => ($user->status == 0)?'Not approved':'Approved'*/
+                    ];
+                }
+
+
+            return apiResponse(true, 200 , null, [], $result);
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
 }

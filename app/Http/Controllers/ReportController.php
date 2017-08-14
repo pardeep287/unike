@@ -89,7 +89,15 @@ class ReportController extends Controller
 		$customer = (new Customer)->getCustomerService();
 		//$products = [];
 		$inputs = \Input::all();
+
+		/*if(isset($inputs['report_type'])) {
+			session('report_type', $inputs['report_type']);
+		}
+
+		dump(session('report_type'));*/
+
         if(count($inputs) > 1) {
+			//dd($inputs);
             Session::flash('inputs', $inputs);
         }
 		if (\Request::isMethod('post') && \Request::ajax())
@@ -118,7 +126,8 @@ class ReportController extends Controller
 			//$data = (new Order)->saleOrderReport($inputs);
 			return view('reports.sale_report_load_data', compact('data', 'inputs', 'setting'));
 		}
-		return view('reports.sale-report', compact('customer'));
+
+		return view('reports.sale-report', compact('customer', 'inputs'));
 	}
 
 	/**

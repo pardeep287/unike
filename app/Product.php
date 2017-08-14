@@ -248,16 +248,22 @@ class Product extends Model
         return ['' => '-Select Units-'] + $result;
     }
 
-    public function findById($product_id)
+    public function findById($productId)
     {
+
         $fields = [
+
             'product_master.*',
+            \DB::raw('GROUP_CONCAT(image_name) as images'),
             //'group_concat(product_images.image_name) ol',
             //'DB::raw(group_concat(product_images.image_name) as namefs',
             //'dimension_name',
             //'product_size_dimensions_value.value',
+
         ];
+
         return $this
+
             //->select('product_master.id')
             //->select('hsn_id',\DB::raw("group_concat(product_images.image_name) as namesd"))
             ->select('product_master.*')
@@ -265,19 +271,24 @@ class Product extends Model
             ->leftJoin('product_images', 'product_master.id', '=', 'product_images.product_id')
             //->whereNull('product_sizes.deleted_at')
             //->whereIn('product_type_id', [4])
-            ->where('product_master.id', $product_id)
+            ->where('product_master.id', $productId)
             //->where('size_master.status', 1)
             ->groupBy('product_master.id')
             //->where('sizes.id', '!=', "")
             //->whereRaw($filter)
             //->orderBy('product_id', 'ASC')
-           // ->orderBy('size_master_id', 'ASC')
+            // ->orderBy('size_master_id', 'ASC')
             //->skip($skip)->take($take)
             //->get($fields);
-            ->first();
+            ->first($fields);
     }
 
-    public function getProductDetailOnly($product_id)
+    /**
+     * @param $product_id
+     * @return mixed
+     */
+
+    public function getProductDetailOnly($productId)
     {
         $fields = [
             'id as product_id',
@@ -287,8 +298,7 @@ class Product extends Model
         ];
         return $this
             ->active()
-            ->where('product_master.id', $product_id)
-
+            ->where('product_master.id', $productId)
             ->first($fields);
             //->first();
     }

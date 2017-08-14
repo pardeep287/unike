@@ -33,7 +33,7 @@
         <!-- /.col-lg-12 -->
     </div>
     <!-- /.igw -->
-    <div class="row hide">
+    <div class="row ">
         <div class="col-lg-3 col-md-6">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -42,12 +42,12 @@
                             <i class="fa fa-comments fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">26</div>
-                            <div>New Comments!</div>
+                            <div class="huge">{!! count($totalOrderMonthWise) !!}</div>
+                            <div>Total Orders!</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="{!! route('order.index') !!}">
                     <div class="panel-footer">
                         <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -64,12 +64,12 @@
                             <i class="fa fa-tasks fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">12</div>
-                            <div>New Tasks!</div>
+                            <div class="huge">{!! isset($grossTotal)?number_format($grossTotal,0):null !!}</div>
+                            <div>Total Amount!</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <a href="{!! route('order.index') !!}">
                     <div class="panel-footer">
                         <span class="pull-left">View Details</span>
                         <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -78,7 +78,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-6 hide">
             <div class="panel panel-yellow">
                 <div class="panel-heading">
                     <div class="row">
@@ -100,7 +100,7 @@
                 </a>
             </div>
         </div>
-        <div class="col-lg-3 col-md-6">
+        <div class="col-lg-3 col-md-6 hide">
             <div class="panel panel-red">
                 <div class="panel-heading">
                     <div class="row">
@@ -126,7 +126,71 @@
     <!-- /.row -->
     <div class="row">
         <div class="col-md-12">
-            {{--{!! dump(authUser()->toArray()) !!}--}}
+            <div class="col-md-6 col-xs-12">
+                <?php $count = 1; ?>
+                <h4><b>Latest Invoices</b></h4>
+                <table class="table table-bordered" style="margin-top:10px;background: #FFFFFF;">
+                    <tr>
+                        <th>{!! lang('common.id') !!}</th>
+                        <th width="30%">{!! lang('customer.customer') !!}</th>
+                        <th>{!! lang('order.ord_number') !!}</th>
+                        <th>{!! lang('order.ord_date') !!}</th>
+                        <th>{!! lang('order.amount') !!}</th>
+                    </tr>
+                    @if(count($monthWiseLatestOrder) > 0)
+                        @foreach($monthWiseLatestOrder  as $order)
+                            <tr>
+                                <td>{!! $count !!}</td>
+                                <td>{!! $order->customer_name !!}</td>
+                                <td class="text-center">{!! 'UNK - '.$order->order_number !!}</td>
+                                <td>{!! convertToLocal($order->order_date, 'd.m.Y')  !!}</td>
+                                <td>{!! numberFormat($order->gross_amount) !!}</td>
+                            </tr>
+                            <?php $count++; ?>
+                        @endforeach
+                        <tr>
+                            <td colspan="5">
+                                <a href="{!! route('order.index') !!}" class="btn btn-block btn-primary">View All</a>
+                            </td>
+                        </tr>
+                    @endif
+                </table>
+            </div>
+
+            <div class="col-md-6 col-xs-12">
+                <?php $sNumber = 1; ?>
+                <h4><b>MR Orders</b></h4>
+                <table class="table table-bordered" style="margin-top:10px;background: #FFFFFF;">
+                    <tr>
+                        <th>{!! lang('common.id') !!}</th>
+                        <th width="30%">{!! lang('customer.customer') !!}</th>
+                        <th>{!! lang('order.gross_amount') !!}</th>
+                       {{-- <th>{!! lang('order.order_date') !!}</th>--}}
+                        <th>{!! lang('order.ord_count') !!}</th>
+                    </tr>
+                    @if(isset($monthWiseTotalOrderMrAgent)&& count($monthWiseTotalOrderMrAgent) > 0)
+                        @foreach($monthWiseTotalOrderMrAgent  as $detail)
+                            <tr>
+                                <td>{!! $sNumber !!}</td>
+                                <td>
+                                    <a title="{!! lang('common.edit') !!}" href="{{ route('order.edit', [$detail['id']]) }}">
+                                        {!! $detail['user_name'] !!}
+                                    </a>
+                                </td>
+                                <td class="text-center">{!! $detail['total_amount'] !!}</td>
+                                {{--<td>{!! convertToLocal($detail->order_date, 'd.m.Y')  !!}</td>--}}
+                                <td>{!! $detail['count'] !!}</td>
+                            </tr>
+                            <?php $sNumber++; ?>
+                        @endforeach
+                        <tr>
+                            <td colspan="6">
+                                <a href="{!! route('order.index', ['s' => 0]) !!}" class="btn btn-block btn-primary">View All</a>
+                            </td>
+                        </tr>
+                    @endif
+                </table>
+            </div>
 
         </div>
     </div>

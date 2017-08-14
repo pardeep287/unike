@@ -25,14 +25,14 @@
 					<div class="col-sm-3">
 						<div class="form-group">
 							{!! Form::label('customer_id', lang('customer.customer'), array('class' => 'control-label')) !!}
-							{!! Form::select('customer_id',$customer, (isset($inputs['customer_id'])) ? $inputs['customer_id'] : '', array('class' => 'form-control padding0 select2')) !!}
+							{!! Form::select('customer_id',$customer, (isset($inputs['customer_id'])) ? $inputs['customer_id'] : '', array('class' => 'form-control padding0 select2','required' => 'true')) !!}
 						</div>
 					</div>
 
 					<div class="col-sm-2">
 						<div class="form-group">
 							{!! Form::label('report_type', lang('report.report_type'), array('class' => 'control-label')) !!}
-							{!! Form::select('report_type', getReportType(), (isset($inputs['report_type'])) ? $inputs['report_type'] : '', array('class' => 'form-control padding0 report_type select2')) !!}
+							{!! Form::select('report_type', getReportType(), session('report_type') ? session('report_type') : 1, array('class' => 'form-control padding0 report_type select2')) !!}
 						</div>
 					</div>
 
@@ -53,7 +53,7 @@
 					<div class="col-md-2 hidden month">
 						<div class="form-group">
 							{!! Form::label('month', lang('report.month'), array('class' => 'control-label')) !!}
-							{!! Form::select('month', getMonths(), (isset($inputs['month'])) ? $inputs['month'] : '', array('class' => 'form-control padding0 select2')) !!}
+							{!! Form::select('month', getMonths(), (isset($inputs['month'])) ? $inputs['month'] : '', array('class' => 'form-control padding0 select2','required'=>'true')) !!}
 						</div>
 					</div>
 
@@ -106,6 +106,7 @@
 	</div>
 	<script type="text/javascript">
 		$(document).ready(function(){
+
 			$(".report_type").change(function(){
 				var report_type = $(this).val();
 

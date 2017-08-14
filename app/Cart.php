@@ -59,15 +59,17 @@ class Cart extends Model
             // $rules['name'] = 'required|unique:brand,name,' . $id .',id,deleted_at,NULL,company_id,'.loggedInCompanyId();
             $rules['user_id'] = 'required';
             $rules['product_id'] = 'required';
-            $rules['size_id'] = 'required';
-            $rules['quantity'] = 'required';
+            $rules['size_id'] = 'required|array';
+            $rules['quantity'] = 'required|array|not_in:0';
         }
         else {
             // $rules['name'] = 'required|unique:brand,name,NULL,id,deleted_at,NULL,company_id,'.loggedInCompanyId();
             $rules['user_id'] = 'required';
             $rules['product_id'] = 'required';
-            $rules['size_id'] = 'required';
-            $rules['quantity'] = 'required';
+            $rules['size_id'] = 'required|array';
+
+            $rules['quantity'] = 'required|array';
+            $rules['quantity.*'] = 'required|not_in:0';
 
         }
 
