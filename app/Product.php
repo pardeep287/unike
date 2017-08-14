@@ -252,6 +252,7 @@ class Product extends Model
     {
         $fields = [
             'product_master.*',
+            \DB::raw('GROUP_CONCAT(image_name) as images'),
             //'group_concat(product_images.image_name) ol',
             //'DB::raw(group_concat(product_images.image_name) as namefs',
             //'dimension_name',
@@ -274,7 +275,7 @@ class Product extends Model
            // ->orderBy('size_master_id', 'ASC')
             //->skip($skip)->take($take)
             //->get($fields);
-            ->first();
+            ->first($fields);
     }
 
     public function getProductDetailOnly($product_id)
