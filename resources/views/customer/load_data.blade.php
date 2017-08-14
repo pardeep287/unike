@@ -4,7 +4,7 @@
     <th>{!! lang('customer.customer_name') !!}</th>
     <th>{!! lang('customer.email1') !!}</th>
     <th>{!! lang('customer.mobile1') !!}</th>
-    <th width="18%">{!! lang('customer.address1') !!}</th>
+    <th width="18%">{!! lang('user.role') !!}</th>
 
       <th width="6%" class="text-center"> {!! lang('common.status') !!} </th>
       <th class="text-center">{!! lang('common.action') !!}</th>

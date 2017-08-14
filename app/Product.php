@@ -90,13 +90,13 @@ class Product extends Model
                 $messages['size_master_id.'.$key.'.required'] = 'Please Select the field labeled "Size Master '.$newkey .'".';
 
             }
-            foreach($inputs['dimension_id'] as $key => $size)
+            /*foreach($inputs['dimension_id'] as $key => $size)
             {
                 $rules['dimension_id.'.$key] = 'required';
                 $newkey= $key + 1 ;
                 $messages['dimension_id.'.$key.'.required'] = 'Please Select the field labeled "Dimension '.$newkey .'".';
 
-            }
+            }*/
             $messages = $messages + [
                 'name.required' => 'The Product :attribute field is required.',
             ];

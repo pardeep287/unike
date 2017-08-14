@@ -266,15 +266,16 @@
                                             <tr>
                                                 <th width="5%" class="text-center">{!! lang('common.id') !!}</th>
                                                 <th>{!! lang('size.normal_size') !!}</th>
-
+                                                @if(isset($dimension_name))
                                                  @foreach($dimension_name as $key => $dim)
                                                     <th>{!! lang('size.dim_value',$dim['dimension_name']) !!}</th>
                                                  @endforeach
+                                                @endif
 
-                                                <th>{!! lang('products.price') !!}</th>
-                                                <th>{!! lang('common.status') !!}</th>
+                                                <th width="5%">{!! lang('products.price') !!}</th>
+                                                <th width="5%" >{!! lang('common.status') !!}</th>
 
-                                                <th >{!! lang('common.action') !!}</th>
+                                                <th width="5%">{!! lang('common.action') !!}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -284,6 +285,7 @@
                                                     <tr>
                                                         <td class="text-center">{!! ++$key !!}</td>
                                                         <td>{!! $detail->normal_size !!}</td>
+                                                        @if(isset($dimension_name))
                                                         <?php
                                                         $value=[];
                                                             if(count($dimension_value)>0){
@@ -330,10 +332,10 @@
 
                                                             </td>
                                                         @endforeach
-
+                                                        @endif
 
                                                         <td>{!! $detail->price !!}</td>
-                                                        <td class="text-center">
+                                                        <td >
                                                             <a title="{!! lang('common.status') !!}" href="javascript:void(0);" class="toggle-status" data-message="{!! lang('messages.change_status') !!}" data-route="{!! route('product.toggleSize', $detail->product_sizes_id) !!}" data-realod="{!! route('product.edit', ['id'=>$id,'tab' => 2]) !!}">
                                                                 {!! Html::image('assets/images/' . $detail->status . '.gif') !!}
                                                             </a>
