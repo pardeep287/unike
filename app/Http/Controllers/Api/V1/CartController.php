@@ -276,7 +276,13 @@ class CartController extends Controller
                 }// foreach ends
                 //dd($cartId,$cartProductId, $inputs,$sizeID,$cartPSizeArray,$cartPSizeData);
                 \DB::commit();
-                return apiResponse(true, 200, lang('cart.added', lang('cart.item')));
+                $cartID = (new Cart)->findByUserId(authUserId())['id'];
+                $cartCount=[];
+                if($cartID) {
+                    //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                    $cartCount = (new CartProducts)->getCartProductsCount($cartID);
+                }
+                return apiResponse(true, 200, lang('cart.added', lang('cart.item')),[],$cartCount);
                 //return apiResponse(true, 200 , null, [], $result);
             }
             else {
@@ -441,7 +447,13 @@ class CartController extends Controller
 
 
             \DB::commit();
-            return apiResponse(true, 200, lang('messages.deleted', lang('products.product')));
+            $cartID = (new Cart)->findByUserId(authUserId())['id'];
+            $cartCount=[];
+            if($cartID) {
+                //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                $cartCount = (new CartProducts)->getCartProductsCount($cartID);
+            }
+            return apiResponse(true, 200, lang('messages.deleted', lang('products.product')),[],$cartCount);
             //return apiResponse(true, 200 , null, [], $result);
 
         /*else {
@@ -514,7 +526,13 @@ class CartController extends Controller
 
 
             \DB::commit();
-            return apiResponse(true, 200, lang('messages.updated', lang('products.product')));
+            $cartID = (new Cart)->findByUserId(authUserId())['id'];
+            $cartCount=[];
+            if($cartID) {
+                //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                $cartCount = (new CartProducts)->getCartProductsCount($cartID);
+            }
+            return apiResponse(true, 200, lang('messages.updated', lang('products.product')),[],$cartCount);
             //return apiResponse(true, 200 , null, [], $result);
 
             /*else {
@@ -703,7 +721,13 @@ class CartController extends Controller
             }//if cart ends
 
             \DB::commit();
-            return apiResponse(true, 200, lang('cart.ordered', lang('cart.cart')));
+            $cartID = (new Cart)->findByUserId(authUserId())['id'];
+            $cartCount=[];
+            if($cartID) {
+                //$cartCount = CartProducts::where('cart_id', $cartID)->count();
+                $cartCount = (new CartProducts)->getCartProductsCount($cartID);
+            }
+            return apiResponse(true, 200, lang('cart.ordered', lang('cart.cart')),[],$cartCount);
             //return apiResponse(true, 200 , null, [], $result);
 
             /*else {

@@ -335,7 +335,7 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
         Route::any('get_total_order_count', ['as' => 'get-totalOrder','uses' =>  'Api\V1\ApiOrderController@totalOrderCount']);
         Route::any('get_all_mr', ['as' => 'get-mr','uses' => 'Api\V1\UserController@listMR']);
         /*Check Orders*/
-        Route::any('filter-order', ['as' => 'filter-order','uses' => 'Api\V1\ApiOrderController@filterOrder']);
+        Route::any('filter-order/{page}', ['as' => 'filter-order','uses' => 'Api\V1\ApiOrderController@filterOrder']);
 
 
     /*For Admin Only*/

@@ -191,6 +191,56 @@ class Order extends Model
         $fields = [
 
             'order_master.id',
+            'order_master.user_id',
+            'customers.customer_name as customer_name',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            //'net_amount',
+            //'round_off',
+            'order_master.status',
+            //'remarks',
+            'user_buyer_id',
+
+
+            //'invoice_master.is_email_sent'
+        ];
+
+        $sortBy = [
+            'order_number' => 'order_number',
+            'customer_name' => 'customer_name',
+            'order_date' => 'order_date',
+        ];
+
+        $orderEntity = 'order_master.id';
+        $orderAction = 'desc';
+
+        if (isset($search['sort_action']) && $search['sort_action'] != "") {
+            $orderAction = ($search['sort_action'] == 1) ? 'desc' : 'asc';
+        }
+
+        if (isset($search['sort_entity']) && $search['sort_entity'] != "") {
+            $orderEntity = (array_key_exists($search['sort_entity'], $sortBy)) ? $sortBy[$search['sort_entity']] : $orderEntity;
+        }
+
+        $filter = $this->getFilters($search);
+      //dd($filter,$skip,$take,$orderEntity, $orderAction);
+        return $this->financialyear()->company()
+            ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
+            ->whereRaw($filter)
+            ->orderBy($orderEntity, $orderAction)
+            ->skip($skip)->take($take)->get($fields);
+    }
+
+    public function getOrdersByFilter($search = null, $skip, $perPage)
+    {
+        // dd($search, $skip, $perPage);
+        trimInputs();
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $fields = [
+
+            'order_master.id',
+            'order_master.user_id',
             'customers.customer_name as customer_name',
             'order_number',
             'order_date',
@@ -221,9 +271,11 @@ class Order extends Model
         }
 
         $filter = $this->getFilters($search);
-      //dd($filter,$skip,$take,$orderEntity, $orderAction);
+        //dd($filter,$skip,$take,$orderEntity, $orderAction);
         return $this->financialyear()->company()
-            ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
+            //->rigthJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            ->leftJoin('customers as mrCustomer', 'order_master.user_id', '=', 'mrCustomer.user_id')
+            //->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
             ->whereRaw($filter)
             ->orderBy($orderEntity, $orderAction)
             ->skip($skip)->take($take)->get($fields);
@@ -268,7 +320,7 @@ class Order extends Model
             $f2 = (array_key_exists('customer_id', $search) && $search['customer_id'] != "") ? " AND order_master.user_id = '" .
                 addslashes(trim($search['customer_id'])) . "' " : "";
 
-            $f4 = (array_key_exists('mr_id', $search) && $search['mr_id'] != "") ? " OR order_master.user_id = '" .
+            $f4 = (array_key_exists('mr_id', $search) && $search['mr_id'] != "") ? " AND order_master.user_buyer_id = '" .
                 addslashes(trim($search['mr_id'])) . "' " : "";
 
             $f3 = (array_key_exists('order_date', $search) && $search['order_date'] != "") ? " AND order_master.order_date = '" .

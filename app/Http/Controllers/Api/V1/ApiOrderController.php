@@ -203,14 +203,14 @@ class ApiOrderController extends Controller
         }
     }
 
-    public function filterOrder(){
+    public function filterOrder($page){
         try {
 
             $result = [];
             $inputs = \Input::all();
 
 
-            /*$page = 1;
+            //$page = 1;
             if (isset($inputs['page']) && (int)$inputs['page'] > 0) {
                 $page = $inputs['page'];
             }
@@ -220,19 +220,57 @@ class ApiOrderController extends Controller
                 $perPage = $inputs['perpage'];
             }
 
-            $start = ($page - 1) * $perPage;*/
+            $start = ($page - 1) * $perPage;
+            if(authUser()->role_id == 3){
+                $inputs['mr_id'] =$inputs['customer_id'];
+                $inputs['customer_id']=authUserId();
+                //unset($inputs['mr_id']);
+            }
+            if(authUser()->role_id == 1){
+                $value=$inputs['mr_id'];
+                $inputs['mr_id'] =$inputs['customer_id'];
+                $inputs['customer_id']=$value;
+                //unset($inputs['mr_id']);
+            }
+            /*if(authUser()->role_id == 2){
+                $inputs['customer_id']=authUserId();
+                $inputs['customer_id']=authUserId();
+                unset($inputs['mr_id']);
+            }*/
 
-
-            $data = (new Order)->getOrders($inputs, 0, 500);
-            //dd($inputs,$data);
+            /*if(!isset($inputs['mr_id'])){
+                unset($inputs['mr_id']);
+            }
+            if(!isset($inputs['customer_id'])){
+                unset($inputs['customer_id']);
+            }*/
+            $data = (new Order)->getOrders($inputs, $start,  $perPage);
+            //dd($inputs,$data->toArray());
 
             if(isset($data) && count($data) > 0) {
-                $result = $data;
+
+                foreach ($data as $order) {
+                    $result[] = [
+                        'order_id'      => $order['id'],
+                        'user_id'       => $order['user_id'],
+                        'user_name'     => $order['customer_name'],
+                        'user_buyer_id' => $order['user_buyer_id'],
+                        'buyer_name'    => isset($order['user_buyer_id'])?getUsername($order['user_buyer_id']):null,
+                        'order_number'  => 'UNK-'.$order['order_number'],
+                        'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
+                        'gross_amount'  => $order['gross_amount'],
+                        //'status'        => $order['status'],
+                    ];
+                }
+                return apiResponse(true, 200 , null, [], $result);
+            }
+            else{
+                return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
             }
 
-            dd($result);
+
             //$result[]=count($data)>0?$data:'';
-            return apiResponse(true, 200 , null, [], $result);
+
         }
         catch (Exception $exception) {
             \DB::rollBack();
