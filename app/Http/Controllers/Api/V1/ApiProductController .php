@@ -59,7 +59,7 @@ class ApiProductController extends Controller
                     ];
                 }
                 $result=[
-                    'cart_Count'      => isset($cartCount)?$cartCount:null,
+                    'cart_Count'      => isset($cartCount)?$cartCount:0,
                     'slider_products' => isset($slideProducts)?$slideProducts:null,
                     //'top_Selling'     => null,
                 ];
@@ -100,7 +100,7 @@ class ApiProductController extends Controller
             foreach($thumbsImages as $key=>$thumbImages){
                 $imagesThumb[] = [
                     'images' => file_exists($dirName . $thumbImages) ? $urlNameImages.'/'.$thumbImages : null,
-                    'path' => $urlName,
+                    'images1' => $urlName,
                 ];
 
                    }
