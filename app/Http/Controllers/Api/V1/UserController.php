@@ -26,7 +26,9 @@ class UserController extends Controller
             $result = [];
            $inputs= \Input::all();
 
-            $users = (new User)->getUsers($inputs, 0, 500);
+
+            $users = (new User)->getUsersFilters($inputs, 0, 500);
+           //dd($users);
             if(count($users) == 0) {
                 return apiResponse(false, 404, lang('messages.not_found', lang('user.user')));
             }
@@ -93,12 +95,14 @@ class UserController extends Controller
             ];
 
             $user_id=(new User)->store($userArray);
-
+            $code= (new Customer)->getCustomerCode();
             $customerArray=[
                 'customer_name' => $inputs['customer_name'],
                 'mobile_no' => $inputs['mobile_no'],
                 'email' => $inputs['email'],
                 'user_id' => $user_id,
+                'company_id' => 1,
+                'customer_code' => $code,
                 'created_by' => 0,
             ];
             (new Customer)->store($customerArray);
@@ -250,7 +254,7 @@ class UserController extends Controller
         try {
             if($id == authUserId() || isAdmin()) {
 
-                $user = (new User)->getUsers([], $id);
+                $user = (new User)->getUsers([], 0,50);
                 if( count($user) > 0) {
                     $result = [
                         'user_id'   => $user->id,

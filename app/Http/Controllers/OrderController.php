@@ -651,11 +651,11 @@ class OrderController extends Controller
         if (isset($inputs['form-search']) && $inputs['form-search'] != '') {
             // $inputs = array_filter($inputs);
             unset($inputs['_token']);
-            $data = (new Order)->getOrders($inputs, $start, $perPage);
+            $data = (new Order)->getOrdersNew($inputs, $start, $perPage);
             $total = (new Order)->totalOrders($inputs);
             $total = $total->total;
         } else {
-            $data = (new Order)->getOrders($inputs, $start, $perPage);
+            $data = (new Order)->getOrdersNew($inputs, $start, $perPage);
             $total = (new Order)->totalOrders($inputs);
             $total = $total->total;
         }

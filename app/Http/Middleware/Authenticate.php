@@ -82,6 +82,12 @@ class Authenticate
                 }
             }
         }
+        else if(isAdmin()){
+            $getAdminRoutesNotAllowed = getCustomerRoutesNotAllowed();
+            if(in_array($currentRouteName, $getAdminRoutesNotAllowed) && $currentRouteName != null){
+                abort(401);
+            }
+        }
 
         $routeData = getModelByRouteName($currentRouteName);
 

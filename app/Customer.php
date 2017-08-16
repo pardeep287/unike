@@ -180,6 +180,7 @@ class Customer extends Model
     public function getCustomerCode($code = null)
     {
         $data =  $this->orderBy('id', 'desc')->take(1)->first(['customer_code']);
+
         if (count($data) == 0) {
             $number = 'C/01';
         } else {
@@ -221,7 +222,8 @@ class Customer extends Model
                 addslashes(trim($search['keyword'])) . "%')" : "";
             $filter .= $keyword;
         }
-        return $this->whereRaw($filter)->orderBy('id', 'ASC')
+        return $this->whereRaw($filter)
+            ->orderBy('id', 'ASC')
             ->skip($skip)->take($take)->get($fields);
     }
 

@@ -86,3 +86,30 @@ function getQuickMenu() {
     }
     return $quickMenuArr;
 }
+
+/**
+ * @param $user_id
+ * @return bool|mixed
+ */
+function check_cart_quantity($userId,$productSizeId)
+{
+    $cartId=(new \App\Cart())->where('user_id',$userId)->where('status',0)->first(['id']);
+
+    if($cartId){
+        $cartQuantity=(new \App\CartProductSizes())->where('cart_id',$cartId->id)->where('size_id',$productSizeId)->first(['quantity']);
+        //dd($cartQuantity,$cartId->toArray(),$userId,$productSizeId);
+        if($cartQuantity) {
+            return $cartQuantity->quantity;
+        }
+        else{
+            return null;
+        }
+    }
+    else{
+        return null;
+    }
+
+
+
+
+}

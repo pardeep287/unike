@@ -15,12 +15,15 @@
             <i class="{!! sortIcon($sortInvoiceDateAction) !!}"></i>
         </a>
     </th>
-    <th>
+    <th class="text-center">
         <?php $sortCustomerNameAction =  ($inputs['sort_entity'] == 'customer_name') ? sortAction($inputs['sort_action']) : 0; ?>
         <a href="javascript:void(0)" class="sort" data-sort-action="{!! $sortCustomerNameAction !!}" data-sort-entity="customer_name">
             {!! lang('customer.customer_name') !!}
             <i class="{!! sortIcon($sortCustomerNameAction) !!}"></i>
         </a>
+    </th>
+    <th class="text-center">
+        {!! lang('user.mr_name') !!}
     </th>
     <th >{!! lang('order.gross_amount') !!}</th>
     {{--<th class="text-center" width="10%">{!! lang('common.email_send') !!}</th>--}}
@@ -44,7 +47,8 @@
     @endif
     </td>
     <td>{!! convertToLocal($detail->order_date, 'd.m.Y') !!}</td>
-    <td>{!! $detail->customer_name !!} </td>
+    <td class="text-center">{!! isset($detail->customer_id)?$detail->customer_name:$detail->mr_name !!} </td>
+    <td class="text-center">{!! isset($detail->customer_id)?$detail->mr_name:'-' !!} </td>
     <td >
         <?php
             //$taxAmount = ($detail->sale == 1) ? (getRoundedAmount($detail->cgst_total) + getRoundedAmount($detail->sgst_total)) : getRoundedAmount($detail->igst_total);

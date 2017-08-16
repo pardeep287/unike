@@ -487,6 +487,12 @@ function getCustomerRoutes()
 		'setting.manage-account'
 	];
 }
+function getCustomerRoutesNotAllowed()
+{
+	return [
+		'customer.create',
+	];
+}
 /**
  * PHP age Calculator
  * Calculate and returns age based on the date provided by the user.

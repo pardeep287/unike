@@ -4,7 +4,7 @@
     <th>{!! lang('customer.customer_name') !!}</th>
     <th>{!! lang('customer.email1') !!}</th>
     <th>{!! lang('customer.mobile1') !!}</th>
-    <th width="18%">{!! lang('user.role') !!}</th>
+{{--    <th width="18%">{!! lang('user.role') !!}</th>--}}
 
       <th width="6%" class="text-center"> {!! lang('common.status') !!} </th>
       <th class="text-center">{!! lang('common.action') !!}</th>
@@ -14,6 +14,7 @@
 <tbody>
 <?php $index = 1; ?>
 @foreach($data as $detail)
+
 <tr id="order_{{ $detail->id }}">
     <td class="text-center">{!! pageIndex($index++, $page, $perPage) !!}</td>
     <td>
@@ -27,7 +28,7 @@
     </td>
     <td>{!! $detail->email !!}</td>
     <td>{!! $detail->mobile_no !!}</td>
-    <td>{!! $detail->address !!}</td>
+    {{--<td>{!! $detail->address !!}</td>--}}
 
       <td class="text-center">
        <a href="javascript:void(0);" class="toggle-status" data-message="{!! lang('messages.change_status') !!}" data-route="{!! route('customer.toggle', $detail->id) !!}">
@@ -39,6 +40,7 @@
       </td>
 
 </tr>
+
 @endforeach
 @if (count($data) < 1)
 <tr>

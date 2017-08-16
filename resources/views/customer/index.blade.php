@@ -3,7 +3,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-        @if(hasMenuRoute('customer.create') || isSuperAdmin() || isAdmin())
+        @if(hasMenuRoute('customer.create') || isSuperAdmin() )
         	<a class="btn btn-sm btn-danger pull-right margintop10" href="{!! route('customer.create') !!}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('customer.customer')) !!} </a>
     	@endif
             <h1 class="page-header margintop10"> {!! lang('customer.customer') !!} </h1>

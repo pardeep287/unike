@@ -8,6 +8,7 @@
 return [
 	'user' 			=> 'User',
 	'mr' 			=> 'MR',
+	'mr_name'		=> 'MR Name',
 	'registered'    => 'You have been successfully registered.',
 	'user_detail'	=> 'User Detail',
 	'user_permissions'	=> 'User Permissions',

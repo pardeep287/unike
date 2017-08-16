@@ -245,6 +245,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
         if (isset($search['sort_entity']) && $search['sort_entity'] != "") {
             $orderEntity = (array_key_exists($search['sort_entity'], $sortBy)) ? $sortBy[$search['sort_entity']] : $orderEntity;
+
         }
 
         /*End of sorting operation*/
@@ -255,12 +256,70 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $filter .= $name;
         }
 
+
         return $this->leftJoin('role', 'role.id', '=', 'users.role_id')
                     ->leftJoin('company', 'company.id', '=', 'users.company_id')
+                    ->where('role_id','!=',2)
                     ->whereRaw($filter)
                     ->company()
                     ->orderBy($orderEntity, $orderAction)
                     ->skip($skip)->take($take)->get($fields);
+    }
+
+    /**
+     * Method is used to search results.
+     * @param array $search
+     * @param int $skip
+     * @param int $perPage
+     * @return mixed
+     */
+    public function getUsersFilters($search = null, $skip, $perPage)
+    {
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $filter = 1; // default filter if no search
+
+        $fields = [
+            'users.id',
+            'username',
+            'users.name',
+            'role.name as role',
+            'role.id as role_id',
+            'users.status',
+            'company.company_name'
+        ];
+        /* Sorting operation */
+        $sortBy = [
+            'username' => 'users.username',
+            'name'     => 'users.name',
+            'role'     => 'role.id'
+        ];
+
+        $orderEntity = 'users.id';
+        $orderAction = 'desc';
+        if (isset($search['sort_action']) && $search['sort_action'] != "") {
+            $orderAction = ($search['sort_action'] == 1) ? 'desc' : 'asc';
+        }
+
+        if (isset($search['sort_entity']) && $search['sort_entity'] != "") {
+            $orderEntity = (array_key_exists($search['sort_entity'], $sortBy)) ? $sortBy[$search['sort_entity']] : $orderEntity;
+
+        }
+
+        /*End of sorting operation*/
+
+        if (is_array($search) && count($search) > 0) {
+            $name = (array_key_exists('keyword', $search)) ? " AND username LIKE '%" .
+                addslashes(trim($search['keyword'])) . "%' " : "";
+            $filter .= $name;
+        }
+
+
+        return $this->leftJoin('role', 'role.id', '=', 'users.role_id')
+            ->leftJoin('company', 'company.id', '=', 'users.company_id')
+            ->whereRaw($filter)
+            ->company()
+            ->orderBy($orderEntity, $orderAction)
+            ->skip($skip)->take($take)->get($fields);
     }
 
     /**

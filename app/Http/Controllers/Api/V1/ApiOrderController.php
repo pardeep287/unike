@@ -23,16 +23,16 @@ class ApiOrderController extends Controller
 
             $result = [];
             //$orderDetails = (new Order)->find($order_id);
-            $orderDetails = (new Order)->findByOrderId($order_id);
-            //dd($orderDetails,$order_id,authUser());
+            $orderDetails = (new Order)->findByOrderIdNew($order_id);
+            //dd($orderDetails->toArray(),$order_id,authUser());
             //$orders = (new Order)->findByUserId(authUserId(),8,8);
             
             if (!$orderDetails) {
                 return apiResponse(false, 404, lang('messages.not_found', lang('order.order')));
             }
-            $UserID = $orderDetails['user_id'];
+            $UserID = $orderDetails['mr_id'];
             $cartID = $orderDetails['cart_id'];
-            $user_buyer_id = $orderDetails->user_buyer_id;
+            $user_buyer_id = $orderDetails->customer_id;
             //dd($orderDetails->toArray(),$UserID,$cartID,$user_buyer_id);
 
             
@@ -90,25 +90,50 @@ class ApiOrderController extends Controller
             else{
                 return apiResponse(false, 404, lang('order.no_order', lang('product.product')));
             }
+            //dd($orderDetails->toArray());
+            if($orderDetails['customer_id']){
+                $result = [
+                    'order_id' => $order_id,
+                    //'cart_id' => $cartID,
+                    'customer_id' => $orderDetails['customer_id'],
+                    'customer_name' => $orderDetails['customer_name'],
+                    'mr_id' => $orderDetails['mr_id'],
+                    'mr_name' => $orderDetails['mr_name'],
+                    'order_number' => $orderDetails['order_number'],
+                    'order_date' => ($orderDetails['order_date'] == '') ? null : dateFormat('d-m-Y', $orderDetails['order_date']),
+                    'order_product_details' => $ProductDetailsArrayNew,
+                    'subtotal' => $orderDetails['gross_amount'],
+                    //'round_off_value'   => number_format($round_off_value,2),
+                    //'subtotal_cgst'   => $Subtotal_cgst,
+                    //'subtotal_sgst'   => $Subtotal_sgst,
+                    // 'subtotal_igst'   => $Subtotal_igst,
+                    // 'nettotal'   => $Subtotal+$Subtotal_cgst+$Subtotal_sgst,
 
-            $result = [
-                'order_id' => $order_id,
-                //'cart_id' => $cartID,
-                'user_id'       => $orderDetails['user_id'],
-                'user_name' => $orderDetails['mr_name'],
-                'user_buyer_id' => $orderDetails['user_buyer_id'],
-                'buyer_name'    => $orderDetails['customer_name'],
-                'order_number'  => $orderDetails['order_number'],
-                'order_date'    => ($orderDetails['order_date'] == '')?null:dateFormat('d-m-Y', $orderDetails['order_date']),
-                'order_product_details' => $ProductDetailsArrayNew,
-                'subtotal'          => $orderDetails['gross_amount'],
-                //'round_off_value'   => number_format($round_off_value,2),
-                //'subtotal_cgst'   => $Subtotal_cgst,
-                //'subtotal_sgst'   => $Subtotal_sgst,
-                // 'subtotal_igst'   => $Subtotal_igst,
-                // 'nettotal'   => $Subtotal+$Subtotal_cgst+$Subtotal_sgst,
+                ];
 
-            ];
+
+            }
+            else {
+                $result = [
+                    'order_id' => $order_id,
+                    //'cart_id' => $cartID,
+                    'customer_id' => $orderDetails['mr_id'],
+                    'customer_name' => $orderDetails['mr_name'],
+                    'mr_id' => $orderDetails['customer_id'],
+                    'mr_name' => $orderDetails['customer_name'],
+                    'order_number' => $orderDetails['order_number'],
+                    'order_date' => ($orderDetails['order_date'] == '') ? null : dateFormat('d-m-Y', $orderDetails['order_date']),
+                    'order_product_details' => $ProductDetailsArrayNew,
+                    'subtotal' => $orderDetails['gross_amount'],
+                    //'round_off_value'   => number_format($round_off_value,2),
+                    //'subtotal_cgst'   => $Subtotal_cgst,
+                    //'subtotal_sgst'   => $Subtotal_sgst,
+                    // 'subtotal_igst'   => $Subtotal_igst,
+                    // 'nettotal'   => $Subtotal+$Subtotal_cgst+$Subtotal_sgst,
+
+                ];
+
+            }
 
                 return apiResponse(true, 200 , null, [], $result);
             
@@ -134,28 +159,83 @@ class ApiOrderController extends Controller
             if (isset($inputs['perpage']) && (int)$inputs['perpage'] > 0) {
                 $perPage = $inputs['perpage'];
             }
-
+            $orders=[];
             $start = ($page - 1) * $perPage;
-            $orders = (new Order)->findByUserId(authUserId(), $start, $perPage);
+            //for admin view
+            if(authUser()->role_id == 1){
+                $orders = (new Order)->getOrdersNew([], $start, $perPage);
+                //dd($orders->toArray());
+                if(count($orders) == 0) {
+                    return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
+                }
+                foreach ($orders as $order) {
+
+                        $result[] = [
+                            'order_id'      => $order['id'],
+                            'customer_id'   => isset($order['customer_id'])?$order['customer_id']:$order['mr_id'],
+                            'customer_name' => isset($order['customer_name'])?$order['customer_name']:$order['mr_name'],
+                            'mr_id'         => isset($order['customer_id'])?$order['mr_id']:null,
+                            'mr_name'       => isset($order['customer_name'])?$order['mr_name']:null,
+                            'order_number'  => $order['order_number'],
+                            'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
+                            'gross_amount'  => $order['gross_amount'],
+                            //'status'        => $order['status'],
+                        ];
+
+
+                }
+            }
+            //for agent view
+            else if (authUser()->role_id == 3){
+                $orders = (new Order)->findByUserIdNew(authUserId(), $start, $perPage);
+                //dd($orders->toArray());
+                if(count($orders) == 0) {
+                    return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
+                }
+                foreach ($orders as $order) {
+
+                    $result[] = [
+                        'order_id'      => $order['id'],
+                        'customer_id'   => $order['customer_id'],
+                        'customer_name' => $order['customer_name'],
+                        'mr_id'         => $order['mr_id'],
+                        'mr_name'       => $order['mr_name'],
+                        'order_number'  => $order['order_number'],
+                        'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
+                        'gross_amount'  => $order['gross_amount'],
+                        //'status'        => $order['status'],
+                    ];
+
+
+                }
+            }
+
+            else {
+                $orders = (new Order)->findByUserIdNew(authUserId(), $start, $perPage);
+                //dd($orders->toArray());
+
+                if(count($orders) == 0) {
+                    return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
+                }
+
+
+                foreach ($orders as $order) {
+                    $result[] = [
+                        'order_id'      => $order['id'],
+                        'customer_id'   => $order['mr_id'],
+                        'customer_name' => $order['mr_name'],
+                        'mr_id'         => $order['customer_name'],
+                        'mr_name'       => $order['customer_id'],
+                        'order_number'  => $order['order_number'],
+                        'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
+                        'gross_amount'  => $order['gross_amount'],
+                        //'status'        => $order['status'],
+                    ];
+                }
+            }
+
             //dd($orders->toArray());
-            if(count($orders) == 0) {
-                return apiResponse(false, 404, lang('order.no_order', lang('order.order')));
-            }
 
-
-            foreach ($orders as $order) {
-                $result[] = [
-                    'order_id'      => $order['id'],
-                    'user_id'       => $order['user_id'],
-                    'user_name' => $order['mr_name'],
-                    'user_buyer_id' => $order['user_buyer_id'],
-                    'buyer_name'    => $order['customer_name'],
-                    'order_number'  => $order['order_number'],
-                    'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
-                    'gross_amount'  => $order['gross_amount'],
-                    //'status'        => $order['status'],
-                ];
-            }
             return apiResponse(true, 200 , null, [], $result);
         }
         catch (Exception $exception) {
@@ -178,12 +258,13 @@ class ApiOrderController extends Controller
             //dd($currentMonth);
             $orders = (new Order)->monthWiseMrOrderCount(['month'=>$currentMonth]);
             $mrWiseOrder = (new Order)->monthWiseMrOrder(['month'=>$currentMonth]);
-           // dd($mrWiseOrder->toArray());
+            //dd($mrWiseOrder->toArray());
             $final=[];
             foreach ($mrWiseOrder as $order){
                 $final[]=[
                     'user_id'       => $order->user_id,
-                    'user_name'     => getUsername($order->user_id),
+                    'user_name'     => $order->username,
+                   // 'user_name'     => getUsername($order->user_id),
                     'total_amount'  => $order->total_amount,
                     'count'         => $order->count,
                 ];
@@ -221,6 +302,10 @@ class ApiOrderController extends Controller
             }
 
             $start = ($page - 1) * $perPage;
+
+            if(authUser()->role_id == 2){
+                return apiResponse(false, 404, 'User no filters set');
+            }
             if(authUser()->role_id == 3){
                 $inputs['mr_id'] =$inputs['customer_id'];
                 $inputs['customer_id']=authUserId();
@@ -232,35 +317,40 @@ class ApiOrderController extends Controller
                 $inputs['customer_id']=$value;
                 //unset($inputs['mr_id']);
             }
-            /*if(authUser()->role_id == 2){
-                $inputs['customer_id']=authUserId();
-                $inputs['customer_id']=authUserId();
-                unset($inputs['mr_id']);
-            }*/
 
-            /*if(!isset($inputs['mr_id'])){
-                unset($inputs['mr_id']);
-            }
-            if(!isset($inputs['customer_id'])){
-                unset($inputs['customer_id']);
-            }*/
-            $data = (new Order)->getOrders($inputs, $start,  $perPage);
+            $data = (new Order)->getOrdersNew($inputs, $start,  $perPage);
             //dd($inputs,$data->toArray());
 
             if(isset($data) && count($data) > 0) {
 
                 foreach ($data as $order) {
-                    $result[] = [
-                        'order_id'      => $order['id'],
-                        'user_id'       => $order['user_id'],
-                        'user_name'     => $order['customer_name'],
-                        'user_buyer_id' => $order['user_buyer_id'],
-                        'buyer_name'    => isset($order['user_buyer_id'])?getUsername($order['user_buyer_id']):null,
-                        'order_number'  => 'UNK-'.$order['order_number'],
-                        'order_date'    => ($order['order_date'] == '')?null:dateFormat('d-m-Y', $order['order_date']),
-                        'gross_amount'  => $order['gross_amount'],
-                        //'status'        => $order['status'],
-                    ];
+                    if(!$order['customer_id']){
+                        $result[] = [
+                            'order_id' => $order['id'],
+                            'customer_id' => $order['mr_id'],
+                            'customer_name' => $order['mr_name'],
+                            'mr_id' => $order['customer_id'],
+                            'mr_name' => $order['customer_name'],
+                            'order_number' => 'UNK-' . $order['order_number'],
+                            'order_date' => ($order['order_date'] == '') ? null : dateFormat('d-m-Y', $order['order_date']),
+                            'gross_amount' => $order['gross_amount'],
+                            //'status'        => $order['status'],
+                        ];
+                    }
+                    else {
+                        $result[] = [
+                            'order_id' => $order['id'],
+                            'customer_id' => $order['customer_id'],
+                            'customer_name' => $order['customer_name'],
+                            'mr_id' => $order['mr_id'],
+                            'mr_name' => $order['mr_name'],
+                            'order_number' => 'UNK-' . $order['order_number'],
+                            'order_date' => ($order['order_date'] == '') ? null : dateFormat('d-m-Y', $order['order_date']),
+                            'gross_amount' => $order['gross_amount'],
+                            //'status'        => $order['status'],
+                        ];
+
+                    }
                 }
                 return apiResponse(true, 200 , null, [], $result);
             }

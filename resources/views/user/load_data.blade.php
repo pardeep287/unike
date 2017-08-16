@@ -1,6 +1,6 @@
 <thead>
 <tr>
-    <th width="3%"> <input type="checkbox" name="check-all" class="check-all" value="0" /> </th>
+    {{--<th width="3%"> <input type="checkbox" name="check-all" class="check-all" value="0" /> </th>--}}
     <th width="5%" class="text-center">{!! lang('common.id') !!}</th>
     <th>
         <?php $sortUserNameAction =  ($inputs['sort_entity'] == 'username') ? sortAction($inputs['sort_action']) : 0; ?>
@@ -41,7 +41,7 @@
 <?php $index = 1; ?>
 @foreach($data as $detail)
 <tr id="order_{{ $detail->id }}">
-    <td> <input type="checkbox" name="tick[]" value="{{ $detail->id }}" class="check-one" /> </td>
+   {{-- <td> <input type="checkbox" name="tick[]" value="{{ $detail->id }}" class="check-one" /> </td>--}}
     <td class="text-center">{!! pageIndex($index++, $page, $perPage) !!}</td>
     <td>
     @if(hasMenuRoute('user.edit') || isAdmin() || isSuperAdmin())

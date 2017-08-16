@@ -473,7 +473,11 @@ class CartController extends Controller
             $inputs = $request->all();
             $result = [];
 
+            $validator = ( new Cart)->validateCartEditItems($inputs);
 
+            if ($validator->fails()) {
+                return apiResponse(false, 406, errorMessages($validator->messages()));
+            }
             $UserID = (new User)->find($inputs['user_id'])['id'];
             //dd($inputs);
             if (!$UserID || $UserID != authUserId()) {

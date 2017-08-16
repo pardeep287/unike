@@ -117,6 +117,38 @@ class Order extends Model
 
 
     }
+    /**
+     * @param $user_id
+     * @return Model|null|static
+     */
+    public function findByUserIdNew($user_id = null, $skip, $perPage)
+    {
+        trimInputs();
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $fields = [
+            'order_master.id',
+            'order_master.user_id as mr_id',
+            'users.username as mr_name',
+            'user_buyer_id as customer_id',
+            'customers.customer_name as customer_name',
+            'cart_id',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            'order_master.status',
+
+        ];
+
+        return $this
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            ->leftJoin('users', 'order_master.user_id', '=', 'users.id')
+            ->where('order_master.user_id', $user_id)
+            ->where('order_master.status', 1)
+            ->skip($skip)->take($take)
+            ->get($fields);
+
+
+    }
 
     /**
      * @param $user_id
@@ -142,6 +174,46 @@ class Order extends Model
         return $this
             ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
             ->leftJoin('customers as mrCustomer', 'order_master.user_id', '=', 'mrCustomer.user_id')
+            ->where('order_master.id', $order_id)
+            ->where('order_master.status', 1)
+            ->first($fields);
+
+
+    }
+
+    /**
+     * @param $user_id
+     * @return Model|null|static
+     */
+    public function findByOrderIdNew($order_id )
+    {
+
+        $fields = [
+            'order_master.id',
+
+            'order_master.user_id as mr_id',
+            'users.username as mr_name',
+            'user_buyer_id as customer_id',
+            'customers.customer_name as customer_name',
+
+            /*'order_master.user_id',
+            'mrCustomer.customer_name as mr_name',
+            'user_buyer_id',
+            'customers.customer_name',*/
+
+            'cart_id',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            'order_master.status',
+
+        ];
+
+        return $this
+            //->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            //->leftJoin('customers as mrCustomer', 'order_master.user_id', '=', 'mrCustomer.user_id')
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            ->leftJoin('users', 'order_master.user_id', '=', 'users.id')
             ->where('order_master.id', $order_id)
             ->where('order_master.status', 1)
             ->first($fields);
@@ -227,6 +299,58 @@ class Order extends Model
       //dd($filter,$skip,$take,$orderEntity, $orderAction);
         return $this->financialyear()->company()
             ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
+            ->whereRaw($filter)
+            ->orderBy($orderEntity, $orderAction)
+            ->skip($skip)->take($take)->get($fields);
+    }
+
+    public function getOrdersNew($search = null, $skip, $perPage)
+    {
+        // dd($search, $skip, $perPage);
+        trimInputs();
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $fields = [
+
+            'order_master.id',
+            'order_master.user_id as mr_id',
+            'users.username as mr_name',
+            'user_buyer_id as customer_id',
+            'customers.customer_name as customer_name',
+            'order_number',
+            'order_date',
+            'gross_amount',
+            //'net_amount',
+            //'round_off',
+            'order_master.status',
+            //'remarks',
+
+
+
+            //'invoice_master.is_email_sent'
+        ];
+
+        $sortBy = [
+            'order_number' => 'order_number',
+            'customer_name' => 'customer_name',
+            'order_date' => 'order_date',
+        ];
+
+        $orderEntity = 'order_master.id';
+        $orderAction = 'desc';
+
+        if (isset($search['sort_action']) && $search['sort_action'] != "") {
+            $orderAction = ($search['sort_action'] == 1) ? 'desc' : 'asc';
+        }
+
+        if (isset($search['sort_entity']) && $search['sort_entity'] != "") {
+            $orderEntity = (array_key_exists($search['sort_entity'], $sortBy)) ? $sortBy[$search['sort_entity']] : $orderEntity;
+        }
+
+        $filter = $this->getFilters($search);
+        //dd($filter,$skip,$take,$orderEntity, $orderAction);
+        return $this->financialyear()->company()
+            ->leftJoin('users', 'order_master.user_id', '=', 'users.id')
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
             ->whereRaw($filter)
             ->orderBy($orderEntity, $orderAction)
             ->skip($skip)->take($take)->get($fields);
@@ -499,8 +623,8 @@ class Order extends Model
 
                 //dd($filter);
                 return $this
-                     ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as count,order_master.user_id ')
-                     ->leftJoin('customers', 'customers.user_id', '=', 'order_master.user_id')
+                     ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as count,order_master.user_id, username')
+                     ->leftJoin('users', 'users.id', '=', 'order_master.user_id')
                     ->whereRaw($filter)
                     ->whereNotNull('user_buyer_id')
                     ->groupby('order_master.user_id')

@@ -36,7 +36,7 @@
                             <div class="form-group">
                                 {!! Form::label('customer_code', lang('customer.customer_code'), array('class' => 'col-sm-4 control-label')) !!}
                                 <div class="col-sm-8">
-                                    {!! Form::text('customer_code', $code, array('class' => 'form-control')) !!}
+                                    {!! Form::text('customer_code', $code, array('class' => 'form-control','readonly')) !!}
                                 </div>
                             </div>
 
@@ -168,8 +168,8 @@
                         <div class="col-sm-12 margintop10 clearfix text-center">
                             <div class="form-group">
                                 {!! Form::hidden('tab', 1) !!}
-                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-primary btn-lg')) !!}
-                                {!! Form::submit(lang('common.save_edit'), array('name' => 'save_edit', 'class' => 'btn btn-primary btn-lg')) !!}
+                                {!! Form::submit(lang('common.save'), array('class' => 'btn btn-danger btn-lg')) !!}
+                                {!! Form::submit(lang('common.save_edit'), array('name' => 'save_edit', 'class' => 'btn btn-danger btn-lg')) !!}
                             </div>
                         </div>
 

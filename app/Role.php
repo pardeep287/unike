@@ -156,7 +156,9 @@ class Role extends Model
         $data = $this->active()->company()->orWhere('role.isdefault', 1)->get([\DB::raw("concat(name, ' (', code) as name"), 'id']);
         $result = [];
         foreach($data as $detail) {
-            $result[$detail->id] = $detail->name .')';
+            if($detail->id != 2 ) {
+                $result[$detail->id] = $detail->name . ')';
+            }
         }
         return ['' => '-Select Role-'] + $result;
     }

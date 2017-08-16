@@ -81,13 +81,12 @@ class ApiProductController extends Controller
     public function getProductDetail($id = null)
     {
         try{
-
             //$product = (new Product)->find($id);
             //dd($id);
             $productsWithImage= (new Product)->findById($id);
-                if(!$productsWithImage){
-                    return apiResponse(false, 404, lang('common.no_result'));
-                }
+            if(!$productsWithImage){
+                return apiResponse(false, 404, lang('common.no_result'));
+            }
             //dd($productsWithImage->toArray());
             $productSizePrice = (new ProductSizes)->getPriceListProductSize($id);
             $productDimensions = (new ProductDimensions)->getProductDimension($id);
@@ -101,6 +100,7 @@ class ApiProductController extends Controller
             foreach($thumbsImages as $key=>$thumbImages){
                 $imagesThumb[] = [
                     'images' => file_exists($dirName . $thumbImages) ? $urlNameImages.'/'.$thumbImages : null,
+                    'path' => $urlName,
                 ];
 
                    }
@@ -149,6 +149,7 @@ class ApiProductController extends Controller
                             'product_sizes_id' => $sizePrice->product_sizes_id,
                             'normal_size' => $sizePrice->normal_size,
                             'price' => $sizePrice->price,
+                            'cart_quantity' => check_cart_quantity(authUserId(),$sizePrice->product_sizes_id),
                             'dimension_value' => $dimValues,
                         ];
 

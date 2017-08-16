@@ -6,8 +6,7 @@
 			<h1 class="page-header margintop10"> {!! lang('user.users') !!} </h1>
 		</div>
 		<div class="col-lg-6 col-md-6 col-sm-3 col-xs-12">
-			{{--@if(hasMenuRoute('user.create') || isAdmin() || isSuperAdmin())--}}
-			@if(hasMenuRoute('user.create')  || isSuperAdmin())
+			@if(hasMenuRoute('user.create') || isAdmin() || isSuperAdmin())
 				<a class="btn btn-sm btn-danger pull-right margintop10 marginbottom10" href="{{ route('user.create') }}"> <i class="fa fa-plus fa-fw"></i> {!! lang('common.create_heading', lang('user.user')) !!} </a>
 			@endif
 		</div>

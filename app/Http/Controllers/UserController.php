@@ -296,6 +296,7 @@ class UserController extends Controller
 
         if (isset($inputs['form-search']) && $inputs['form-search'] != '') {
             $inputs = array_filter($inputs);
+            
             unset($inputs['_token']);
 
             $data = (new User)->getUsers($inputs, $start, $perPage);
@@ -303,7 +304,8 @@ class UserController extends Controller
             $total = $totalUser->total;
 
         } else {
-            $data = (new User)->getUsers($filter, $start, $perPage);
+
+            $data = (new User)->getUsers($inputs, $start, $perPage);
 
             $totalUser = (new User)->totalUser();
             $total = $totalUser->total;
