@@ -268,6 +268,7 @@ class OrderController extends Controller
     public function edit($id, $itemId = null)
     {
         $result = (new Order)->getOrderDetail($id);
+        //dd($result);
         $t = \Input::get('t');
         $a = \Input::get('a');
         if (!$result) {
@@ -827,7 +828,13 @@ class OrderController extends Controller
 
         $companyId = loggedInCompanyId();
         $company = (new Company)->getCompanyInfo($companyId);
-        $party = (new Customer)->findByUserId($result->user_id);
+        if($result->user_buyer_id == null) {
+            $party = (new Customer)->findByUserId($result->user_id);
+        }
+        else{
+            $party = (new Customer)->findByUserId($result->user_buyer_id);
+        }
+        //dd($party,$result);
         //dd($company,$party,$result->user_id);
         //dd($result->toArray(),$party->toArray(),$orderItems->toArray()  ,$company->toArray());
 

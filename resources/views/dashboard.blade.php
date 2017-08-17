@@ -39,11 +39,11 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-xs-3">
-                            <i class="fa fa-comments fa-5x"></i>
+                            <i class="fa fa-tasks fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
                             <div class="huge">{!! count($totalOrderMonthWise) !!}</div>
-                            <div>Total Orders!</div>
+                            <div>Monthly Orders!</div>
                         </div>
                     </div>
                 </div>
@@ -60,12 +60,12 @@
             <div class="panel panel-green">
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-tasks fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
+                        {{--<div class="col-xs-1">
+                            <i class="fa fa-tasks fa-2x"></i>
+                        </div>--}}
+                        <div class="col-xs-12 text-right">
                             <div class="huge">{!! isset($grossTotal)?number_format($grossTotal,0):null !!}</div>
-                            <div>Total Amount!</div>
+                            <div>Monthly Amount!</div>
                         </div>
                     </div>
                 </div>
@@ -125,14 +125,15 @@
     </div>
     <!-- /.row -->
     <div class="row">
-        <div class="col-md-12">
+
             <div class="col-md-6 col-xs-12">
                 <?php $count = 1; ?>
                 <h4><b>Latest Invoices</b></h4>
                 <table class="table table-bordered" style="margin-top:10px;background: #FFFFFF;">
                     <tr>
                         <th>{!! lang('common.id') !!}</th>
-                        <th width="30%">{!! lang('customer.customer') !!}</th>
+                        <th width="20%">{!! lang('customer.customer') !!}</th>
+                        <th width="20%">{!! lang('user.mr_name') !!}</th>
                         <th>{!! lang('order.ord_number') !!}</th>
                         <th>{!! lang('order.ord_date') !!}</th>
                         <th>{!! lang('order.amount') !!}</th>
@@ -141,7 +142,8 @@
                         @foreach($monthWiseLatestOrder  as $order)
                             <tr>
                                 <td>{!! $count !!}</td>
-                                <td>{!! $order->customer_name !!}</td>
+                                <td>{!! isset($order->customer_name)?$order->customer_name:$order->mr_name  !!}</td>
+                                <td>{!! isset($order->customer_name)?$order->mr_name:'-'  !!}</td>
                                 <td class="text-center">{!! 'UNK - '.$order->order_number !!}</td>
                                 <td>{!! convertToLocal($order->order_date, 'd.m.Y')  !!}</td>
                                 <td>{!! numberFormat($order->gross_amount) !!}</td>
@@ -149,7 +151,7 @@
                             <?php $count++; ?>
                         @endforeach
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <a href="{!! route('order.index') !!}" class="btn btn-block btn-primary">View All</a>
                             </td>
                         </tr>
@@ -163,7 +165,7 @@
                 <table class="table table-bordered" style="margin-top:10px;background: #FFFFFF;">
                     <tr>
                         <th>{!! lang('common.id') !!}</th>
-                        <th width="30%">{!! lang('customer.customer') !!}</th>
+                        <th width="30%">{!! lang('user.mr_name') !!}</th>
                         <th>{!! lang('order.gross_amount') !!}</th>
                        {{-- <th>{!! lang('order.order_date') !!}</th>--}}
                         <th>{!! lang('order.ord_count') !!}</th>
@@ -173,9 +175,10 @@
                             <tr>
                                 <td>{!! $sNumber !!}</td>
                                 <td>
-                                    <a title="{!! lang('common.edit') !!}" href="{{ route('order.edit', [$detail['id']]) }}">
+                                    {{--<a title="{!! lang('common.edit') !!}" href="{{ route('order.edit', [$detail['id']]) }}">
                                         {!! $detail['user_name'] !!}
-                                    </a>
+                                    </a>--}}
+                                    {!! $detail['user_name'] !!}
                                 </td>
                                 <td class="text-center">{!! $detail['total_amount'] !!}</td>
                                 {{--<td>{!! convertToLocal($detail->order_date, 'd.m.Y')  !!}</td>--}}
@@ -192,7 +195,7 @@
                 </table>
             </div>
 
-        </div>
+
     </div>
 </div>
 <!-- /#page-wrapper -->

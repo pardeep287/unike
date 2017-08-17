@@ -76,7 +76,7 @@
                     </tr>
                     <tr>
                         <td style="font-size: 1.1em;" valign="top" width="100%">
-                            {!!  $party->customer_name . ' <br/>' . $party->address !!} <br/>
+                            {!!  isset($party->customer_name)?$party->customer_name:$party->mr_name . ' <br/>' . $party->address !!} <br/>
                             @if($party->city != "")
                                 {!! $party->city !!}
                             @endif
@@ -238,30 +238,41 @@
                             style="text-transform: uppercase;text-align:left;vertical-align:top;font-size: 15px;border-left:0;border-right:0;border-bottom:0">
 
                             <table width="70%" border="0" cellpadding="0" cellspacing="0">
-                                {{--<tr>
+                                <tr>
+                                    <td colspan="7">
+                                        <strong>Amount in
+                                            words :</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 0.8em !important;text-transform: uppercase;">
+                                        {!! string_manip(numberToWord($result->net_amount)) !!} only
+                                    </td>
+                                </tr>
+                                {{-- <tr>
                                     <td colspan="7">
                                         <strong>Tax Summary:</strong>
                                     </td>
                                 </tr>
 
                                 <tr>
-                                    <th width="3%">&nbsp; </th>
+                                     <th width="3%">&nbsp; </th>
 
-                                        <th width="2%" style="text-align: center;">(%) </th>
-                                        <th width="4%" style="text-align: center;">Amount </th>
+                                         <th width="2%" style="text-align: center;">(%) </th>
+                                         <th width="4%" style="text-align: center;">Amount </th>
 
-                                    <th width="5%" style="text-align: center;">Total </th>
-                                </tr>
+                                     <th width="5%" style="text-align: center;">Total </th>
+                                 </tr>
 
-                                        <tr>
-                                            <th>Gst </th>
+                                         <tr>
+                                             <th>Gst </th>
 
 
-                                                <td style="text-align: center;"> 9</td>
-                                                <td style="text-align: center;">{!!  $cgstAmount !!} </td>
+                                                 <td style="text-align: center;"> 9</td>
+                                                 <td style="text-align: center;">{!!  $cgstAmount !!} </td>
 
-                                            <td style="text-align: center;">{!!  $cgstAmount !!} </td>
-                                        </tr>--}}
+                                             <td style="text-align: center;">{!!  $cgstAmount !!} </td>
+                                         </tr>--}}
 
                             </table>
                         </td>
@@ -305,7 +316,7 @@
                             freight
                         </td>
                     </tr>--}}
-                    <tr>
+                   {{-- <tr>
                         <td colspan="3"
                             style="text-align:right;vertical-align:middle;font-weight: 600;border-bottom:0;border-right:0">
                             {!! lang('order.other_charges') !!}
@@ -313,7 +324,7 @@
                         <td style="border-bottom:0;border-right:0;text-align: right;">
                           0.00
                         </td>
-                    </tr>
+                    </tr>--}}
                     <tr>
                         <td colspan="3"
                             style="text-align:right;vertical-align:middle;font-weight: 600;border-bottom:0;border-right:0">
@@ -328,10 +339,10 @@
             </td>
         </tr>
 
-        <tr class="total-amount">
+        <tr class="total-amount" >
             <td colspan="4">
-                <table style="border-width:0px 1px 0 1px;border-style:solid;border-color:#222" width="100%"
-                       cellspacing="0" cellpadding="10" border="0">
+                <table valign="" style="border-width:1px 1px 1px 1px;border-style:solid;border-color:#222;" width="100%"
+                       cellspacing="0" cellpadding="5" border="0">
                     <tbody>
                     <tr style="border:1px solid #555;text-align: right;font-size: 15px;">
                         <td style="text-align: right; width: 85%; border-right: 0px none; font-weight: bold; font-size: 1em;padding-top: 5px;padding-bottom: 5px;border-top: 0;">
@@ -347,7 +358,7 @@
                 </table>
             </td>
         </tr>
-        <tr style="border: 1px solid #555;">
+       {{-- <tr  style="border: 1px solid #555;">
             <td colspan="4">
                 <table valign="" style="border-width:1px 1px 1px 1px;border-style:solid;border-color:#222;" width="100%"
                        cellspacing="0" cellpadding="5" border="0">
@@ -379,7 +390,7 @@
                     </tbody>
                 </table>
             </td>
-        </tr>
+        </tr>--}}
 
         </tbody>
     </table>

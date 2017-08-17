@@ -241,7 +241,10 @@
 
                                         {!! Form::open(array('route' => array('product.storeDimValue', 'id' => $id), 'method' => 'POST' , 'id' => 'ajaxSave' ,'class' => 'form-horizontal')) !!}
                                         <div class="form-group cloneDiv" id="clone-size">
-
+                                           {{-- {!! Form::label('size_master_id', lang('size.master_size'), array('class' => 'col-sm-2 control-label')) !!}
+                                            <div class="col-sm-3">
+                                                {!! Form::select('size_master_id', $NotSelectedSize, null, array('class' => 'form-control select2 padding0' )) !!}
+                                            </div>--}}
                                             {!! Form::label('price', lang('products.price'), array('class' => 'col-sm-1 control-label')) !!}
                                             <div class="col-sm-3">
                                                 {{--{!! Form::text('price', null, array('class' => 'form-control')) !!}--}}

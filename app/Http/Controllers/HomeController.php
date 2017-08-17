@@ -37,8 +37,8 @@ class HomeController extends Controller
         $monthWiseTotalOrderMrAgent=[];
         foreach ($final as $order){
             $monthWiseTotalOrderMrAgent[]=[
-                'id'       => $order->user_id,
-                'user_name'     => getUsername($order->user_id),
+                'id'            => $order->user_id,
+                'user_name'     => $order->username,
                 'total_amount'  => $order->total_amount,
                 'count'         => $order->count,
             ];

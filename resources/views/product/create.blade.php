@@ -23,7 +23,6 @@
                         {!! lang('products.product_detail') !!}
                     </div>
                     <div class="panel-body">
-
                         <div class="row">
                             <div class="col-md-6 " style="border-right: 1px solid #D3D3D3;">
                                 <div class="form-group">
@@ -128,50 +127,43 @@
 
                             </div>
 
-                            <div class="col-md-6 ">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <div class="col-sm-3 col-sm-offset-3"><h3>Add Size</h3></div>
-                                    <div class="col-sm-3  pull-right"><button type="button" name="imgSU" class="btn btn-danger" id="add-new">Add New</button> </div>
+                                    <div class="col-sm-3  pull-right"><button type="button" name="imgSU" class="btn btn-danger btn-xs" id="add-new">+</button> </div>
 
                                 </div>
-                                <div class="form-group cloneDiv" id="clone-size">
+
+                                <div class="form-group cloneDiv lastdiv" id="clone-size">
                                     {!! Form::label('size_master_id', lang('size.master_size'), array('class' => 'col-sm-2 control-label')) !!}
                                     <div class="col-sm-4">
                                         {!! Form::select('size_master_id[]', $size, null, array('class' => 'form-control ' )) !!}
                                     </div>
-
                                     {!! Form::label('price', lang('products.price'), array('class' => 'col-sm-1 control-label')) !!}
                                     <div class="col-sm-3">
                                         {!! Form::text('price[]', null, array('class' => 'form-control')) !!}
                                     </div>
+                                    <a href="javascript:void(0)" class="remove" style="display: none;" ><i class="fa fa-times" aria-hidden="true"></i>
+
+                                    </a>
+
                                 </div>
-
-                                        <div class="form-group" style="border-top: 1px solid lightgrey;">
-                                            <div class="col-sm-6 col-sm-offset-2"><h3>Add Dimension</h3></div>
-                                            <div class="col-sm-3 pull-right  margintop20"><button type="button" class="btn btn-danger" id="add-new-dim">Add More</button> </div>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <div id="dimension" class="col-md-4">
-                                                {!! Form::label('dimension_id', lang('size.dim'), array('class' => ' control-label')) !!}
-                                                <div class="">
-                                                    {!! Form::select('dimension_id[]', $dimension, null, array('class' => 'form-control  ' )) !!}
-                                                </div>
-
-                                            </div>
-
-
-
-                                        </div>
-
-
+                                <div class="form-group" style="border-top: 1px solid lightgrey;">
+                                    <div class="col-sm-6 col-sm-offset-2"><h3>Add Dimension</h3></div>
+                                    <div class="col-sm-3 pull-right  margintop20"><button type="button" class="btn btn-danger btn-xs" id="add-new-dim">+</button> </div>
+                                </div>
+                                <div class="form-group">
+                                    <div id="dimension" class="col-md-4 duplicateDim lastDim">
+                                        {!! Form::label('dimension_id', lang('size.dim'), array('class' => ' control-label')) !!}
+                                        {!! Form::select('dimension_id[]', $dimension, null, array('class' => 'form-control' )) !!}
+                                        <a href="javascript:void(0)" class="remove_dim" style="display: block;"><i class="fa fa-times fa-2x" aria-hidden="true" style="padding: 9px 0px 0px 50px;"></i></a>
+                                    </div>
+                                </div>
 
                             </div>
                         </div>
-
-
-
-                        <div class="col-sm-12 margintop10 clearfix text-center">
+                        <div class="row">
+                            <div class="col-sm-12 margintop10 clearfix text-center">
                                 <div class="form-group">
                                     {!! Form::hidden('company_id', loggedInCompanyId()) !!}
                                     {!! Form::hidden('tab_handler', 1, ['id' => 'tab_handler']) !!}
@@ -179,34 +171,60 @@
                                     {!! Form::submit(lang('common.save_edit'), array('name' => 'save_edit', 'class' => 'btn btn-danger btn-lg')) !!}
                                 </div>
                             </div>
-
-
+                        </div>
                     </div> <!--panel-body-->
                 </div><!-- end: PANEL -->
-
             </div>
             {!! Form::close() !!}
         </div>    
     </div>
+
+
 </div><!--page-wrapper END -->
     <script type="text/javascript">
         $(document).ready(function(){
+            //clone table
+            $(".remove_dim").click(function() {
+                $(this).closest(".duplicateDim").remove();
+                //e.preventDefault();
+            });
+
+            $("#add-new-dim").on("click", function() {
+                var button = $("#dimension").clone(true).insertAfter("div.lastDim:last");
+               // button.attr('id', '');
+               // button.attr('class', 'col-md-4 duplicateDim lastDim');
+               // button.children('.remove_dim ').show();
+            });
 
             //clone table
+            $(".remove").click(function(e) {
+                //$('.par > div.duplicate:gt(0)').remove();
+                $(this).closest(".duplicate").remove();
+                e.preventDefault();
+            });
+
+
             $("#add-new").on("click", function() {
-                $("#clone-size").clone().insertAfter("div.cloneDiv:last").find(":text").val("");
+
+                var button = $("#clone-size").clone(true).insertAfter("div.lastdiv:last");
+                //$("#clone-size").clone().insertAfter("div.cloneDiv:last").find(":text").val("");
+
+                button.find(":text").val("");
+                button.attr('id', '');
+                button.attr('class', 'form-group duplicate lastdiv');
+                button.children('.remove ').show();
+
 
             });
+
+
 
             /*$('.select2').click(function () {
                 $(this).trigger('select2:updated');
             });*/
-            //clone table
-            $("#add-new-dim").on("click", function() {
-                $("#dimension").clone().insertAfter("div#dimension:last");
-                /*var content = $("#dimension").html();
-                $(this).html(content);*/
-            });
+
+
+
 
 
             $('#product_image').on('change',function(){

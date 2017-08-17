@@ -497,11 +497,15 @@ class Order extends Model
     {
         $fields = [
             'order_master.*',
+            'users.username as mr_name',
             'customers.customer_name as customer_name',
+            //'customers.customer_name as customer_name',
         ];
 
         return $this
-            ->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
+            ->leftJoin('users', 'order_master.user_id', '=', 'users.id')
+            ->leftJoin('customers', 'order_master.user_buyer_id', '=', 'customers.user_id')
+            //->leftJoin('customers', 'order_master.user_id', '=', 'customers.user_id')
             //->leftJoin('account_master as ledger_account', 'invoice_master.ledger_id', ' = ', 'ledger_account.id')
             ->where('order_master.id', $id)
             ->company()->first($fields);
@@ -623,8 +627,9 @@ class Order extends Model
 
                 //dd($filter);
                 return $this
-                     ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as count,order_master.user_id, username')
+                     ->selectRaw('sum(gross_amount) as total_amount,count(gross_amount) as count,order_master.user_id, username,customers.customer_name')
                      ->leftJoin('users', 'users.id', '=', 'order_master.user_id')
+                     ->leftJoin('customers', 'customers.id', '=', 'order_master.user_buyer_id')
                     ->whereRaw($filter)
                     ->whereNotNull('user_buyer_id')
                     ->groupby('order_master.user_id')
@@ -646,7 +651,9 @@ class Order extends Model
     {
         $fields = [
             //'order_master.id',
-            'customers.customer_name',
+            //'customers.customer_name',
+            'users.username as mr_name',
+            'customers.customer_name as customer_name',
             'order_number',
             'order_date',
             'gross_amount',
@@ -663,7 +670,8 @@ class Order extends Model
             //dd($filter);
             return $this
 
-                ->leftJoin('customers', 'customers.user_id', '=', 'order_master.user_id')
+                ->leftJoin('users', 'users.id', '=', 'order_master.user_id')
+                ->leftJoin('customers', 'customers.user_id', '=', 'order_master.user_buyer_id')
                 ->whereRaw($filter)
                 ->orderBy('order_master.order_date', 'DESC')
                 ->company()

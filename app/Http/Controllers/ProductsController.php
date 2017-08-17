@@ -71,7 +71,7 @@ class ProductsController extends Controller
         {
             return validationResponse(true, 207, "Same Size Not allowed,Please Select the Unique Size");
         }
-        if(count(array_unique($inputs['dimension_id'])) < count($inputs['dimension_id']))
+        if(isset($inputs['dimension_id']) && count(array_unique($inputs['dimension_id'])) < count($inputs['dimension_id']))
         {
             return validationResponse(true, 207, "Error:!Same Dimension Not allowed,Please Select the Unique Dimension");
         }
@@ -123,7 +123,7 @@ class ProductsController extends Controller
                     }
                 }
             if($product_id) {
-                if(count($inputs['dimension_id']) > 0 && $inputs['dimension_id'][0] != null) {
+                if(isset($inputs['dimension_id']) && count($inputs['dimension_id']) > 0 && $inputs['dimension_id'][0] != null) {
                     foreach ($inputs['dimension_id'] as $dimkey => $dimId) {
                         if ($dimId != "" && $inputs['dimension_id'][$dimkey] != "") {
                             $productDimensionData[] = [

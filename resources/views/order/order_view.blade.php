@@ -42,15 +42,18 @@
     <div class="row">
         <div class="col-md-12">
             <div class="form-group marginbottom20">
-                {!! Form::label('customer_name', lang('customer.customer_name'), array('class' => 'col-sm-2 control-label')) !!}
+
+                {!! Form::label('mr_name', lang('user.mr_name'), array('class' => 'col-sm-2 control-label')) !!}
                 <div class="col-sm-2 paddingtop10">
-                    <p>{!! $result->customer_name !!}</p>
+                    <p>{!! isset($result->customer_name)?$result->mr_name:'-' !!}</p>
                 </div>
 
-               {{-- {!! Form::label('order_number', lang('order.order_number'), array('class' => 'col-sm-2 control-label')) !!}
-                <div class="col-sm-1 paddingtop10">
-                    <p>{!! $result->order_number !!}</p>
-                </div>--}}
+                {!! Form::label('customer_name', lang('customer.customer_name'), array('class' => 'col-sm-2 control-label')) !!}
+                <div class="col-sm-2 paddingtop10">
+                    <p>{!! isset($result->customer_name)?$result->customer_name:$result->mr_name !!}</p>
+                </div>
+
+
                 {!! Form::label('order_number', lang('order.order_number'), array('class' => 'col-sm-2 control-label')) !!}
                 <div class="col-sm-1 paddingtop10">
                     <p>{!! 'UNK - '. $result->order_number !!}</p>
@@ -79,45 +82,14 @@
                         <th width="5%">{!! lang('size.normal_size') !!}</th>
                         <th width="5%">{!! lang('order.hsn_code') !!}</th>
                        {{-- <th width="10%">{!! lang('order.unit') !!}</th>--}}
-                        <th width="5%">{!! lang('order.gst') !!}</th>
+                        {{--<th width="5%">{!! lang('order.gst') !!}</th>--}}
                         {{--<th width="10%">{!! lang('order.mrp') !!}</th>--}}
                         <th width="5%">{!! lang('order.quantity') !!}</th>
                         <th width="5%">{!! lang('order.price') !!}</th>
                         <th width="5%">{!! lang('order.amount') !!}</th>
 
+                    </tr>
 
-                        {{--<th >Size</th>
-                        <th>{!! lang('order.hsn_code') !!}</th>
-                        <th>{!! lang('order.unit') !!}</th>
-                        <th>{!! lang('order.gst') !!}</th>
-                        <th width="10%">{!! lang('order.mrp') !!}</th>
-                        <th>{!! lang('order.quantity') !!}</th>--}}
-                    </tr>
-                    {{--<tr>
-                        <td rowspan="2">s44</td>
-                        <td>s1</td>
-                        <td>s2</td>
-                        <td>s3</td>
-                        <td>s4</td>
-                        <td>s5</td>
-                        <td>s5</td>
-                    </tr>
-                    <tr>
-                        <td>s44</td>
-                        <td>s1</td>
-                        <td>s2</td>
-                        <td>s3</td>
-                        <td>s4</td>
-                        <td>s5</td>
-                    </tr>
-                    <tr>
-                        <td rowspan="1">s44</td>
-                        <td>s1</td>
-                        <td>s2</td>
-                        <td>s3</td>
-                        <td>s4</td>
-                        <td>s5</td>
-                    </tr>--}}
 
                     @foreach($products as $pKey => $product)
                         <?php $count=1; ?>
@@ -129,7 +101,7 @@
                                         <td rowspan="{!! $itemCountProductWise[$product['product_id']]  !!}">{!! $product->name !!}</td>
                                         <td>{!! $item->normal_size !!}</td>
                                         <td>{!! $item->hsn_code !!}</td>
-                                        <td>{!! $item->tax_group !!}</td>
+                                   {{--     <td>{!! $item->tax_group !!}</td>--}}
                                         <td>{!! $item->quantity !!}</td>
                                         <td>{!! $item->price !!}</td>
                                         <td>{!! $item->quantity*$item->price !!}</td>
@@ -141,7 +113,7 @@
 
                                     <td>{!! $item->normal_size !!}</td>
                                     <td>{!! $item->hsn_code !!}</td>
-                                    <td>{!! $item->tax_group !!}</td>
+                                    {{--<td>{!! $item->tax_group !!}</td>--}}
                                     <td>{!! $item->quantity !!}</td>
                                     <td>{!! $item->price !!}</td>
                                     <td>{!! $item->quantity*$item->price !!}</td>
@@ -156,18 +128,18 @@
 
 
                     @endforeach
-                    <tr>
-                        <td colspan="5">&nbsp;</td>
+                    {{--<tr>
+                        <td colspan="4">&nbsp;</td>
                         <th>Sub Total:</th>
                         <td>{!! $result->gross_amount !!}</td>
                     </tr>
                     <tr>
-                        <td colspan="5">&nbsp;</td>
+                        <td colspan="4">&nbsp;</td>
                         <th>Other Charges:</th>
                         <td>0</td>
-                    </tr>
+                    </tr>--}}
                     <tr>
-                        <td colspan="5">&nbsp;</td>
+                        <td colspan="4">&nbsp;</td>
                         <th>Total Sale Amount:</th>
                         <td>{!! $result->gross_amount !!}</td>
                     </tr>

@@ -100,7 +100,7 @@ class ApiProductController extends Controller
             foreach($thumbsImages as $key=>$thumbImages){
                 $imagesThumb[] = [
                     'images' => file_exists($dirName . $thumbImages) ? $urlNameImages.'/'.$thumbImages : null,
-                    'images1' => $urlName,
+                    //'images1' => $urlName,
                 ];
 
                    }
@@ -121,6 +121,7 @@ class ApiProductController extends Controller
                     //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
                     'path' => $urlName,
                     'thumb_images' => $imagesThumb,
+                    //'thumb_images' => $imagesThumb +['images'=>$urlName],
 
 
                 ];
