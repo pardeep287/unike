@@ -1,10 +1,11 @@
 <thead>
 <tr>
-    <th width="1%">{!! lang('common.sr_no') !!}</th>
-    <th width="2%">{!! lang('report.order_number') !!}</th>
-    <th width="2%">{!! lang('report.order_date') !!}</th>
-    <th width="16%">{!! lang('customer.customer_name') !!}</th>
-    <th width="3%" class="text-right">{!! lang('report.total') !!}</th>
+    <th width="3%">{!! lang('common.sr_no') !!}</th>
+    <th width="10%">{!! lang('report.order_number') !!}</th>
+    <th width="10%">{!! lang('report.order_date') !!}</th>
+    <th width="30%">{!! lang('customer.customer_name') !!}</th>
+    <th width="30%">{!! lang('user.mr_name') !!}</th>
+    <th width="10%" class="text-right">{!! lang('report.total') !!}</th>
 </tr>
 </thead>
 <tbody>
@@ -15,18 +16,19 @@
         <td> {!! $index++ !!} </td>
         <td class="heavy"> {!! 'UNK - '.paddingLeft($detail->order_number) !!} </td>
         <td class="heavy"> {!! convertToLocal($detail->order_date, 'd.m.Y') !!} </td>
-        <td>{!! $detail->customer_name  !!}</td>
+        <td class="">{!! isset($detail->customer_id)?$detail->customer_name:$detail->mr_name !!} </td>
+        <td class="">{!! isset($detail->customer_id)?$detail->mr_name:'-' !!} </td>
         <?php $netAmount += $detail->gross_amount;?>
-        <td  class="text-right">{!! numberFormat($detail->gross_amount) !!}</td>
+        <td  class="text-right">{!! indianFormat($detail->gross_amount) !!}</td>
         {{--<td  class="text-right">{!! numberFormat(getRoundedAmount($detail->gross_amount)) !!}</td>--}}
     </tr>
 @endforeach
 <tr>
-    <td colspan="4" class="text-right heavy font-16">
+    <td colspan="5" class="text-right heavy font-16">
         {!! lang('report.net_sale_amount') !!}
     </td>
     <td class="text-right heavy font-16">
-        {!! numberFormat($netAmount) !!}
+        {!! indianFormat($netAmount) !!}
     </td>
 </tr>
 @else

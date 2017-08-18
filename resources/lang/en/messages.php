@@ -75,4 +75,6 @@ return [
     'email_not_send'                       => 'Email is not sent due to network problem',
     'something_went_wrong'                 	=> 'Something went wrong',
 	'not_found'     					   => ':attribute not found',
+	'thumb_error'     					   => 'Thumb Image not Found',
+	
 ];

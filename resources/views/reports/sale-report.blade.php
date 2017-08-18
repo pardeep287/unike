@@ -53,7 +53,7 @@
 					<div class="col-md-2 hidden month">
 						<div class="form-group">
 							{!! Form::label('month', lang('report.month'), array('class' => 'control-label')) !!}
-							{!! Form::select('month', getMonths(), (isset($inputs['month'])) ? $inputs['month'] : '', array('class' => 'form-control padding0 select2','required'=>'true')) !!}
+							{!! Form::select('month', getMonths(), (isset($inputs['month'])) ? $inputs['month'] : '', array('class' => 'form-control padding0 select2')) !!}
 						</div>
 					</div>
 

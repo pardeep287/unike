@@ -527,6 +527,9 @@ input[name="thumb_image"] {
 .paddingtop0{
     padding-top: 0px !important;
 }
+.paddingtop5{
+    padding-top: 5px !important;
+}
 .paddingtop8{
     padding-top: 8px !important;
 }

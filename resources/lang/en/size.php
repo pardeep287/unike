@@ -19,4 +19,6 @@ return [
     'dim_value'       	=> 'Dimension in mm ( :Attribute )',
     'normal_size' 		=> 'Normal Size',
     'master_size' 		=> 'Master Size',
+	'size_error'     	=> 'Thumb Image not Found',
+	'size_dim'     		=> 'Size Dimension',
 ];

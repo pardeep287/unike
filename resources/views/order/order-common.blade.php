@@ -181,7 +181,7 @@
                                unit
                             </td>--}}
                             <td style="text-align:right;border-top:0;border-bottom:0;border-right:0;">
-                                {!! numberFormat($detail->price) !!}
+                                {!! indianFormat($detail->price) !!}
                             </td>
                                {{-- <td style="text-align:center;border-top:0;border-bottom:0;border-right:0;">
                                     {!! $detail->cgst !!}%
@@ -192,7 +192,7 @@
 
                             <td style="text-align:right;border-top:0;border-bottom:0;border-right:0;">
                             <?php $total_amount=$detail->quantity*$detail->price;?>
-                                {!! numberFormat($total_amount) !!}
+                                {!! indianFormat($total_amount) !!}
                                 {{--{!! numberFormat( $detail->quantity*$detail->price) !!}--}}
                             </td>
                         </tr>
@@ -246,7 +246,7 @@
                                 </tr>
                                 <tr>
                                     <td style="font-size: 0.8em !important;text-transform: uppercase;">
-                                        {!! string_manip(numberToWord($result->net_amount)) !!} only
+                                        {!! string_manip(getIndianCurrency($result->gross_amount)) !!} only
                                     </td>
                                 </tr>
                                 {{-- <tr>
@@ -281,7 +281,7 @@
                             Total
                         </td>
                         {{--<td style="border-right:0;border-bottom:0;text-align: right;">{!! $result->gross_amount !!}</td>--}}
-                        <td style="border-right:0;border-bottom:0;text-align: right;">{!!  numberFormat($totalAmount) !!}</td>
+                        <td style="border-right:0;border-bottom:0;text-align: right;">{!!  indianFormat($totalAmount) !!}</td>
                     </tr>
 
                         <tr>
@@ -350,7 +350,7 @@
                         </td>
                         <td style="text-align: right;width: 15%;border-left: 0;font-size: 1em;padding-top: 5px;padding-bottom: 5px;border-top: 0;">
 
-                            {!! numberFormat( $result->gross_amount ) !!}
+                            {!! indianFormat( $result->gross_amount ) !!}
                            {{-- {!! numberFormat( $result->net_amount ) !!}--}}
                         </td>
                     </tr>

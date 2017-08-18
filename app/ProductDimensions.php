@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductDimensions extends Model
 {
+    use SoftDeletes;
     /**
      * The database table used by the model.
      *
@@ -23,6 +25,8 @@ class ProductDimensions extends Model
     protected $fillable = [
         'product_id',
         'dimension_name',
+        'deleted_by',
+        'deleted_at',
 
     ];
 
@@ -80,5 +84,14 @@ class ProductDimensions extends Model
             //->skip($skip)->take($take)
             ->get($fields);
 
+    }
+
+
+    /**
+     * @param $id
+     */
+    public function drop($id)
+    {
+        $this->find($id)->update([ 'deleted_by' => authUserId(), 'deleted_at' => convertToUtc()]);
     }
 }

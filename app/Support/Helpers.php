@@ -1150,3 +1150,149 @@ function orderNumberInc($orderNumber){
 	$incNumber = paddingLeft(substr($orderNumber, strrpos($orderNumber, '/') + 1) + 1);
 	return $text = str_replace($number, $incNumber, $orderNumber);
 }
+
+function indianFormat($num)
+{
+	$pos = strpos((string)$num, ".");
+	if ($pos === false) {
+		$decimalpart="00";
+	}
+	if (!($pos === false)) {
+
+
+		/* my custom code */
+		$decimalpart= substr($num, $pos+1, 10);
+		$num = substr($num, 0, $pos);
+	}
+
+	if(strlen($num)>3 & strlen($num) <= 12)
+	{
+		$last3digits = substr($num, -3 );
+		$numexceptlastdigits = substr($num, 0, -3 );
+		$formatted = makeComma($numexceptlastdigits);
+		$stringtoreturn = $formatted.",".$last3digits.".".$decimalpart ;
+	}
+	elseif(strlen($num)<=3){
+		$stringtoreturn = $num.".".$decimalpart ;
+	}
+	elseif(strlen($num)>12)
+	{
+		$stringtoreturn = number_format($num, 2);
+	}
+
+	if(substr($stringtoreturn,0,2)=="-,"){
+		$stringtoreturn = "-".substr($stringtoreturn, 2);
+	}
+
+	/*//$val = (string) $stringtoreturn;
+    $val = (float) $temp;
+     echo $val; die;
+    $e = explode('.', $val);
+    $p = $e[1] * 10; */
+
+	return $stringtoreturn;
+
+	//return $stringtoreturn;
+}
+
+function makeComma($input){
+	// This function is written by some anonymous person - I got it from Google
+	if(strlen($input)<=2)
+	{ return $input; }
+	$length=substr($input,0,strlen($input)-2);
+	$formatted_input = makeComma($length).",".substr($input,-2);
+	return $formatted_input;
+}
+
+
+
+
+function formatIndianWords($number) {
+	$number = (float)$number;
+	$decimal = round($number - ($no = floor($number)), 2) * 100;
+	$hundred = null;
+	$digits_length = strlen($no);
+	$i = 0;
+	$str = array();
+
+	$words = array(
+		0 => '',
+		1 => 'one',
+		2 => 'two',
+		3 => 'three',
+		4 => 'four',
+		5 => 'five',
+		6 => 'six',
+		7 => 'seven',
+		8 => 'eight',
+		9 => 'nine',
+		10 => 'ten',
+		11 => 'eleven',
+		12 => 'twelve',
+		13 => 'thirteen',
+		14 => 'fourteen',
+		15 => 'fifteen',
+		16 => 'sixteen',
+		17 => 'seventeen',
+		18 => 'eighteen',
+		19 => 'nineteen',
+		20 => 'twenty',
+		30 => 'thirty',
+		40 => 'forty',
+		50 => 'fifty',
+		60 => 'sixty',
+		70 => 'seventy',
+		80 => 'eighty',
+		90 => 'ninety'
+	);
+
+	$digits = array('', 'hundred', 'thousand', 'lakh', 'crore', 'arab');
+
+	while( $i < $digits_length ) {
+		$divider = ($i == 2) ? 10 : 100;
+		$number = floor($no % $divider);
+		$no = floor($no / $divider);
+		$i += $divider == 10 ? 1 : 2;
+		if ($number) {
+			$plural = (($counter = count($str)) && $number > 9) ? 's' : null;
+			$hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
+			$str [] = ($number < 21) ? $words[$number].' '. $digits[$counter]. $plural.' '.$hundred:$words[ floor($number / 10) * 10 ].' '.$words[$number % 10]. ' '.$digits[$counter].$plural.' '.$hundred;
+		} else $str[] = null;
+	}
+	return [
+		'prefix'	=> $str,
+		'decimal' => $decimal,
+		'words'		=> $words
+	];
+}
+
+function getIndianCurrency($number)
+{
+	if($number > 1000000000) {
+		throw new Exception('Number is too large.');
+	}
+	//echo $number; die;
+	$paise = '';
+	$result  = formatIndianWords($number);
+	$str = $result['prefix'];
+	$decimal = $result['decimal'];
+	$words = $result['words'];
+
+
+	$Rupees = implode('', array_reverse($str));
+
+	//$paise = ($decimal) ? "" . ($words[$decimal / 10] . " " . $words[$decimal % 10 ]) . ' Paise' : '';
+	if($decimal !='') {
+		$result = formatIndianWords($decimal);
+		$paise = isset($result['prefix'][0]) ? $result['prefix'][0] . ' Paise' : '';
+	}
+	// echo $decimal; die;
+
+	$result =  ($Rupees ? $Rupees . 'Rupees ' : '') . $paise ;
+	return ucwords($result);
+}
+
+
+
+//echo getIndianCurrency(85756);
+

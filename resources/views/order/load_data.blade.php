@@ -49,13 +49,14 @@
     <td>{!! convertToLocal($detail->order_date, 'd.m.Y') !!}</td>
     <td class="text-center">{!! isset($detail->customer_id)?$detail->customer_name:$detail->mr_name !!} </td>
     <td class="text-center">{!! isset($detail->customer_id)?$detail->mr_name:'-' !!} </td>
+    {{--<td class="text-center">{!!  indianFormat($detail->gross_amount) !!} </td>--}}
     <td >
         <?php
             //$taxAmount = ($detail->sale == 1) ? (getRoundedAmount($detail->cgst_total) + getRoundedAmount($detail->sgst_total)) : getRoundedAmount($detail->igst_total);
             //$netAmount = getRoundedAmount(($detail->gross_amount));
             $netAmount = $detail->gross_amount;
         ?>
-        {!!  numberFormat($netAmount) !!}
+        {!!  indianFormat($netAmount)  !!}
     </td>
     {{--<td class="text-center">
         @if($detail->is_email_sent == 1)

@@ -44,18 +44,18 @@
             <div class="form-group marginbottom20">
 
                 {!! Form::label('mr_name', lang('user.mr_name'), array('class' => 'col-sm-2 control-label')) !!}
-                <div class="col-sm-2 paddingtop10">
+                <div class="col-sm-2 paddingtop5">
                     <p>{!! isset($result->customer_name)?$result->mr_name:'-' !!}</p>
                 </div>
 
                 {!! Form::label('customer_name', lang('customer.customer_name'), array('class' => 'col-sm-2 control-label')) !!}
-                <div class="col-sm-2 paddingtop10">
+                <div class="col-sm-2 paddingtop5">
                     <p>{!! isset($result->customer_name)?$result->customer_name:$result->mr_name !!}</p>
                 </div>
 
 
                 {!! Form::label('order_number', lang('order.order_number'), array('class' => 'col-sm-2 control-label')) !!}
-                <div class="col-sm-1 paddingtop10">
+                <div class="col-sm-1 paddingtop5">
                     <p>{!! 'UNK - '. $result->order_number !!}</p>
                 </div>
 
@@ -68,7 +68,7 @@
                 </div>--}}
 
                 {!! Form::label('order_date', lang('order.order_date'), array('class' => 'col-sm-2 control-label')) !!}
-                <div class="col-sm-2 paddingtop10">
+                <div class="col-sm-2 paddingtop5">
                     <p>{!! dateFormat('d-m-Y', $result->order_date) !!}</p>
                 </div>
             </div>
@@ -103,8 +103,8 @@
                                         <td>{!! $item->hsn_code !!}</td>
                                    {{--     <td>{!! $item->tax_group !!}</td>--}}
                                         <td>{!! $item->quantity !!}</td>
-                                        <td>{!! $item->price !!}</td>
-                                        <td>{!! $item->quantity*$item->price !!}</td>
+                                        <td>{!! indianFormat($item->price) !!}</td>
+                                        <td>{!! indianFormat($item->quantity*$item->price) !!}</td>
                                     </tr>
                                         <?php $count++; ?>
 
@@ -115,8 +115,8 @@
                                     <td>{!! $item->hsn_code !!}</td>
                                     {{--<td>{!! $item->tax_group !!}</td>--}}
                                     <td>{!! $item->quantity !!}</td>
-                                    <td>{!! $item->price !!}</td>
-                                    <td>{!! $item->quantity*$item->price !!}</td>
+                                    <td>{!! indianFormat($item->price) !!}</td>
+                                    <td>{!! indianFormat($item->quantity*$item->price) !!}</td>
 
                                 </tr>
                                 @endif
@@ -141,7 +141,7 @@
                     <tr>
                         <td colspan="4">&nbsp;</td>
                         <th>Total Sale Amount:</th>
-                        <td>{!! $result->gross_amount !!}</td>
+                        <td>{!! indianFormat($result->gross_amount) !!}</td>
                     </tr>
 
 

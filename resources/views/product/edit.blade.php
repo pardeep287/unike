@@ -185,11 +185,11 @@
 
                                                     </div>
                                                     <div class="panel-body" style="padding: 2px;">
-                                                        <!-- Watch Out: Here We must use the effect name in the data tag-->
+
                                                        <a class="clickable __drop" data-effect="slideUp" data-route="{!! route('product.deleteImage', ['id'=>$image->product_image_thumb_id]) !!}" style="display: table; margin: 0px auto;" data-message="{!! lang('messages.sure_delete', string_manip(lang('products.thumb_image'))) !!}" href="javascript:void(0)"><i class="fa fa-times"></i>
                                                        </a>
 
-                                                        {{--<a title="{!! lang('common.delete') !!}" class="btn btn-xs btn-danger __drop" data-route="{!! route('bank.drop', [$detail->id]) !!}" data-message="{!! lang('messages.sure_delete', string_manip(lang('bank.bank'))) !!}" href="javascript:void(0)"><i class="fa fa-times"></i></a>--}}
+
                                                     </div>
 
 
@@ -199,19 +199,98 @@
                                             }
                                             }
                                             ?>
+                                    </div >
+                                    {!! Form::close() !!}
+
+                                    <div class="form-group" style="border-top: 1px solid lightgrey;">
+
+
+
+                                        @if(isset($dimension_name) && count($dimension_name) >0)
+                                            <div class="col-md-12">
+                                                <div class="col-md-8"><h3>Selected Dimension</h3></div>
+                                                <div class="col-sm-4 margintop20"><button type="button" class="btn btn-danger btn-xs" id="add-more-dim">Add More Dimension</button> </div>
+                                            </div>
+
+                                            @foreach($dimension_name as $dimensionsInProduct)
+                                                <div id="dimension" class="col-md-4 duplicateDim lastDim">
+                                                    {!! Form::label('dimension_id', lang('size.dim'), array('class' => ' control-label')) !!}
+                                                    {!! Form::select('dimension_id[]', $dimension, $dimensionsInProduct['dimension_name'], array('class' => 'form-control' )) !!}
+
+                                                    <a class="clickable __drop" data-effect="slideUp" data-route="{!! route('product.deleteDimension', ['id'=>$dimensionsInProduct['product_dimension_id'],'product_id'=>$id]) !!}" style="display: table; margin: 10px auto;" data-message="{!! lang('messages.sure_delete', string_manip(lang('size.size_dim'))) !!}" href="javascript:void(0)"><i class="fa fa-times"></i>
+                                                    </a>
+                                                </div>
+                                            @endforeach
+        <div class="col-md-12" id="add-more-dims1" style="display: none; border-top: 1px dashed lightgray;">
+            {!! Form::open(array('route' => array('product.storeNewDim'), 'method' => 'POST' , 'id' => 'ajaxSave' , 'class' => 'form-horizontal ajaxSaveAll','name'=>'newDim')) !!}
+
+            <div class="form-group "  >
+                <div class="col-sm-6 col-sm-offset-2"><h3>Add Dimension</h3></div>
+                <div class="col-sm-1   margintop20"><button type="button" class="btn btn-danger btn-xs" id="add-more-dim-button">+</button> </div>
+
+            </div>
+
+            <div id="dimension_more" class="col-md-4 duplicateDim lastDim" style="display:none;">
+                {!! Form::label('dimension_id', lang('size.dim'), array('class' => ' control-label')) !!}
+                {!! Form::select('dimension_id_more[]', $dimension, null, array('class' => 'form-control' )) !!}
+                <a href="javascript:void(0)" class="remove_dim" style="display: block;"><i class="fa fa-times fa-2x" aria-hidden="true" style="padding: 9px 0px 0px 50px;"></i></a>
+            </div>
+            <input type="hidden" name="tab" value="1">
+
+            {!! Form::hidden('product_id', $id) !!}
+            <div class="col-sm-4 col-sm-offset-5 margintop20" id="add-dims" >
+                {!! Form::submit(lang('common.add'), array('class' => 'btn btn-sm btn-danger control-label')) !!}
+            </div>
+            {!! Form::close() !!}
+        </div>
+                                        @else
+
+                                            {{--<div class="form-group">
+                                                <div class="col-md-6 col-md-offset-3"><p>NO Dimension For Product</p></div>
+
+                                            </div>--}}
+                                            {!! Form::open(array('route' => array('product.storeNewDim'), 'method' => 'POST' , 'id' => 'ajaxSave' , 'class' => 'form-horizontal ajaxSaveAll','name'=>'newDim')) !!}
+
+                                            <div class="form-group" >
+                                                <div class="col-sm-6 col-sm-offset-2"><h3>Add Dimension</h3></div>
+                                                <div class="col-sm-1   margintop20"><button type="button" class="btn btn-danger btn-xs" id="add-new-dim1">+</button> </div>
+                                                <div class="col-sm-1   hide margintop20"><button type="button" class="btn btn-danger btn-xs" id="add-new-dim" >+</button> </div>
+                                            </div>
+
+                                                <div id="dimension" class="col-md-4 duplicateDim lastDim" style="display:none;">
+                                                    {!! Form::label('dimension_id', lang('size.dim'), array('class' => ' control-label')) !!}
+                                                    {!! Form::select('dimension_id[]', $dimension, null, array('class' => 'form-control' )) !!}
+                                                    <a href="javascript:void(0)" class="remove_dim" style="display: block;"><i class="fa fa-times fa-2x" aria-hidden="true" style="padding: 9px 0px 0px 50px;"></i></a>
+                                                </div>
+                                            <input type="hidden" name="tab" value="1">
+
+                                            {!! Form::hidden('product_id', $id) !!}
+                                            <div class="col-sm-4 col-sm-offset-5 margintop20" id="add-dims" style="display: none;">
+                                            {!! Form::submit(lang('common.add'), array('class' => 'btn btn-sm btn-danger control-label')) !!}
+                                                </div>
+                                            {!! Form::close() !!}
+                                            {{--<div class="form-group" >
+                                                <div class="col-sm-3 col-sm-offset-6">
+                                                    <a href="" class="href">submit</a>
+
+                                                </div>
+
+                                            </div>--}}
+
+                                        @endif
+
+
+
                                     </div>
-
-
-
                                 </div>
-                                {!! Form::close() !!}
+
                             </div> <!--row ends-->
 
                             </div> <!--tabs1 end-->
 
                             <div data-tab = '2' role="tabpanel" class="tab-pane @if($tab == 2) active @endif" id="sizes">
                                 <div class="row">
-                                    <button class="btn btn-sm btn-success pull-right" id="addSize" style="position: relative; right: 39px; bottom: -6px;">Add Size</button>
+                                    <button class="btn btn-sm btn-success pull-right" id="addSize" style="position: relative; right: 39px; bottom: 38px;">Add Size</button>
 
                                     <div class="col-md-12 margintop20" id="addSizeDiv" style="display:none;">
 
@@ -241,25 +320,30 @@
 
                                         {!! Form::open(array('route' => array('product.storeDimValue', 'id' => $id), 'method' => 'POST' , 'id' => 'ajaxSave' ,'class' => 'form-horizontal')) !!}
                                         <div class="form-group cloneDiv" id="clone-size">
-                                           {{-- {!! Form::label('size_master_id', lang('size.master_size'), array('class' => 'col-sm-2 control-label')) !!}
+                                            {!! Form::label('edit_size_master_id', lang('size.master_size'), array('class' => 'col-sm-2 control-label')) !!}
                                             <div class="col-sm-3">
-                                                {!! Form::select('size_master_id', $NotSelectedSize, null, array('class' => 'form-control select2 padding0' )) !!}
-                                            </div>--}}
+                                                {!! Form::select('edit_size_master_id', $NotSelectedSize, '', array('class' => 'form-control  padding0 add_price_size' )) !!}
+                                            </div>
                                             {!! Form::label('price', lang('products.price'), array('class' => 'col-sm-1 control-label')) !!}
                                             <div class="col-sm-3">
                                                 {{--{!! Form::text('price', null, array('class' => 'form-control')) !!}--}}
                                                 <input type="text" class="form-control" id="priceOld" name="price" value="" />
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-1">
                                                 {{--<br/>--}}
                                                 <input type="hidden" name="tab" value="2">
                                                 <input type="hidden" id="size_id" name="size_id" />
+                                                <input type="hidden" id="select_master_size_id" name="select_master_size_id" />
                                                 <input type="hidden" name="change_price" value="1" />
                                                 {!! Form::hidden('product_id', $id) !!}
-                                                {!! Form::submit(lang('common.update'), array('class' => 'btn btn-sm btn-danger control-label')) !!}
+                                                {!! Form::submit(lang('common.update'), array('class' => 'btn btn-sm btn-success control-label')) !!}
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <a href="javascript:void(0)" class="remove_edit_price" style="display: block; color:red;"><button class="btn btn-sm btn-danger control-label">Cancel</button></a>
                                             </div>
                                         </div>
                                         {!! Form::close() !!}
+
                                     </div>
                                     <div class="col-md-12 margintop20">
                                        {{-- {!! Form::model($product, array('route' => array('products.update', $product->id), 'method' => 'PATCH', 'id' => 'products-form', 'class' => 'form-horizontal')) !!}--}}
@@ -344,8 +428,7 @@
                                                             </a>
                                                         </td>
                                                         <td>
-
-                                                            <a class="btn btn-xs btn-default <?php echo $detail->status==0?'':'priceEdit';?>" id="<?php echo $detail->status==0?'':'priceEdit';?>" data-q_id="{!! $detail->product_sizes_id  !!}" data-q_id2="{!! $detail->price  !!}" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
+    <a class="btn btn-xs btn-default <?php echo $detail->status==0?'':'priceEdit';?>" id="<?php echo $detail->status==0?'':'priceEdit';?>" data-q_id="{!! $detail->product_sizes_id  !!}" data-q_id2="{!! $detail->price  !!}" data-q_select_master_size_id="{!! $detail->size_master_id  !!}" data-size_master_id="{!! $detail->size_master_id  !!}" data-size_master_value="{!! $detail->normal_size  !!}" data-route="{!! route('product.ajaxEdit', $id) !!}" href="javascript:void(0)"><i class="fa fa-edit"></i></a>
                                                             {{--<a class="btn btn-xs btn-default" id="priceEdit" data-q_id="{!! $detail->product_sizes_id  !!}" href="{{ route('product.edit', ['id' => $product->id, 'tab' => 2, 'size_id' => $detail->product_sizes_id]) }}"><i class="fa fa-edit"></i></a>--}}
                                                         </td>
                                                     </tr>
@@ -383,21 +466,48 @@
     $(document).ready(function(){
 
 
-            /*$('.clickable').on('click',function(){
+        $(".remove_dim").click(function() {
+            $(this).closest(".duplicateDim").remove();
+            //e.preventDefault();
+        });
+        $("#add-new-dim1").on("click", function() {
+            //var button = $("#dimension").clone(true).insertAfter("div.lastDim:last");
+            //button.show();
+            $("#add-dims").show();
+            $("#dimension").show();
+            $("#add-new-dim").parent().removeClass('hide');
+            $("#add-new-dim1").remove();
+        });
 
 
-                //$.post( "ajax/test.html", function( data ) {
-                    //$( ".result" ).html( data );
+        $("#add-more-dim").on("click", function() {
+            $("#add-more-dims1").show();
+            $("#dimension_more").show();
 
-                var effect = $(this).data('effect');
-                $(this).closest('.panel')[effect]();
-                });
+        });
 
-            });*/
+        $("#add-more-dim-button").on("click", function() {
 
-        /*$('.select2').click(function () {
-         $(this).trigger('select2:updated');
-         });*/
+
+            var button = $("#dimension_more").clone(true).insertAfter("div.lastDim:last");
+            button.show();
+            $("#add-dims").show();
+            // button.attr('id', '');
+            // button.attr('class', 'col-md-4 duplicateDim lastDim');
+            // button.children('.remove_dim ').show();
+        });
+
+
+        $("#add-new-dim").on("click", function() {
+
+
+            var button = $("#dimension").clone(true).insertAfter("div.lastDim:last");
+            button.show();
+            $("#add-dims").show();
+            // button.attr('id', '');
+            // button.attr('class', 'col-md-4 duplicateDim lastDim');
+            // button.children('.remove_dim ').show();
+        });
 
         //show add button
         $("#addSize").click(function() {
@@ -405,13 +515,75 @@
             $("#addSize").hide();
         });
 
+
+        $(".remove_edit_price").click(function() {
+            $(this).closest("#chngPriceDiv").hide();
+            //e.preventDefault();
+        });
+
         $(".priceEdit").click(function(e) {
             //var $link = $(this);
             var t2 = $(this).data('q_id');
             var t3 = $(this).data('q_id2');
-            $("#chngPriceDiv").fadeToggle();
-            $("#size_id").val(t2);
-            $("#priceOld").val(t3);
+            var select_master_size_id = $(this).data('q_select_master_size_id');
+            var sMID = $(this).data('size_master_id');
+            var normalValue = $(this).data('size_master_value');
+            var route = $(this).attr("data-route");
+            var token = $('meta[name="csrf-token"]').attr('content');
+            //alert(route);
+
+            $.ajax
+            ({
+                //url: "/product/ajax_edit_price/"+t2+"",
+                url:route,
+                data: {'_token' : token,"value": sMID,"text": normalValue},
+                type: 'post',
+                dataType: "json",
+                success: function(data)
+                {
+
+                    //alert(data.value);
+                    //alert(data);
+                    $("#chngPriceDiv").fadeToggle();
+                    $("#size_id").val(t2);
+                    $("#select_master_size_id").val(select_master_size_id);
+                    $("#priceOld").val(t3);
+                    $('.add_price_size')
+                            .find('option')
+                            .remove()
+                            .end();
+
+                    $.each(data, function (i, item) {
+
+                        $('.add_price_size').append($('<option>', {
+                            value: i,
+                            text : item
+                        })
+                        );
+                    });
+                    $('.add_price_size option')
+                            .removeAttr('selected')
+                            .filter('[value='+sMID+']')
+                            .attr('selected', true);
+                }
+            });
+
+
+
+            //$('select[name^="edit_size_master_id"] option:selected').attr("selected",null);
+
+
+            /*$('.add_price_size option')
+                    .removeAttr('selected')
+                    .filter('[value='+sMID+']')
+                    .attr('selected', true);*/
+
+            /*$('.add_price_size').append($('<option>', {
+                value: sMID,
+                text: normalValue
+            }).attr('selected', true));*/
+
+            //$('select[name^="edit_size_master_id"] option[value="'+ sMID +'"]').attr("selected",true);
         });
 
         $('#product_image').on('change',function(){

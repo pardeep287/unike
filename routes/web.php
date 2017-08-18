@@ -142,10 +142,13 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
             'create'    => 'product.create',
             'store'     => 'product.store',
             'edit'      => 'product.edit',
-            'update'    => 'product.update'
+            'update'    => 'product.update',
+            //'ajax_edit_price'    => 'product.ajaxEdit'
         ],
             'except' => ['show', 'destroy']
         ]);
+    Route::any('product/ajax_edit_price/{id?}', ['as' => 'product.ajaxEdit',
+        'uses' => 'ProductsController@ajaxEditPrice']);
     Route::any('product/paginate/{page?}', ['as' => 'product.paginate',
         'uses' => 'ProductsController@productPaginate']);
     Route::any('product/action', ['as' => 'product.action',
@@ -156,10 +159,14 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
         'uses' => 'ProductsController@storeSize']);
     Route::any('product/storeDimValue', ['as' => 'product.storeDimValue',
         'uses' => 'ProductsController@storeDimensionValue']);
+    Route::any('product/store_new_dimension', ['as' => 'product.storeNewDim',
+        'uses' => 'ProductsController@storeNewDimensions']);
     Route::any('product/toggleSize/{id?}', ['as' => 'product.toggleSize',
         'uses' => 'ProductsController@productSizeToggle']);
     Route::any('product/ImageDelete/{id?}', ['as' => 'product.deleteImage',
         'uses' => 'ProductsController@productImageDelete']);
+    Route::any('product/DimensionDelete/{id?}/{productId?}', ['as' => 'product.deleteDimension',
+        'uses' => 'ProductsController@productDimensionDelete']);
 
 
     // Company Routes

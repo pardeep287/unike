@@ -121,7 +121,7 @@ class ReportController extends Controller
 			$start = ($page - 1) * $perPage;
 
 
-			$data = (new Order)->getOrders($inputs, $start, $perPage);
+			$data = (new Order)->getOrdersNew($inputs, $start, $perPage);
 			//dd($data->toArray());
 			//$data = (new Order)->saleOrderReport($inputs);
 			return view('reports.sale_report_load_data', compact('data', 'inputs', 'setting'));

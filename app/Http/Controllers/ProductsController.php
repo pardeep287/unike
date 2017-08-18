@@ -220,8 +220,10 @@ class ProductsController extends Controller
         $size = (new Size)->getSizeService();
         $tax = (new Tax)->getTaxService();
         $tab = \Input::get('tab', 1);
+        $dimension = getStatusNameByCode(false,false,true);
         //$tab = 2;
         $dimension_name=(new ProductDimensions())->getProductDimension($id);
+        //dd($dimension_name);
         $thumbImages=(new ProductThumbImages())->getProductThumbImages($id);
         //dd($thumbImages);
         $dimension_value=(new ProductSizeDimensionsValue)->getProductDimensionValue($id);
@@ -240,7 +242,46 @@ class ProductsController extends Controller
             $NotSelectedSize = array_diff($size, $array2);
         }
 
-        return view('product.edit', compact('product', 'id', 'hsn', 'tax' ,'tab','SizePrice','NotSelectedSize','dimension_name','dimension_value', 'thumbImages'));
+        return view('product.edit', compact('product', 'id', 'hsn', 'tax' ,'tab','SizePrice','NotSelectedSize','dimension_name','dimension_value', 'thumbImages','size','dimension'));
+    }/**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function ajaxEditPrice($id = null)
+    {
+        //dd($_POST);
+        /*echo '$id';
+        print_r($_POST);
+        die;*/
+        $inputs = \Input::all();
+        //dd($inputs);
+        $product = Product::find($id);
+        if (!$product) {
+            abort(404);
+        }
+
+
+        $size = (new Size)->getSizeService();
+
+        $SizePrice = (new ProductSizes)->getPriceListProductSize($id);
+        //dd($SizePrice->toArray());
+        //dd($dimension_name->toArray(),$dimension_value->toArray(),$SizePrice->toArray());
+
+        //Show only Unselected Sizes
+        $NotSelectedSize = [];
+        $array2 = [];
+        foreach($SizePrice->toArray() as $key=>$sp) {
+            $array2[]= $sp['normal_size'];
+        }
+        if(count($array2) > 0) {
+            $NotSelectedSize = array_diff($size, $array2);
+        }
+        $new= $NotSelectedSize + [''.$inputs['value'].'' => ''.$inputs['text'].''];
+        return json_encode($new);
+
+        //return view('product.edit', compact('product', 'id', 'hsn', 'tax' ,'tab','SizePrice','NotSelectedSize','dimension_name','dimension_value', 'thumbImages','size'));
     }
 
 
@@ -277,6 +318,41 @@ class ProductsController extends Controller
         return json_encode($response);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function productDimensionDelete($id,$productId)
+    {
+        if (!\Request::ajax()) {
+            return lang('messages.server_error');
+        }
+
+
+        $dimData= (new ProductDimensions)->find($id);
+        //dd($id,$productId,$dimData);
+        if(!$dimData){
+            return lang('size.size_error');
+        }
+
+        try {
+            (new ProductDimensions)->drop($id);
+            $response = ['status' => 1, 'message' => lang('messages.deleted', lang('size.size_dim'))];
+            
+
+
+        } catch (\Exception $exception) {
+            $response = ['status' => 0, 'message' => lang('messages.server_error')];
+        }
+        return json_encode($response);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update($id)
     {
         $product = Product::find($id);
@@ -483,6 +559,9 @@ class ProductsController extends Controller
         }
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function storeDimensionValue()
     {
         $inputs = \Input::all();
@@ -511,6 +590,35 @@ class ProductsController extends Controller
                             ->withInput()
                             ->withErrors($validator);*/
                     }
+                    //check if size in cart
+                        //dd('size not edit ,used in cart');
+                    //if not used in same product
+                    if($inputs['edit_size_master_id'] != $inputs['select_master_size_id'])
+                    {
+                        //check if used already used in this product
+                        $allSizeData=(new ProductSizes())->getPriceListProductSize($product_id);
+                        //dd($allSizeData->toArray());
+                        if($allSizeData) {
+                            foreach ($allSizeData as $sizeData) {
+                                if ($sizeData['size_master_id'] == $inputs['edit_size_master_id']) {
+                                    return validationResponse(true, 207, lang('size.size_in_use'));
+                                }
+                            }
+                            $updatePSizeData=[
+                                'size_master_id'    => $inputs['edit_size_master_id'],
+                                'product_id'        => $product_id,
+                                //'dimension_name'    => $productDimensionDataNew,
+                                'status'            => 1,
+                                'created_by'        => authUserId(),
+                            ];
+                            //dd($updatePSizeData,$inputs['size_id']);
+                            (new ProductSizes())->store($updatePSizeData,$inputs['size_id']);
+                        }
+                    }
+
+                    //product wise delete
+                        //dd(size all ready used in product);
+
 
                     
                     if(isset($inputs['size_id']))
@@ -680,6 +788,111 @@ class ProductsController extends Controller
         }
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeNewDimensions()
+    {
+        $inputs = \Input::all();
+       // dd($inputs);
+        /*$validator = (new Product)->validateProductSizeDim($inputs);
+        if ($validator->fails()) {
+            return validationResponse(false, 206, "", "", $validator->messages());
+        }*/
+
+        //$tab = \Input::get('tab', 1);
+        $tab = 1;
+        //dd($tab);
+        try {
+            \DB::beginTransaction();
+            $product_id = $inputs['product_id'];
+
+            if($product_id) {
+                if(isset($inputs['dimension_id']) && count($inputs['dimension_id']) > 0 && $inputs['dimension_id'][0] != null) {
+
+                    $dim = array_unique($inputs['dimension_id']);
+                    unset($inputs['dimension_id']);
+                    $inputs= $inputs + ['dimension_id' => $dim];
+
+                    foreach ($inputs['dimension_id'] as $dimkey => $dimId) {
+                        if ($dimId != "" && $inputs['dimension_id'][$dimkey] != "") {
+                            $productDimensionData[] = [
+                                'product_id'       => $product_id,
+                                'dimension_name'   => $dimId,
+                                //'dimensions_size' => 0,
+                            ];
+                        }
+                    }
+                    //dd($inputs,$productDimensionData);
+
+                    (new ProductDimensions)->store($productDimensionData,null, true);
+                }
+
+                if(isset($inputs['dimension_id_more']) && count($inputs['dimension_id_more']) > 0 && $inputs['dimension_id_more'][0] != null) {
+
+                    //check if already in size
+
+                    $allStoredProductDimensionName=(new ProductDimensions())->getProductDimension($product_id);
+                    $dim = array_unique($inputs['dimension_id_more']);
+                    unset($inputs['dimension_id_more']);
+                    $inputs= $inputs + ['dimension_id_more' => $dim];
+
+                    if(count($allStoredProductDimensionName)>0) {
+                        foreach ($allStoredProductDimensionName as $dimdata) {
+                            foreach ($inputs['dimension_id_more'] as $dimId) {
+                                if($dimdata['dimension_name']==$dimId){
+
+                                }else{
+                                    $productDimensionData[] = [
+                                        'product_id'       => $product_id,
+                                        'dimension_name'   => $dimId,
+                                        //'dimensions_size' => 0,
+                                    ];
+                                }
+                            }
+                        }
+                        //dd($allStoredProductDimensionName->toArray(),$productDimensionData);
+                        (new ProductDimensions)->store($productDimensionData,null, true);
+                    }
+                    else{
+
+
+                        foreach ($inputs['dimension_id_more'] as $dimkey => $dimId) {
+                            if ($dimId != "" && $inputs['dimension_id_more'][$dimkey] != "") {
+                                $productDimensionData[] = [
+                                    'product_id'       => $product_id,
+                                    'dimension_name'   => $dimId,
+                                    //'dimensions_size' => 0,
+                                ];
+                            }
+                        }
+                        //dd($inputs,$productDimensionData);
+
+                        (new ProductDimensions)->store($productDimensionData,null, true);
+
+                    }
+
+
+                }
+            }
+            \DB::commit();
+            $route = route('product.edit',  ['id'=>$product_id,'tab' => $tab]);
+            $lang = lang('messages.updated', lang('products.product'));
+            return validationResponse(true, 201, $lang, $route);
+
+        } catch (\Exception $exception) {
+
+            \DB::rollBack();
+            $route = route('product.edit',  ['id'=>$product_id,'tab' => $tab]);
+            $lang = lang('messages.updated', lang('products.product'));
+            return validationResponse(true, 201, $lang, $route);
+        }
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
     public function productSizeToggle($id)
     {
         if (!\Request::isMethod('post') && !\Request::ajax()) {
@@ -700,6 +913,10 @@ class ProductsController extends Controller
         return json_encode($response);
     }
 
+    /**
+     * @param $id
+     * @return string
+     */
     public function productToggle($id)
     {
         if (!\Request::isMethod('post') && !\Request::ajax()) {
