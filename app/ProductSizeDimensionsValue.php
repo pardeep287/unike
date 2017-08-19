@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductSizeDimensionsValue extends Model
 {
+    use SoftDeletes;
     /**
      * The database table used by the model.
      *
@@ -25,6 +27,8 @@ class ProductSizeDimensionsValue extends Model
         'size_id',
         'dimension_id',
         'dimension_value',
+        'deleted_by',
+        'deleted_at',
 
     ];
 
@@ -86,5 +90,23 @@ class ProductSizeDimensionsValue extends Model
             //->skip($skip)->take($take)
             ->get($fields);
 
+    }
+    /**
+     * @param $id
+     */
+    public function dropProductAndDimId($dimId,$productId)
+    {
+        $where = [
+            'product_id' => $productId,
+            'dimension_id' => $dimId
+        ];
+        
+        $update = [
+            'deleted_by' => authUserId(),
+            'deleted_at' => convertToUtc()
+        ];
+
+        $this->where($where)
+            ->update($update);
     }
 }

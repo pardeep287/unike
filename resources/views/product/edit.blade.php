@@ -306,12 +306,17 @@
                                             <div class="col-sm-3">
                                                 {!! Form::text('price', null, array('class' => 'form-control')) !!}
                                             </div>
-                                            <div class="col-sm-3">
+                                            <div class="col-sm-1">
                                                 {{--<br/>--}}
                                                 <input type="hidden" name="tab" value="2">
                                                 <input type="hidden" id="dimension_name" name="dimension_name" />
                                                 {!! Form::hidden('product_id', $id) !!}
-                                                {!! Form::submit(lang('common.add'), array('class' => 'btn btn-sm btn-danger control-label')) !!}
+                                                {!! Form::submit(lang('common.add'), array('class' => 'btn btn-sm btn-success control-label')) !!}
+                                            </div>
+                                            <div class="col-sm-1">
+                                                {{--{!! Form::submit($cancel,array('class'=> 'btn btn-primary form-control','route' => 'consignees.index')) !!}--}}
+
+                                                <a href="javascript:void(0)" onclick="preventDefault()" class="cancel_size" style="display: block; color:red;"><button class="btn btn-sm btn-danger control-label">Cancel</button></a>
                                             </div>
                                         </div>
                                         {!! Form::close() !!}
@@ -345,7 +350,7 @@
                                         {!! Form::close() !!}
 
                                     </div>
-                                    <div class="col-md-12 margintop20">
+                                    <div class="col-md-12 ">
                                        {{-- {!! Form::model($product, array('route' => array('products.update', $product->id), 'method' => 'PATCH', 'id' => 'products-form', 'class' => 'form-horizontal')) !!}--}}
                                         {!! Form::open(array('route' => array('product.storeDimValue'), 'method' => 'POST' , 'id' => 'ajaxSave' , 'class' => 'form-horizontal')) !!}
                                         <table class="table table-hover clearfix margin0 col-md-12 padding0">
@@ -375,13 +380,18 @@
                                                         @if(isset($dimension_name))
                                                         <?php
                                                         $value=[];
-                                                            if(count($dimension_value)>0){
-                                                                foreach ($dimension_value as $key=>$data)
-                                                                {
-                                                                    if($data['size_id']==$detail['product_sizes_id'])
-                                                                    $value[]= $data;
-                                                                }
-                                                            }
+                            if(count($dimension_value)>0){
+                               // dump($dimension_value);
+
+                                foreach ($dimension_value as $key=>$data){
+                                    //dd($data['size_id'],$detail['product_sizes_id']);
+                                    if($data['size_id']==$detail['product_sizes_id']){
+                                    $value[]= $data;
+                                        }
+                                }
+                                //echo '<pre>';
+                               // dump($value);
+                            }
                                                         //$value= (count($dimension_value)>0)?$dimension_value:null;
                                                         //$value = null
                                                         ?>
@@ -395,29 +405,38 @@
                                                                        {{-- {!! Form::text('dim['.$detail->product_sizes_id.']['.$dim->product_dimension_id.']',if(count($value)>0){ foreach($value as $key=>$dimValue) {if($dimValue['dimension_id']==$dim['product_dimension_id']) echo $dimValue['dimension_id'];}}, array('class' => 'form-control')) !!}--}}
 
         <input type="text"  name="<?php
-        if(count($value)>0){
-            echo 'dim_id['.$detail->product_sizes_id.']['.$value[$dimKey]['product_size_dimensions_id'].']';
+
+        if(isset($value) && count($value)>0){
+            if(isset($value[$dimKey]['product_size_dimensions_id'])){
+                echo 'dim_id['.$detail->product_sizes_id.']['.$value[$dimKey]['product_size_dimensions_id'].']';
+            }
+            else{
+                echo 'dim['.$detail->product_sizes_id.']['.$dim->product_dimension_id.']';
+            }
         }
         else{
             echo 'dim['.$detail->product_sizes_id.']['.$dim->product_dimension_id.']';
         }
+
         ?>" value="<?php
 
-        if(count($value)>0)
-        {
+        if(isset($value) && count($value)>0)
+        {//dump($value[1]);
             foreach($value as $key=>$dimValue)
             {
+
                 if($dimValue['dimension_id']==$dim['product_dimension_id'])
                     echo $dimValue['dimension_value'];
             }
         }
-        ?>" <?php echo $detail->status==0?'disabled ':'';?> class="form-control"/>
+        ?>" <?php echo $detail->status==0?'disabled':'';?> class="form-control"/>
 
                                         {{--{!! Form::text('dim['.$detail->product_sizes_id.'][]', ($value==null) ?null:$value[$dimkey] , array('class' => 'form-control')) !!}--}}
                                                                     </div>
                                                                 </div>
 
                                                             </td>
+                                                               {{-- {!! dd($value) !!}--}}
                                                         @endforeach
                                                         @endif
 
@@ -464,6 +483,13 @@
 <!-- /#page-wrapper -->
 <script type="text/javascript">
     $(document).ready(function(){
+
+        $(".cancel_size").click(function(e) {
+            e.preventDefault();
+            $(this).closest("#addSizeDiv").hide();
+            $("#addSize").show();
+
+        });
 
 
         $(".remove_dim").click(function() {
@@ -516,9 +542,10 @@
         });
 
 
-        $(".remove_edit_price").click(function() {
+        $(".remove_edit_price").click(function(e) {
+            e.preventDefault();
             $(this).closest("#chngPriceDiv").hide();
-            //e.preventDefault();
+
         });
 
         $(".priceEdit").click(function(e) {

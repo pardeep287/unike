@@ -227,7 +227,7 @@ class ProductsController extends Controller
         $thumbImages=(new ProductThumbImages())->getProductThumbImages($id);
         //dd($thumbImages);
         $dimension_value=(new ProductSizeDimensionsValue)->getProductDimensionValue($id);
-
+        //dd($dimension_value->toArray());
         $SizePrice = (new ProductSizes)->getPriceListProductSize($id);
         //dd($SizePrice->toArray());
         //dd($dimension_name->toArray(),$dimension_value->toArray(),$SizePrice->toArray());
@@ -338,6 +338,9 @@ class ProductsController extends Controller
         }
 
         try {
+            //get all dim value and delete
+            //$dimValuesId=(new ProductSizeDimensionsValue)->findByProductAndDimId();
+            (new ProductSizeDimensionsValue)->dropProductAndDimId($id,$productId);
             (new ProductDimensions)->drop($id);
             $response = ['status' => 1, 'message' => lang('messages.deleted', lang('size.size_dim'))];
             
@@ -836,23 +839,42 @@ class ProductsController extends Controller
                     $dim = array_unique($inputs['dimension_id_more']);
                     unset($inputs['dimension_id_more']);
                     $inputs= $inputs + ['dimension_id_more' => $dim];
+                    //dd($allStoredProductDimensionName);
 
                     if(count($allStoredProductDimensionName)>0) {
-                        foreach ($allStoredProductDimensionName as $dimdata) {
-                            foreach ($inputs['dimension_id_more'] as $dimId) {
-                                if($dimdata['dimension_name']==$dimId){
 
+                        $productDimensionDataArray=[];
+                        foreach ($inputs['dimension_id_more'] as $key=>$dimId) {
+
+                            $flag=0;
+                            $dbDimName='';
+                            foreach ($allStoredProductDimensionName as $dimdata) {
+
+
+                                if($dimdata['dimension_name']==$dimId){
+                                    //unset($inputs['dimension_id_more']['$key']);
+                                    $dbDimName=$dimId;
+                                    //$dbDimName=$inputs['dimension_id_more'];
                                 }else{
-                                    $productDimensionData[] = [
-                                        'product_id'       => $product_id,
-                                        'dimension_name'   => $dimId,
+                                    $flag=1;
+                                }
+
+                            }
+
+                            if($flag == 1){
+                                //dd($dbDimName,$dimId);
+                                if($dbDimName != $dimId) {
+                                    $productDimensionDataArray[] = [
+                                        'product_id' => $product_id,
+                                        'dimension_name' => $dimId,
                                         //'dimensions_size' => 0,
                                     ];
                                 }
                             }
                         }
-                        //dd($allStoredProductDimensionName->toArray(),$productDimensionData);
-                        (new ProductDimensions)->store($productDimensionData,null, true);
+
+                        //dd($productDimensionDataArray);
+                        (new ProductDimensions)->store($productDimensionDataArray,null, true);
                     }
                     else{
 
