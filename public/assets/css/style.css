@@ -410,6 +410,8 @@ table.dataTable thead .sorting:after {
 
 
     padding: 8px 1px 0 107px;
-}
+}.panel-body{
+    padding-bottom: 0px !important;
+  }
 
 /*pardeep css*/

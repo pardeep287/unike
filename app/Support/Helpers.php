@@ -263,9 +263,9 @@ function paginationControls($page, $total, $perPage = 20)
 	$paginates .= '<div class="col-sm-5 padding0 pull-left custom-martop">' .
 		lang('common.jump_to') .
 		'<input type="text" class="goto" size="1" />
-					<button type="button" id="go_btn" class="go_button btn btn-default btn-xs paddingtop5"> <span class="fa fa-arrow-right"> </span> </button> ' .
+					<button type="button" id="go_btn" class="go_button btn btn-default btn-xs "> <span class="fa fa-arrow-right"> </span> </button> ' .
 		lang('common.pages') . ' ' .  $curPage . ' of <span class="_total">' . $noOfPaginations . '</span> | ' . lang('common.total_records', $total) .
-		'</div> <ul class="pagination pagination-sm pull-right custom-martop">';
+		'</div> <ul class="pagination pagination-sm pull-right custom-martop margin0">';
 
 	// FOR ENABLING THE FIRST BUTTON
 	if ($first_btn && $curPage > 1) {

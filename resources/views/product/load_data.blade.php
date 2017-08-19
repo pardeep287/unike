@@ -59,7 +59,7 @@
     <td class="text-center" colspan="8"> {!! lang('messages.no_data_found') !!} </td>
 </tr>
 @else
-<tr class="margintop10">
+<tr >
     <td colspan="8">
         {!! paginationControls($page, $total, $perPage) !!}
     </td>
