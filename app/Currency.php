@@ -79,7 +79,9 @@ class Currency extends Model
         if ($id) {
             return $this->find($id)->update($input);
         }
-        return $this->create($input)->id;
+        else {
+            return $this->create($input)->id;
+        }
     }
 
     /**

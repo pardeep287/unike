@@ -47,7 +47,9 @@ class CartProducts extends Model
         if ($id) {
             $this->find($id)->update($inputs);
         }
-        return $this->create($inputs)->id;
+        else {
+            return $this->create($inputs)->id;
+        }
     }
 
     /**

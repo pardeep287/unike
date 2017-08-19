@@ -213,7 +213,7 @@
                     </div>
                     <div class="col-sm-12 margintop10 clearfix text-center">
                         <div class="form-group">
-                            {!! Form::submit(lang('common.update'), array('class' => 'btn btn-primary btn-lg')) !!}
+                            {!! Form::submit(lang('common.update'), array('class' => 'btn btn-danger btn-lg')) !!}
                         </div>
                     </div>
                 </div>

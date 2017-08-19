@@ -212,8 +212,9 @@ class CartController extends Controller
             $cartProductId='';
             if($cartId)
             {
-                $cartProductIdArray = CartProducts::where('product_id', $ProductID)->where('cart_id',$cartId)->get(['id','product_id']);
-                //dd($cartProductIdArray,$cartId);
+                $cartProductIdArray = CartProducts::where('product_id', $ProductID)->where('cart_id',$cartId)->where('status',1)->get(['id','product_id']);
+                //$cartProductIdArray=(new CartProducts);
+                //dd($cartProductIdArray,$cartId,$ProductID);
                 if(count($cartProductIdArray)>0){
                     foreach ($cartProductIdArray as $key=>$cartPData)
                     {
@@ -324,7 +325,7 @@ class CartController extends Controller
                     $ProductDetails[] = (new CartProducts())->find($productIds);
                     //$ProductDetails[] = (new CartProducts())->getCartProduct($CartID, $productIds);
                 }
-
+                //dd($ProductDetails);
                 foreach ($ProductDetails as $productData) {
                     if (!$productData) {
                         return apiResponse(false, 404, lang('messages.not_found', lang('products.product')));
@@ -347,7 +348,7 @@ class CartController extends Controller
             }
 
 
-
+            //dd(count($ProductDetails));
             //check if Product Delete request only
             if (isset($ProductDetails) && count($ProductDetails)>0) {
                 foreach ($ProductDetails as $productData) {
@@ -355,18 +356,19 @@ class CartController extends Controller
                     $ProductID = $productData->product_id;
                     //dd($ProductID);
                     $allCartPSizes = (new CartProductSizes)->getCartProductAllSize($CartID, $ProductID);
-                    //dd($inputs,$allCartPSizes->toArray());
+                    //dd($inputs,$allCartPSizes->toArray(),count($allCartPSizes));
                     if (isset($allCartPSizes) && count($allCartPSizes) > 0) {
-                        $deletedItems = [];
+                        //$deletedItems = [];
                         foreach ($allCartPSizes as $cpSize) {
                             $deletedItems = [
                                 'status'     => 0,
                                 'deleted_at' => convertToUtc(),
                                 'deleted_by' => $UserID
                             ];
-                            //dd($deletedItems,$cpSize->id);
+                            //dump($deletedItems,$cpSize->id);
                             (new CartProductSizes())->store($deletedItems, $cpSize->id);
                         }
+                        //dd('i ma ');
                         //delete product (same cart id)on success of deletion of sizes
                         $deletedProduct = [
                             'status' => 0,
@@ -398,6 +400,7 @@ class CartController extends Controller
 
             //check if Product Size Delete Request only
             if(isset($cartSizeDetails) && count($cartSizeDetails)>0){
+
                 foreach ($cartSizeDetails as $pSizeData) {
 
                     $ProductID = $pSizeData->product_id;
