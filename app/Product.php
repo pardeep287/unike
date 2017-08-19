@@ -185,6 +185,7 @@ class Product extends Model
                 'id',
                 'name',
                 'p_image',
+                'status',
             ];
             $orderAction = 'Asc';
         }
@@ -208,7 +209,9 @@ class Product extends Model
             $filter .= $keyword;
         }
 
-        $result  =  $this->whereRaw($filter)
+        $result  =  $this
+
+                         ->whereRaw($filter)
                          ->orderBy($orderEntity, $orderAction)
                          ->skip($skip)->take($take)->get($fields);
         return $result;
@@ -266,12 +269,14 @@ class Product extends Model
 
             //->select('product_master.id')
             //->select('hsn_id',\DB::raw("group_concat(product_images.image_name) as namesd"))
+               // ->active()
             ->select('product_master.*')
             ->selectRaw('GROUP_CONCAT(image_name) as images')
             ->leftJoin('product_images', 'product_master.id', '=', 'product_images.product_id')
             //->whereNull('product_sizes.deleted_at')
             //->whereIn('product_type_id', [4])
             ->where('product_master.id', $productId)
+            ->where('product_master.status', 1)
             //->where('size_master.status', 1)
             ->groupBy('product_master.id')
             //->where('sizes.id', '!=', "")

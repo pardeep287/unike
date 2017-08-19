@@ -16,8 +16,8 @@
 
 
     @if(isAdmin() || isSuperAdmin())
-     <th width="20%" class="text-center"> {!! lang('common.status') !!} </th>
-     <th width="20%" class="text-center">{!! lang('common.action') !!}</th>
+     <th width="5%" class="text-center"> {!! lang('common.status') !!} </th>
+     <th width="12%" class="text-center">{!! lang('common.action') !!}</th>
     @endif 
 </tr>
 </thead>
@@ -28,7 +28,7 @@
     {{--<td> <input type="checkbox" name="tick[]" value="{{ $detail->id }}" class="check-one" /> </td>--}}
     <td class="text-center">{!! pageIndex($index++, $page, $perPage) !!}</td>
     <td >
-    @if(isAdmin() || isSuperAdmin())
+    @if((isAdmin() || isSuperAdmin()) && $detail->status==1 )
         <a title="{!! lang('common.edit') !!}" href="{!! route('product.edit', [$detail->id]) !!}">
             {!! $detail->name !!}
         </a>
@@ -44,8 +44,12 @@
                 {!! Html::image('assets/images/' . $detail->status . '.gif') !!}
             </a>
         </td>
-        <td class="text-center col-md-1">
+        <td class="text-center">
+            @if((isAdmin() || isSuperAdmin()) && $detail->status==1 )
             <a class="btn btn-xs btn-default" title="{!! lang('common.edit') !!}" href="{{ route('product.edit', [$detail->id]) }}"><i class="fa fa-edit"></i></a>
+            @else
+                <p>Not Active</p>
+            @endif
         </td>
     @endif
 </tr>

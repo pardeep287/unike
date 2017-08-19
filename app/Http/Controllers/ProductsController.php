@@ -213,7 +213,7 @@ class ProductsController extends Controller
     public function edit($id = null)
     {
         $product = Product::find($id);
-        if (!$product) {
+        if (!$product || $product['status'] == 0) {
             abort(404);
         }
         $hsn = (new Hsn)->getHsnService();

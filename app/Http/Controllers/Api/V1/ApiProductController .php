@@ -151,7 +151,7 @@ class ApiProductController extends Controller
                             'normal_size' => $sizePrice->normal_size,
                             'price' => $sizePrice->price,
                             'cart_quantity' => check_cart_quantity(authUserId(),$sizePrice->product_sizes_id),
-                            'dimension_value' => $dimValues,
+                            'dimension_value' => (isset($dimValues) && count($dimValues)>0)?$dimValues:null,
                         ];
 
                     } //foreach Ends $productSizePrice
@@ -159,7 +159,7 @@ class ApiProductController extends Controller
 
                 $result = [
                     'product_detail' => $productDetail,
-                    'product_dimension' => $productDimensions,
+                    'product_dimension' => (isset($productDimensions) && count($productDimensions)>0)?$productDimensions:null,
                    // 'product_size_dimension_value' => $sizeDimensionValue,
                     'product_size_price' => $productSizePriceArray,
 
@@ -361,16 +361,19 @@ class ApiProductController extends Controller
 
             $allProductData=[];
             $products = (new Product)->getProduct([],$start, $perPage,true);
+            //dd($products);
             if(count($products) > 0) {
                 foreach( $products as $product ) {
-                    $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
-                    $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
-                    $allProductData[] = [
-                        'id'             => $product->id,
-                        'name'           => $product->name,
-                        'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
-                        'path'           => file_exists($dirName.$product->p_image)?$urlName:null,
-                    ];
+                    if($product->status == 1) {
+                        $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $product->id . '/';
+                        $urlName = url(\Config::get('constants.UPLOADS-PRODUCT') . $product->id . '/' . $product->p_image);
+                        $allProductData[] = [
+                            'id' => $product->id,
+                            'name' => $product->name,
+                            'p_image' => file_exists($dirName . $product->p_image) ? $product->p_image : null,
+                            'path' => file_exists($dirName . $product->p_image) ? $urlName : null,
+                        ];
+                    }
                 }
             }
             else{
