@@ -17,6 +17,10 @@ use App\Http\Controllers\Controller;
 
 class CartController extends Controller
 {
+    /**
+     * @param null $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function userCartDetail($id = null)
     {
         try{
@@ -150,6 +154,10 @@ class CartController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addToCart(Request $request)
     {
         try {
@@ -297,6 +305,10 @@ class CartController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function deleteFromCart(Request $request)
     {
         try {
@@ -470,6 +482,10 @@ class CartController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function editCart(Request $request){
         try {
             \DB::beginTransaction();
@@ -553,6 +569,11 @@ class CartController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
     public function checkOutCart(Request $request){
         try {
             \DB::beginTransaction();
@@ -565,7 +586,7 @@ class CartController extends Controller
             }
 
             $UserID = (new User)->find($inputs['user_id'])['id'];
-            //dd($inputs);
+
             if (!$UserID || $UserID != authUserId()) {
                 return apiResponse(false, 404, lang('user.user_not'));
             }
@@ -578,8 +599,6 @@ class CartController extends Controller
             }
 
             $cartDetails = (new Cart)->findByUserId($UserID);
-            //$cartDetails = (new Cart)->findByUserId($inputs['cart_id']);
-            //dd($cartDetails);
 
             if (!$cartDetails) {
                 //return apiResponse(false, 404, lang('cart.cart'));
@@ -593,8 +612,7 @@ class CartController extends Controller
 
             //fill orderMaster
             $orderNumber=(new Order())->getOrderNumber();
-            //if($orderNumber) {
-                $cartMasterData = [
+            $cartMasterData = [
                     'user_id' => $UserID,
                     'user_buyer_id' => isset($inputs['user_buyer_id'])?$inputs['user_buyer_id']:null,
                     'cart_id' => $CartID,
@@ -609,16 +627,11 @@ class CartController extends Controller
                     //'remarks'   => '',
                     'created_by' => authUserId(),
                 ];
-                //dd($cartMasterData);
-                $orderId = (new Order)->store($cartMasterData);
+            $orderId = (new Order)->store($cartMasterData);
 
-            //}
-
-
+            $isOrdered='';
             if($CartID && $orderId)
             {
-
-
                 //get cart Products where status 1
                 $cartProductIdArray=(new CartProducts)->getCartProducts($CartID);
                 //dd($cartProductIdArray);
@@ -697,7 +710,7 @@ class CartController extends Controller
                     }// for ends
                 }//if ends
                 else{
-                    dd('No Product Found in Cart');
+                    return apiResponse(false, 404, lang('messages.not_found', lang('product.product')));
                 }
 
                 //update the Order Master With Total
@@ -713,7 +726,7 @@ class CartController extends Controller
                     //'subtotal_sgst'   => $Subtotal_sgst,
                     // 'subtotal_igst'   => $Subtotal_igst,
                     'net_amount'     => round(($Subtotal+$Subtotal_cGst+$Subtotal_sGst),2),
-                    //'net_amount'     => number_format($Subtotal+$Subtotal_cGst+$Subtotal_sGst,2),
+                    //'net_amount'   => number_format($Subtotal+$Subtotal_cGst+$Subtotal_sGst,2),
                 ];
                 //dd($OrderUpdateArray,$orderId,$cartMasterData);
                 (new Order)->store($OrderUpdateArray,$orderId);
@@ -724,22 +737,19 @@ class CartController extends Controller
                     'user_buyer_id' => isset($inputs['user_buyer_id'])?$inputs['user_buyer_id']:null,
                 ];
                 //dd($updateCartMaster,$CartID);
-                (new Cart)->store($updateCartMaster,$CartID);
+                $isOrdered=(new Cart)->store($updateCartMaster,$CartID);
             }//if cart ends
+            if($isOrdered){
 
+            }
             \DB::commit();
             $cartID = (new Cart)->findByUserId(authUserId())['id'];
             $cartCount=[];
             if($cartID) {
-                //$cartCount = CartProducts::where('cart_id', $cartID)->count();
                 $cartCount = (new CartProducts)->getCartProductsCount($cartID);
             }
             return apiResponse(true, 200, lang('cart.ordered', lang('cart.cart')),[],$cartCount);
-            //return apiResponse(true, 200 , null, [], $result);
 
-            /*else {
-                    return apiResponse(false, 404, lang('common.no_size_select'));
-                }*/
         }
         catch (Exception $exception) {
             \DB::rollBack();
@@ -748,5 +758,7 @@ class CartController extends Controller
 
     }
 
+
+    
 
 }

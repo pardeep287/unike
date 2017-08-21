@@ -299,4 +299,24 @@ class ReportController extends Controller
 		}
 		return view('reports.account-group-statement');
 	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\View\View
+	 */
+	public function emailFormat()
+	{
+		$resu=1;
+		return view('email.order_format');
+		/*\Mail::send('\'email.order_format', ['customer' => '1'], function ($m) use ($resu) {
+			$m->from(\Config::get('constants.EMAIL'), lang('email.sale_force'));
+			//$m->to($customer->email1, $customer->customer_name);
+			$m->to(\Config::get('constants.EMAIL'));
+			$m->subject(lang('email.order_hash') . $resu . lang('email.dated') . lang('email.generated_by') . lang('email.sale_force'));
+			$m->attachData(lang('email.quotation_number') . $resu);
+		});*/
+
+
+	}
 }

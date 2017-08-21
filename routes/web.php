@@ -307,6 +307,10 @@ Route::group(['middleware' => 'auth', 'after' => 'no-cache'], function () {
     Route::any('report/sale-report-paginate', ['as' => 'report.sale-report-paginate',
         'uses' => 'ReportController@saleReport']);
 
+    //Order Email Format
+    Route::any('order/email-format', ['as' => 'email.format',
+        'uses' => 'ReportController@emailFormat']);
+
 });
 
 
