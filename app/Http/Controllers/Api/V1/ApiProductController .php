@@ -49,19 +49,83 @@ class ApiProductController extends Controller
 
             if(count($products) > 0) {
                 foreach( $products as $product ) {
-                    $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
-                    $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
-                    $slideProducts[] = [
-                        'id'             => $product->id,
-                        'name'           => $product->name,
-                        'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
-                        'path'           => $urlName,
-                    ];
+                    if($product['status'] == 1) {
+                        $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $product->id . '/';
+                        $urlName = url(\Config::get('constants.UPLOADS-PRODUCT') . $product->id . '/' . $product->p_image);
+                        $slideProducts[] = [
+                            'id' => $product->id,
+                            'name' => $product->name,
+                            'p_image' => file_exists($dirName . $product->p_image) ? $product->p_image : null,
+                            'path' => $urlName,
+                        ];
+                    }
                 }
+                $page = 1;
+                $perPage = 20;
+                $start = ($page - 1) * $perPage;
+                $result1=[];
+                $orders = (new Order())->findByUserId(authUserId(), $start, $perPage);
+
+                $topSellingPData=$allPData=[];
+                if(count($orders) > 0) {
+
+                    foreach ($orders as $orderMaster){
+                        $orderId=$orderMaster->id;
+                        $orderProductDetails=(new OrderProducts)->getProductsByOrderIdUnique($orderId);
+
+                        foreach ($orderProductDetails as $orderProductDetail){
+                            //dd($orderProductDetail->toArray());
+                            if($orderProductDetails) {
+
+                                $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$orderProductDetail->product_id.'/'.$orderProductDetail->p_image);
+                                //dd($orders->toArray(), $orderId, $orderProductDetail->product_id);
+                                $topSellingPData[] = [
+                                    'product_id' => $orderProductDetail->product_id,
+                                    'name'       => $orderProductDetail->name,
+                                    'p_image'    => $orderProductDetail->p_image,
+                                    'image_path' => $urlName,
+                                ];
+                            }//if ends
+                        }//for loop ends
+                    }//outer loop ends
+                    $temp_array = array();
+                    $key='product_id';
+                    //dd($topSellingPData);
+                    if(isset($topSellingPData) && count($topSellingPData)>0) {
+                        foreach ($topSellingPData as &$v) {
+
+                            if (!isset($temp_array[$v[$key]]))
+
+                                $temp_array[$v[$key]] =& $v;
+
+                        }
+
+                        $result1 = array_values($temp_array);
+                    }
+                }//if ends
+                else{
+                    $products = (new Product)->getProduct([],0,20,true);
+                    if(count($products) > 0) {
+                        foreach( $products as $product ) {
+                            if($product['status'] == 1){
+                                $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
+                                $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
+                                $allPData[] = [
+                                    'id'             => $product->id,
+                                    'name'           => $product->name,
+                                    'p_image'        => file_exists($dirName.$product->p_image)?$product->p_image:null,
+                                    'path'           => $urlName,
+                                ];
+                            }
+                        }
+                    }
+                    $result1=$allPData;
+                }//else ends
+
                 $result=[
                     'cart_Count'      => isset($cartCount)?$cartCount:0,
                     'slider_products' => isset($slideProducts)?$slideProducts:null,
-                    //'top_Selling'     => null,
+                    'top_Selling'     => $result1,
                 ];
                 return apiResponse(true, 200 , null, [], $result);
             }
@@ -330,10 +394,10 @@ class ApiProductController extends Controller
                 }
             }//if ends
             else{
-
-                $products = (new Product)->getProduct([],0,20,true);
-                if(count($products) > 0) {
-                    foreach( $products as $product ) {
+            $products = (new Product)->getProduct([],0,20,true);
+            if(count($products) > 0) {
+                foreach( $products as $product ) {
+                    if($product['status'] == 1){
                         $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT').$product->id.'/';
                         $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$product->id.'/'.$product->p_image);
                         $allPData[] = [
@@ -344,7 +408,8 @@ class ApiProductController extends Controller
                         ];
                     }
                 }
-                $result=$allPData;
+            }
+            $result=$allPData;
             }//else ends
               return apiResponse(true, 200 , null, [], $result);
         }
