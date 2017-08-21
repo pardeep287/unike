@@ -96,6 +96,7 @@ class ApiProductController extends Controller
             $thumbsImages=(explode(',',$productsWithImage->images));
             $dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $productsWithImage->id . '/';
             $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/'.$productsWithImage->p_image);
+            $urlName2 = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/'.$productsWithImage->d_image);
             $urlNameImages = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/' );
             foreach($thumbsImages as $key=>$thumbImages){
                 $imagesThumb[] = [
@@ -120,6 +121,9 @@ class ApiProductController extends Controller
                     'p_image' => file_exists($dirName . $productsWithImage->p_image) ? $productsWithImage->p_image : null,
                     //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
                     'path' => $urlName,
+                    'd_image' => file_exists($dirName . $productsWithImage->d_image) ? $productsWithImage->d_image : null,
+                    //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
+                    'd_path' => $urlName2,
                     'thumb_images' => $imagesThumb,
                     //'thumb_images' => $imagesThumb +['images'=>$urlName],
 
@@ -128,15 +132,15 @@ class ApiProductController extends Controller
                 $productSizePriceArray=[];
                 if(count($productSizePrice)>0){
                     foreach ($productSizePrice as $key=>$sizePrice) {
-                        $dimValues=[];
+                        if ($sizePrice['status'] == 1){
+                            $dimValues = [];
                         foreach ($sizeDimensionValue as $dimValue) {
-                            if($dimValue['size_id'] == $sizePrice->product_sizes_id )
-                            {
-                                foreach ($productDimensions as $dimension){
-                                    if($dimension['product_dimension_id'] ==$dimValue['dimension_id'] ){
+                            if ($dimValue['size_id'] == $sizePrice->product_sizes_id) {
+                                foreach ($productDimensions as $dimension) {
+                                    if ($dimension['product_dimension_id'] == $dimValue['dimension_id']) {
                                         $dimValues[] = [
                                             'product_size_dimensions_id' => $dimValue->product_size_dimensions_id,
-                                           // 'dimension_id' => $dimValue->dimension_id,
+                                            // 'dimension_id' => $dimValue->dimension_id,
                                             'dimension_name' => $dimension->dimension_name,
                                             'dimension_value' => $dimValue->dimension_value,
                                         ];
@@ -150,16 +154,16 @@ class ApiProductController extends Controller
                             'product_sizes_id' => $sizePrice->product_sizes_id,
                             'normal_size' => $sizePrice->normal_size,
                             'price' => $sizePrice->price,
-                            'cart_quantity' => check_cart_quantity(authUserId(),$sizePrice->product_sizes_id),
-                            'dimension_value' => (isset($dimValues) && count($dimValues)>0)?$dimValues:null,
+                            'cart_quantity' => check_cart_quantity(authUserId(), $sizePrice->product_sizes_id),
+                            'dimension_value' => (isset($dimValues) && count($dimValues) > 0) ? $dimValues : null,
                         ];
-
+                    }//if ends
                     } //foreach Ends $productSizePrice
                 }
 
                 $result = [
                     'product_detail' => $productDetail,
-                    'product_dimension' => (isset($productDimensions) && count($productDimensions)>0)?$productDimensions:null,
+                    'product_dimension' => $productDimensions,
                    // 'product_size_dimension_value' => $sizeDimensionValue,
                     'product_size_price' => $productSizePriceArray,
 
