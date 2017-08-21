@@ -155,7 +155,7 @@ class ApiProductController extends Controller
                             'normal_size' => $sizePrice->normal_size,
                             'price' => $sizePrice->price,
                             'cart_quantity' => check_cart_quantity(authUserId(), $sizePrice->product_sizes_id),
-                            'dimension_value' => (isset($dimValues) && count($dimValues) > 0) ? $dimValues : null,
+                            'dimension_value' => $dimValues,
                         ];
                     }//if ends
                     } //foreach Ends $productSizePrice
