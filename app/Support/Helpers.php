@@ -1293,6 +1293,45 @@ function getIndianCurrency($number)
 }
 
 
+/**
+ * @param null $type
+ * @return array|void
+ */
+function getUserTypes($type = null)
+{
+	$types = [
+		'' => '',
+		1 => 'REGISTERED',
+		2 => 'UN-REGISTERED',
+		//3 => 'COMPOSITE',
+		//4 => 'UIN'
+	];
+	if ($type != "") {
+		return $types[$type];
+	}
+	return $types;
+}
 
-//echo getIndianCurrency(85756);
 
+/**
+ * Get States
+ * @return mixed
+ */
+function getStates(){
+	$states = DB::table('state_master')->get([\DB::raw("concat(state_name, ' (', state_digit_code) as name"), 'id']);
+	foreach($states as $state) {
+		$result[$state->id] = $state->name.')';
+	}
+	return ['' =>'-Select State-'] + $result;
+}
+
+
+/**
+ * Get States
+ * @return mixed
+ */
+function getDiscount($actualPrice,$discountPercentage){
+	//dd($actualPrice,$discountPercentage);
+	$SellingPrice=$actualPrice - ($actualPrice * ($discountPercentage / 100));
+	return round($SellingPrice,2);
+}

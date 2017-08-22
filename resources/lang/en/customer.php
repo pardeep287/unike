@@ -47,6 +47,7 @@ return [
     'delivery_city'     => 'City',
     'delivery_state'    => 'State',
     'delivery_country'  => 'Country',
-    'delivery_pincode'  => 'Pincode'
+    'delivery_pincode'  => 'Pincode',
+    'cus_type'         => 'Customer Type',
 
 ];

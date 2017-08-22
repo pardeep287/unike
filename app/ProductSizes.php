@@ -87,6 +87,7 @@ class ProductSizes extends Model
         return $this
             ->leftJoin('size_master', 'product_sizes.size_master_id', '=', 'size_master.id')
             ->leftJoin('product_cost', 'product_sizes.id', '=', 'product_cost.size_id')
+
             //->leftJoin('product_size_dimensions_value', 'product_sizes.id', '=', 'product_size_dimensions_value.product_size_id')
             //->whereNull('product_sizes.deleted_at')
             //->whereIn('product_type_id', [4])

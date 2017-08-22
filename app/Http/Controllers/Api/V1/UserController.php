@@ -73,7 +73,7 @@ class UserController extends Controller
             \DB::beginTransaction();
             $inputs = $request->all();
 
-            $validator = ( new Customer )->validateCustomer($inputs);
+            $validator = ( new Customer )->validateCustomer($inputs,null,null,true);
             if( $validator->fails() ) {
                 return apiResponse(false, 406, "", errorMessages($validator->messages()));
             }
@@ -93,18 +93,25 @@ class UserController extends Controller
                 'created_by' => 0,
 
             ];
-
+            //$user_id=1;
             $user_id=(new User)->store($userArray);
             $code= (new Customer)->getCustomerCode();
             $customerArray=[
                 'customer_name' => $inputs['customer_name'],
+                'customer_code' => $code,
                 'mobile_no' => $inputs['mobile_no'],
                 'email' => $inputs['email'],
+                'gst_number' => $inputs['gst_number'],
+                'address' => $inputs['address'],
+                'country' => $inputs['country'],
+                'state_id' => $inputs['state_id'],
+                'city' => $inputs['city'],
+                'pin_code' => $inputs['pin_code'],
                 'user_id' => $user_id,
                 'company_id' => 1,
-                'customer_code' => $code,
                 'created_by' => 0,
             ];
+           // dd($customerArray);
             (new Customer)->store($customerArray);
 
             \DB::commit();

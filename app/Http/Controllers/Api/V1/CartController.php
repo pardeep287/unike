@@ -577,6 +577,7 @@ class CartController extends Controller
     public function checkOutCart(Request $request){
         try {
             \DB::beginTransaction();
+            $authUserDetails=authUser();
             $inputs = $request->all();
             $result = [];
             $validator = ( new Order)->validate($inputs);
@@ -590,7 +591,7 @@ class CartController extends Controller
             if (!$UserID || $UserID != authUserId()) {
                 return apiResponse(false, 404, lang('user.user_not'));
             }
-            if(authUser()->role_id==3){
+            if($authUserDetails->role_id==3){
 
                 if(!isset($inputs['user_buyer_id']) || $inputs['user_buyer_id']== ""){
 
@@ -645,7 +646,7 @@ class CartController extends Controller
                         $orderProductData = [
                             'product_id'=> $ProductID,
                             'order_id'  => $orderId,
-                            'created_by'=> authUserId(),
+                            'created_by'=> $authUserDetails->id,
                         ];
                         $orderProductId = (new OrderProducts)->store($orderProductData);
 
@@ -691,7 +692,7 @@ class CartController extends Controller
                                     'price'      => $price,
                                     //'status'     => $ProductID,
                                     'total_price'=> $total_price,
-                                    'created_by' => authUserId(),
+                                    'created_by' => $authUserDetails->id,
                                 ];
                                 $total_amount += $total_price;
                                 $total_cgst_amount += $cGst_price;

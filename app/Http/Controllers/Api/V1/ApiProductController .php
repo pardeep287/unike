@@ -146,7 +146,15 @@ class ApiProductController extends Controller
     {
         try{
             //$product = (new Product)->find($id);
-            //dd($id);
+            $authUserDetails=authUser();
+            $inputs = \Input::all();
+            $customerDiscount=[];
+            if($inputs['customer_id']){
+                $customerId=$inputs['customer_id'];
+                $customerDiscount=(new Customer)->getCustomerByUserId($customerId);
+
+            }
+            //dd($inputs,$authUserDetails->id,$customerDiscount);
             $productsWithImage= (new Product)->findById($id);
             if(!$productsWithImage){
                 return apiResponse(false, 404, lang('common.no_result'));
@@ -171,72 +179,61 @@ class ApiProductController extends Controller
                    }
 
 
-            //dd($productSizePrice->toArray());
+
             if(count($productsWithImage) > 0) {
-                //$images=$productsWithImage->images;
-//                dd($productsWithImage[0]['images']);
-                /*$dirName = ROOT . \Config::get('constants.UPLOADS-PRODUCT') . $productsWithImage->id . '/';
-                $urlName = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/'.$productsWithImage->p_image);
-                $urlNameImages = url(\Config::get('constants.UPLOADS-PRODUCT').$productsWithImage->id.'/' );*/
+
                 $productDetail = [
                     'id' => $productsWithImage->id,
                     'name' => $productsWithImage->name,
                     'description' => $productsWithImage->description,
                     'p_image' => file_exists($dirName . $productsWithImage->p_image) ? $productsWithImage->p_image : null,
-                    //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
+                     //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
                     'path' => $urlName,
                     'd_image' => file_exists($dirName . $productsWithImage->d_image) ? $productsWithImage->d_image : null,
-                    //'images' => isset($productsWithImage->images) ? preg_filter('/^/', $urlNameImages.'/', explode(',',$productsWithImage->images)) : null,
                     'd_path' => $urlName2,
                     'thumb_images' => $imagesThumb,
-                    //'thumb_images' => $imagesThumb +['images'=>$urlName],
-
-
                 ];
                 $productSizePriceArray=[];
+
                 if(count($productSizePrice)>0){
                     foreach ($productSizePrice as $key=>$sizePrice) {
                         if ($sizePrice['status'] == 1){
                             $dimValues = [];
-                        foreach ($sizeDimensionValue as $dimValue) {
-                            if ($dimValue['size_id'] == $sizePrice->product_sizes_id) {
-                                foreach ($productDimensions as $dimension) {
-                                    if ($dimension['product_dimension_id'] == $dimValue['dimension_id']) {
-                                        $dimValues[] = [
-                                            'product_size_dimensions_id' => $dimValue->product_size_dimensions_id,
-                                            // 'dimension_id' => $dimValue->dimension_id,
-                                            'dimension_name' => $dimension->dimension_name,
-                                            'dimension_value' => $dimValue->dimension_value,
-                                        ];
+                            foreach ($sizeDimensionValue as $dimValue) {
+                                if ($dimValue['size_id'] == $sizePrice->product_sizes_id) {
+                                    foreach ($productDimensions as $dimension) {
+                                        if ($dimension['product_dimension_id'] == $dimValue['dimension_id']) {
+                                            $dimValues[] = [
+                                                'product_size_dimensions_id' => $dimValue->product_size_dimensions_id,
+                                                // 'dimension_id' => $dimValue->dimension_id,
+                                                'dimension_name' => $dimension->dimension_name,
+                                                'dimension_value' => $dimValue->dimension_value,
+                                            ];
+                                        }
                                     }
                                 }
-
                             }
-
-                        }
-                        $productSizePriceArray[] = [
-                            'product_sizes_id' => $sizePrice->product_sizes_id,
-                            'normal_size' => $sizePrice->normal_size,
-                            'price' => $sizePrice->price,
-                            'cart_quantity' => check_cart_quantity(authUserId(), $sizePrice->product_sizes_id),
-                            'dimension_value' => $dimValues,
-                        ];
-                    }//if ends
+                            $productSizePriceArray[] = [
+                                'product_sizes_id' => $sizePrice->product_sizes_id,
+                                'normal_size' => $sizePrice->normal_size,
+                                //'price' => $sizePrice->price,
+                                //'price' => ($authUserDetails->role_id==3)?null:$sizePrice->price,
+                                'price' =>
+                                    (count($customerDiscount)>0)?
+                                        getDiscount($sizePrice->price,$customerDiscount->discount):null,
+                                'cart_quantity' => check_cart_quantity($authUserDetails->id, $sizePrice->product_sizes_id),
+                                'dimension_value' => $dimValues,
+                            ];
+                        }//if ends
                     } //foreach Ends $productSizePrice
                 }
-
                 $result = [
                     'product_detail' => $productDetail,
                     'product_dimension' => $productDimensions,
                    // 'product_size_dimension_value' => $sizeDimensionValue,
                     'product_size_price' => $productSizePriceArray,
-
-
                 ];
-
                 return apiResponse(true, 200, null, [], $result);
-
-
             }
             else {
                 return apiResponse(false, 404, lang('common.no_result'));

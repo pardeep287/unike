@@ -8,6 +8,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Customer;
 
+use App\StateCode;
 use Illuminate\Http\Request;
 use League\Flysystem\Exception;
 
@@ -177,4 +178,74 @@ class CustomerController extends Controller
             return apiResponse(false, 500, lang('messages.server_error'));
         }
     }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function saveCustomerDetails( Request $request )
+    {
+        try {
+            \DB::beginTransaction();
+            $inputs = $request->all();
+
+            if($inputs['user_id'] != authUserId()){
+                return apiResponse(false, 404, "",lang('user.user_not')) ;
+            }
+
+            $validator = (new Customer)->validateCAddress( $inputs );
+            if( $validator->fails() ) {
+                return apiResponse(false, 406, "", errorMessages($validator->messages()));
+            }
+            $customerId=(new Customer)->getCustomerByUserId($inputs['user_id']);
+            //dd($inputs,$customerId);
+            //$userId = authUserId();
+            //$inputs = $inputs + ['user_id' => $userId];
+            ( new Customer)->store( $inputs ,$customerId['id']);
+            \DB::commit();
+           // return apiResponse(true, 200, lang('messages.updated', lang('customer.customer')),[], ['id' => $id, 'name' => $inputs['customer_name']]);
+            return apiResponse(true, 200, lang('messages.updated', lang('customer.customer')),[], []);
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
+
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function listStateCode(){
+        try {
+
+            $result = [];
+            $inputs= \Input::all();
+
+
+            $states = (new StateCode)->getStateCode($inputs, 0, 500);
+            //dd($states);
+            if(count($states) == 0) {
+                return apiResponse(false, 404, lang('messages.not_found', lang('common.state')));
+            }
+
+            /*foreach ($states as $state) {
+
+
+                $result[] = [
+                    'id' => $state->id,
+                    'state_name' => $state->state_name,
+                    'state_digit_code' => $state->state_digit_code,
+                    'state_char_code' => $state->state_char_code,
+
+                ];
+            }*/
+            $result=$states;
+            return apiResponse(true, 200 , null, [], $result);
+        }
+        catch (Exception $exception) {
+            \DB::rollBack();
+            return apiResponse(false, 500, lang('messages.server_error'));
+        }
+    }
+
 }

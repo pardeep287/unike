@@ -103,4 +103,5 @@ return [
 	'demo_version_expired'	=> 'Your demo version has been expired, please contact administrator.',
 	'no_result' => 'No result found',
 	'no_size_select' => 'No Size has Selected',
+	'state' => 'State',
 ];

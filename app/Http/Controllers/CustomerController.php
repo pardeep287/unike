@@ -47,7 +47,8 @@ class CustomerController extends Controller
     public function store()
     {
         $inputs = \Input::all();
-        $data = \Input::all();
+
+        //$data = \Input::all();
 
         /*$inputs = $inputs + [
             'email1' => $inputs['email'],
@@ -76,6 +77,7 @@ class CustomerController extends Controller
             if ($inputs['password'] != "") {
                 $user = [
                     'name' => $inputs['customer_name'],
+                    //'state_id' => $inputs['state_id'],
                     'username' => $inputs['username'],
                     'email' => $inputs['email'],
                     'role_id' => 2,
@@ -149,30 +151,23 @@ class CustomerController extends Controller
     public function edit($id)
     {
         $result = Customer::find($id);
+        //dd($result);
 
         if (!$result) {
             abort(404);
         }
 
+        //$tab = 1;
         $tab = \Input::get('tab', 1);
+        //session(['tab' => $tab]);
 
-        /*$list = (new CustomerPriceList)->getPriceLists(['customer_id' => $id]);
-        $prices  = [];
-        if ($result) {
-            $prices = array_column($list->toArray(), 'price_list_id');
-        }
-
-        $appliedTaxes  = [];
-        $taxes = (new CustomerTaxes)->getTaxes(['customer_id' => $id]);
-        if ($taxes) {
-            $appliedTaxes = array_column($taxes->toArray(), 'tax_id');
-        }*/
+        $states = getStates();
 
         $user = User::find($result->user_id);
         //dd($user);
         //$priceLists = (new PriceList)->getPriceListService();
         //$taxes = (new Tax)->getTaxesService();
-        return view('customer.edit', compact('result',  'user', 'tab'));
+        return view('customer.edit', compact('result',  'user', 'tab','states'));
     }
 
     /**
@@ -191,122 +186,67 @@ class CustomerController extends Controller
         }
 
         $inputs = \Input::all();
+        $tab = $inputs['tab'];
+        //\Session::set('tab', $tab);
+        //session(['tab' => $tab]);
 
-        unset($inputs['address2']);
 
-        $data = \Input::all();
-
-
-        $validator = (new Customer)->validateCustomer($inputs, $id);
+        $validator = (new Customer)->validateCustomer($inputs, $id, $tab,null);
         if ($validator->fails()) {
-            return redirect()->route('customer.edit', ['id' => $id])
-                ->withInput()
-                ->withErrors($validator);
+            //return validationResponse(false, 206, "", "", $validator->messages());
+            return redirect()->back()->with(['tab' => $tab])
+                ->withErrors($validator)->withInput($inputs);
         }
-       // dd($inputs,$customer);
+       // dd($inputs);
+
         try {
             \DB::beginTransaction();
-            $inputs = $inputs + [
-                'status' => isset($inputs['status']) ? 1 : 0,
-                'updated_by'    => authUserId(),
-            ];
+            if($tab == 1) {
+                //session(['tab' => $tab]);
+                $inputs = $inputs + [
+                        'status' => isset($inputs['status']) ? 1 : 0,
+                        'updated_by' => authUserId(),
+                    ];
+                (new Customer)->store($inputs, $id);
+                if ($inputs['password'] != "") {
+                    $user = [
+                        'name'      => $inputs['customer_name'],
+                        'username'  => $inputs['username'],
+                        'password'  => \Hash::make($inputs['password']),
+                    ];
+                    if ($customer->user_id == "") {
+                        $userId = (new User)->store($user);
+                        (new Customer)->store(['user_id' => $userId], $id);
+                    } else {
+                        (new User)->store($user, $customer->user_id);
+                    }
+                }
+            }
+            else if($tab == 2) {
+
+                 // dump($inputs,session('tab'));
+                (new Customer)->store($inputs, $id);
+            }
            
-            (new Customer)->store($inputs, $id);
+
            // dd($inputs);
-            if ($inputs['password'] != "") {
-                $user = [
-                    'name'      => $inputs['customer_name'],
-                    'username'  => $inputs['username'],
-                    'password'  => \Hash::make($inputs['password']),
-                ];
-                if ($customer->user_id == "") {
-                    $userId = (new User)->store($user);
-                    (new Customer)->store(['user_id' => $userId], $id);
-                } else {
-                    (new User)->store($user, $customer->user_id);
-                }
-            }
-            //(new CustomerPriceList)->updatePriceList($id, $inputs['price_list']);
 
-            /*
-            22-02-2017 changed customer have only one price list.
-            $oldPrices = [];
-            $result = (new CustomerPriceList)->getPriceLists(['customer_id' => $id]);
-            if ($result) {
-                $oldPrices = array_column($result->toArray(), 'price_list_id');
-            }
 
-            $deletedPrice = array_diff($oldPrices, []);
-            $priceList = (isset($data['price_list'])) ? array_filter($data['price_list']) : [];
-            if (count($priceList) > 0) {
-                $newPrices = array_values($data['price_list']);
-                $deletedPrice = array_diff($oldPrices, $newPrices);
-                $newAdded = array_diff($newPrices, $oldPrices);
-
-                if (count($newAdded) > 0) {
-                    foreach ($newAdded as $key => $value) {
-                        if ($value > 0) {
-                            $save[] = [
-                                'customer_id' => $id,
-                                'price_list_id' => $value
-                            ];
-                        }
-                    }
-                    (new CustomerPriceList)->store($save);
-                }
-            }
-
-            if (count($deletedPrice) > 0) {
-                foreach ($deletedPrice as $key => $value) {
-                    if ($value > 0) {
-                        $deletePrices[] = $value;
-                    }
-                }
-                (new CustomerPriceList)->deletePrices($id, $deletePrices);
-            }*/
-
-            /*$oldTaxes = $save = [];
-            $result = (new CustomerTaxes)->getTaxes(['customer_id' => $id]);
-            if ($result) {
-                $oldTaxes = array_column($result->toArray(), 'tax_id');
-            }
-
-            $deletedTax = array_diff($oldTaxes, []);
-            $taxes = (isset($data['taxes'])) ? array_filter($data['taxes']) : [];
-            if (count($taxes) > 0) {
-                $newTaxes = array_values($data['taxes']);
-                $deletedTax = array_diff($oldTaxes, $newTaxes);
-                $newAdded = array_diff($newTaxes, $oldTaxes);
-
-                if (count($newAdded) > 0){
-                    foreach ($newAdded as $key => $value) {
-                        if ($value > 0) {
-                            $save[] = [
-                                'customer_id' => $id,
-                                'tax_id' => $value
-                            ];
-                        }
-                    }
-                    (new CustomerTaxes)->store($save);
-                }
-            }
-
-            if (count($deletedTax) > 0) {
-                foreach ($deletedTax as $key => $value) {
-                    if ($value > 0) {
-                        $deleteTaxes[] = $value;
-                    }
-                }
-                (new CustomerTaxes)->deleteTaxes($id, $deleteTaxes);
-            }*/
 
             \DB::commit();
-            return redirect()->route('customer.index')
-                ->with('success', lang('messages.updated', lang('customer.customer')));
+            /*return redirect()->route('customer.edit', ['id' => $id, 'tab' => $tab])
+                ->with('success', lang('messages.updated', lang('customer.customer')));*/
+           /* $route = route('customer.edit', ['id' => $id]);
+            $lang = lang('messages.updated', lang('customer.customer'));
+            return validationResponse(true, 201, $lang, $route);*/
+            return redirect()->back()
+                ->with(['tab' => $tab, 'success' => lang('messages.updated', lang('customer.customer'))]);
         } catch (\Exception $exception) {
             \DB::rollBack();
-            return redirect()->route('customer.edit', ['id' => $id])
-                ->with('error', $exception->getMessage() . lang('messages.server_error'));
+
+            return redirect()->back(['tab' => $tab])
+                ->withInput($inputs)
+                ->with('error', lang('messages.server_error'));
         }
     }
 

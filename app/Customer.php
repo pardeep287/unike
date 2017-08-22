@@ -27,6 +27,7 @@ class Customer extends Model
 
     protected $fillable = [
         'company_id',
+        'discount',
         'salutation',
         'customer_name',
         'customer_code',
@@ -39,7 +40,7 @@ class Customer extends Model
         'address',
         'alternate_address',
         'country',
-        'state',
+        'state_id',
         'city',
         'pin_code',
         'user_id',
@@ -90,41 +91,95 @@ class Customer extends Model
         ];
         return \Validator::make($inputs, $rules);
     }
+
+    /**
+     * @param $inputs
+     * @return mixed
+     */
+
+    public function validateCAddress( $inputs, $id = null)
+    {
+        $inputs = array_filter($inputs);
+        if($id) {
+            //$rules['email'] = 'email';
+        } else {
+            $rules['user_id'] = 'required|numeric|min:1';
+            $rules['address'] = 'required';
+            $rules['country'] = 'required';
+            $rules['state_id'] = 'required|numeric|min:1';
+            $rules['city'] = 'required';
+            $rules['pin_code'] = 'required|numeric|min:1';
+            $rules['gst_number'] = 'numeric|min:1';
+        }
+
+
+        return \Validator::make($inputs, $rules);
+    }
     /*
      * required:username,password(min:5),email,mobile,phone
      */
-    public function  validateCustomer( $inputs, $id = null )
+    public function  validateCustomer( $inputs, $id = null,$tab=null,$isApi=null )
     {
-        $rules = [
-            'customer_name' => 'required',
-           // 'username'      => 'required',
-           // 'mobile_no'     => 'required|numeric'
-        ];
 
-        if($id)
-        {
-
-            $rules['email'] = 'required|email|unique:customers,email,' . $id . ',id,deleted_at,NULL';
-            $rules['customer_code'] = 'unique:customers,customer_code,' . $id . ',id,deleted_at,NULL';
-            $rules['mobile_no']= 'required|numeric|unique:customers,mobile_no,' . $id . ',id,deleted_at,NULL';
-
-            //dd($inputs);
-        }
-        else {
-
-            $rules['username'] = 'required|unique:users,username';
-            $rules['password'] = 'required|min:5';
-            $rules['email']    = 'required|unique:customers,email';
-            $rules['mobile_no']   = 'required|numeric|digits:10|unique:customers,mobile_no';
-
-        }
-
-        /*if (array_key_exists('dob', $inputs)) {
-            if($inputs['dob'] != '') {
-                $rules = $rules + ['dob' => 'date'];
+        if($id ){
+            if($isApi==1) {
+                $rules['customer_name'] = 'required';
+                $rules['gst_number'] = 'nullable|alpha_dash|min:15|max:15|unique:customers,gst_number,' . $id . ',id,deleted_at,NULL';
+                $rules['email'] = 'required|email|unique:customers,email,' . $id . ',id,deleted_at,NULL';
+                $rules['customer_code'] = 'unique:customers,customer_code,' . $id . ',id,deleted_at,NULL';
+                $rules['mobile_no'] = 'required|numeric|unique:customers,mobile_no,' . $id . ',id,deleted_at,NULL';
+                $rules['address'] = 'required';
+                $rules['country'] = 'required';
+                $rules['state_id'] = 'required';
+                $rules['city'] = 'required';
+                $rules['pin_code'] = 'required|numeric';
             }
-        }*/
 
+            if(isset($inputs['tab']) && $inputs['tab']==1){
+                $rules['customer_name'] = 'required';
+                $rules['email'] = 'required|email|unique:customers,email,' . $id . ',id,deleted_at,NULL';
+                $rules['customer_code'] = 'unique:customers,customer_code,' . $id . ',id,deleted_at,NULL';
+                $rules['mobile_no'] = 'required|numeric|unique:customers,mobile_no,' . $id . ',id,deleted_at,NULL';
+                $rules['gst_number'] = 'nullable|alpha_dash|min:15|max:15|unique:customers,gst_number,' . $id . ',id,deleted_at,NULL';
+                $rules['discount'] = 'nullable|numeric|max:2,' . $id . ',id,deleted_at,NULL';
+            }
+            if(isset($inputs['tab']) && $inputs['tab']==2){
+
+                $rules['address'] = 'required';
+                $rules['country'] = 'required';
+                $rules['state_id'] = 'required';
+                $rules['city'] = 'required';
+                $rules['pin_code'] = 'required|numeric';
+            }
+        }
+        else{
+            if($isApi==1) {
+                $rules['username'] = 'required|unique:users,username';
+                $rules['gst_number'] = 'nullable|alpha_dash|min:15|max:15|unique:customers,gst_number';
+                $rules['password'] = 'required|min:5';
+                $rules['email'] = 'required|unique:customers,email';
+                $rules['mobile_no'] = 'required|numeric|digits:10|unique:customers,mobile_no';
+                $rules['address'] = 'required';
+                $rules['country'] = 'required';
+                $rules['state_id'] = 'required|numeric';
+                $rules['city'] = 'required';
+                $rules['pin_code'] = 'required|numeric';
+            }
+            if($tab==1){
+                $rules['customer_name'] = 'required';
+                $rules['username'] = 'required|unique:users,username';
+                $rules['password'] = 'required|min:5';
+                $rules['email']    = 'required|unique:customers,email';
+                $rules['mobile_no']   = 'required|numeric|digits:10|unique:customers,mobile_no';
+            }
+            if($tab==2){
+                $rules['address'] = 'required';
+                $rules['country'] = 'required';
+                $rules['state_id'] = 'required|numeric';
+                $rules['city'] = 'required';
+                $rules['pin_code'] = 'required|numeric';
+            }
+        }
         return \Validator::make($inputs, $rules);
     }
 
@@ -135,6 +190,7 @@ class Customer extends Model
      */
     public function store($inputs, $id = null)
     {
+        //dd($inputs, $id);
         if ($id) {
             return $this->find($id)->update($inputs);
         } else {
@@ -163,6 +219,29 @@ class Customer extends Model
                         ->get();
          }
          return $result;
+    }
+
+
+
+    /**
+     * @param $product_id
+     * @return mixed
+     */
+
+    public function getCustomerByUserId($userId)
+    {
+        $fields = [
+            'id',
+            'discount',
+            /*'name',
+            'p_image',
+            'tax_id',*/
+        ];
+        return $this
+            ->active()
+            ->where('customers.user_id', $userId)
+            ->first($fields);
+        //->first();
     }
 
     /**

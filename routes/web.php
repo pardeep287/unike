@@ -320,6 +320,10 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('login', ['as' => 'api-login', 'uses' => 'Api\V1\AuthController@login']);
     Route::any('logout', ['as' => 'api-logout', 'uses' => 'Api\V1\AuthController@logout']);
 
+    /*After Login*/
+    Route::any('state-code', ['as' => 'state.code','uses' => 'Api\V1\CustomerController@listStateCode']);
+    Route::any('save-customer-details', ['as' => 'save-c-detail','uses' => 'Api\V1\CustomerController@saveCustomerDetails']);
+
     /* CUSTOMERS API */
     Route::any('customer-dashboard/{id}', ['as' => 'get-all-products','uses' => 'Api\V1\ApiProductController@customerDashboard']);
     Route::any('top-selling-product', ['as' => 'get-top-selling-products','uses' => 'Api\V1\ApiProductController@topSelling']);
