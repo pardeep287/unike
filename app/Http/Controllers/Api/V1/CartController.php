@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Cart;
 use App\CartProducts;
 use App\CartProductSizes;
+use App\Customer;
 use App\Order;
 use App\OrderProducts;
 use App\OrderProductSizes;
@@ -165,6 +166,7 @@ class CartController extends Controller
                 $inputs = $request->all();
             $result = [];
             //dd($inputs,authUser());
+            $authUserDetails=authUser();
 
 
             $validator = ( new Cart)->validate($inputs);
@@ -176,10 +178,10 @@ class CartController extends Controller
             $UserID = (new User)->find($inputs['user_id'])['id'];
             //dd($inputs,$UserDetails);
 
-            if (!$UserID || $UserID != authUserId()) {
+            if (!$UserID || $UserID != $authUserDetails->id) {
                 //Check for MR Agent
-                if(authUser()->role_id== 3){
-                    $mrId=authUserId();
+                if($authUserDetails->role_id== 3){
+                    $mrId=$authUserDetails->id;
                 }
                 else {
                     return apiResponse(false, 404, lang('user.user_not'));
@@ -206,12 +208,21 @@ class CartController extends Controller
                     'user_id'   => $inputs['user_id'],
                     'cart_date' => currentDate(true),
                     'status'    => 0,
-                    'created_by'=> authUserId(),
+                    'created_by'=> $authUserDetails->id,
                 ];
                 //dd($cartMasterData);
                 $cartId = (new Cart)->store($cartMasterData);
             }else{
                 $cartId = $cartDetails->id;
+            }
+
+
+            //check Discount
+            $customerDiscount=[];
+            if(isset($inputs['customer_id'])){
+                $customerId=$inputs['customer_id'];
+                $customerDiscount=(new Customer)->getCustomerByUserId($customerId);
+
             }
 
 
@@ -233,7 +244,7 @@ class CartController extends Controller
                             $cartProductData = [
                                 'product_id' => $ProductID,
                                 'cart_id' => $cartId,
-                                'created_by' => authUserId(),
+                                'created_by' => $authUserDetails->id,
                             ];
                             $cartProductId = (new CartProducts)->store($cartProductData);
                         }
@@ -243,7 +254,7 @@ class CartController extends Controller
                     $cartProductData = [
                         'product_id' => $ProductID,
                         'cart_id' => $cartId,
-                        'created_by' => authUserId(),
+                        'created_by' => $authUserDetails->id,
                     ];
                     $cartProductId = (new CartProducts)->store($cartProductData);
                 }
@@ -260,6 +271,7 @@ class CartController extends Controller
                     if($sizeExist && $sizeExist->product_id == $ProductID) {
                         //check size exixts or not
                         $cartPSizeArray = CartProductSizes::where('size_id', $sizeID)->where('cart_id', $cartId)->where('product_id', $ProductID)->first(['id', 'size_id']);
+                        $acutalPrice=getSizePrice($inputs['size_id'][$key]);
                         //dd($cartId,$cartProductId, $inputs,$sizeID,$cartPSizeArray,$inputs['size_id'][$key]);
                         if (!$cartPSizeArray) {
                             //if( $cartPSizeArray['size_id']!=$sizeID) {
@@ -268,9 +280,10 @@ class CartController extends Controller
                                 'product_id' => $ProductID,
                                 'size_id' => $inputs['size_id'][$key],
                                 'quantity' => $inputs['quantity'][$key],
-                                'price' => getSizePrice($inputs['size_id'][$key]),
+                                'price' => (count($customerDiscount)>0)?
+                                    getDiscount($acutalPrice,$customerDiscount->discount):$acutalPrice,
                                 //'price' => $inputs['price'][$key],
-                                'created_by' => authUserId(),
+                                'created_by' => $authUserDetails->id,
                             ];
                             (new CartProductSizes)->store($cartPSizeData);
                             //}
@@ -285,7 +298,7 @@ class CartController extends Controller
                 }// foreach ends
                 //dd($cartId,$cartProductId, $inputs,$sizeID,$cartPSizeArray,$cartPSizeData);
                 \DB::commit();
-                $cartID = (new Cart)->findByUserId(authUserId())['id'];
+                $cartID = (new Cart)->findByUserId($authUserDetails->id)['id'];
                 $cartCount=[];
                 if($cartID) {
                     //$cartCount = CartProducts::where('cart_id', $cartID)->count();
@@ -609,8 +622,14 @@ class CartController extends Controller
                 return apiResponse(false, 404, lang('cart.already_ordered', lang('cart.cart')));
             }
             $CartID=$cartDetails->id;
-
-
+            /*$customerId='';
+            if(isset($inputs['user_buyer_id'])){
+                $customerId=$inputs['user_buyer_id'];
+            }
+            else{
+                $customerId=$UserID;
+            }
+            $customerDiscount=(new Customer)->getCustomerByUserId($customerId);*/
             //fill orderMaster
             $orderNumber=(new Order())->getOrderNumber();
             $cartMasterData = [

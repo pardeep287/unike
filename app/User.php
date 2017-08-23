@@ -93,6 +93,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return \Validator::make($inputs, $rules);
     }
 
+    /**
+     * @param $id
+     */
+    public function activateAccount( $id ) {
+        $this->find($id)->update(['status' => 1]);
+    }
+
+    /**
+     * @param $inputs
+     * @return \Illuminate\Validation\Validator
+     */
+
     public function validateResetPassword($inputs)
     {
         $rules = ['email' => 'required|email'];

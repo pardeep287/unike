@@ -149,7 +149,7 @@ class ApiProductController extends Controller
             $authUserDetails=authUser();
             $inputs = \Input::all();
             $customerDiscount=[];
-            if($inputs['customer_id']){
+            if(isset($inputs['customer_id'])){
                 $customerId=$inputs['customer_id'];
                 $customerDiscount=(new Customer)->getCustomerByUserId($customerId);
 

@@ -17,25 +17,39 @@ class CustomerController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getCustomers(Request $request)
+    public function getCustomers($page)
     {
         try{
-            $inputs = $request->all();
+            if(! isAdmin()) {
+                return apiResponse(false, 404, lang('auth.customer_not_accessible'));
+            }
+            $inputs = \Input::all();
             $result = [];
-            $customers = (new Customer)->getCustomer($inputs);
+            if (isset($inputs['page']) && (int)$inputs['page'] > 0) {
+                $page = $inputs['page'];
+            }
+
+            $perPage = 20;
+            if (isset($inputs['perpage']) && (int)$inputs['perpage'] > 0) {
+                $perPage = $inputs['perpage'];
+            }
+
+            $start = ($page - 1) * $perPage;
+            $customers = (new Customer)->getCustomer($inputs, $start,  $perPage);
+            //dd($customers->toArray( ));
             if(count($customers) > 0) {
                 foreach( $customers as $customer ) {
                     $result[] = [
                         'id'             => $customer->id,
                         'customer_name'  => $customer->customer_name,
-                        'contact_person' => $customer->contact_person,
+                        'customer_code'  => $customer->customer_code,
                         'mobile_no'      => $customer->mobile_no,
-                        'landline_no'    => $customer->landline_no,
                         'email'          => $customer->email,
                         'address'        => $customer->address,
                         'country'        => $customer->country,
-                        'state'          => $customer->state,
-                        'city'           => $customer->city
+                        'state_id'       => $customer->state_id,
+                        'city'           => $customer->city,
+                        'status'         => $customer->status
                     ];
                 }
                 return apiResponse(true, 200 , null, [], $result);
@@ -53,25 +67,24 @@ class CustomerController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getCustomerDetail($id = null)
+        public function getCustomerDetail($id = null)
     {
         try{
-            $customer = (new Customer)->getCustomer([], $id);
+            $customer = (new Customer)->find($id);
+            //dd($customer->toArray());
             if(count($customer) > 0) {
                 if($customer->user_id == authUserId() || isAdmin()) {
                     $result  = [
-                        'id'                  => $customer->id,
-                        'customer_name'       => $customer->customer_name,
-                        'contact_person'      => $customer->contact_person,
-                        'mobile_no'           => $customer->mobile_no,
-                        'landline_no'         => $customer->landline_no,
-                        'email'               => $customer->email,
-                        'address'             => $customer->address,
-                        'alternate_address'   => $customer->alternate_address,
-                        'country'             => $customer->country,
-                        'state'               => $customer->state,
-                        'city'                => $customer->city,
-                        'pin_code'            => $customer->pin_code
+                        'id'             => $customer->id,
+                        'customer_name'  => $customer->customer_name,
+                        'customer_code'  => $customer->customer_code,
+                        'mobile_no'      => $customer->mobile_no,
+                        'email'          => $customer->email,
+                        'address'        => $customer->address,
+                        'country'        => $customer->country,
+                        'state_id'       => $customer->state_id,
+                        'city'           => $customer->city,
+                        'status'         => $customer->status
                     ];
                     return apiResponse(true, 200 , null, [], $result);
                 }

@@ -65,9 +65,6 @@ class UserController extends Controller
      */
     public function store( Request $request )
     {
-
-
-
         try{
 
             \DB::beginTransaction();
@@ -84,12 +81,13 @@ class UserController extends Controller
             $role_id = 2;
 
             $userArray=[
-                'name' => $inputs['customer_name'],
-                'username' => $inputs['username'],
-                'password' => $password,
-                'email' => $inputs['email'],
+                'name'       => $inputs['customer_name'],
+                'username'   => $inputs['username'],
+                'password'   => $password,
+                'email'      => $inputs['email'],
                 'company_id' => 1,
-                'role_id' => $role_id,
+                'role_id'    => $role_id,
+                'status'     => 0,
                 'created_by' => 0,
 
             ];
@@ -99,19 +97,19 @@ class UserController extends Controller
             $customerArray=[
                 'customer_name' => $inputs['customer_name'],
                 'customer_code' => $code,
-                'mobile_no' => $inputs['mobile_no'],
-                'email' => $inputs['email'],
-                'gst_number' => $inputs['gst_number'],
-                'address' => $inputs['address'],
-                'country' => $inputs['country'],
-                'state_id' => $inputs['state_id'],
-                'city' => $inputs['city'],
-                'pin_code' => $inputs['pin_code'],
-                'user_id' => $user_id,
-                'company_id' => 1,
-                'created_by' => 0,
+                'mobile_no'     => $inputs['mobile_no'],
+                'email'         => $inputs['email'],
+                'gst_number'    => $inputs['gst_number'],
+                'address'       => $inputs['address'],
+                'country'       => $inputs['country'],
+                'state_id'      => $inputs['state_id'],
+                'city'          => $inputs['city'],
+                'pin_code'      => $inputs['pin_code'],
+                'user_id'       => $user_id,
+                'company_id'    => 1,
+                'created_by'    => 0,
             ];
-           // dd($customerArray);
+            //dd($customerArray);
             (new Customer)->store($customerArray);
 
             \DB::commit();

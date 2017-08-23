@@ -36,6 +36,7 @@ Route::get('user-hack', array('as' => 'user-hack',
 
 /* REGISTER NEW USER for API */
 Route::any('api/v1/register', ['as' => 'users-apiCreate','uses' => 'Api\V1\UserController@store']);
+Route::any('api/v1/state-code', ['as' => 'state.code','uses' => 'Api\V1\CustomerController@listStateCode']);
 Route::any('api/v1/reset-password', ['as' => 'reset-apiPassword','uses' => 'Api\V1\AuthController@forgotPassword']);
 //Route::any('api/v1/send-push', ['as' => 'api.send-push', 'uses' => 'Api\V1\CommonController@sendPush']);
 
@@ -321,7 +322,7 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
     Route::any('logout', ['as' => 'api-logout', 'uses' => 'Api\V1\AuthController@logout']);
 
     /*After Login*/
-    Route::any('state-code', ['as' => 'state.code','uses' => 'Api\V1\CustomerController@listStateCode']);
+
     Route::any('save-customer-details', ['as' => 'save-c-detail','uses' => 'Api\V1\CustomerController@saveCustomerDetails']);
 
     /* CUSTOMERS API */
@@ -351,6 +352,10 @@ Route::group(array('middleware' => 'auth.api', 'prefix' => 'api/v1'), function (
         Route::any('get_all_mr', ['as' => 'get-mr','uses' => 'Api\V1\UserController@listMR']);
         /*Check Orders*/
         Route::any('filter-order/{page}', ['as' => 'filter-order','uses' => 'Api\V1\ApiOrderController@filterOrder']);
+        /*Customer Aprroval*/
+        Route::any('customers-list/{page}', ['as' => 'customer.list','uses' => 'Api\V1\CustomerController@getCustomers']);
+        Route::any('customers-details/{id}', ['as' => 'customer.details','uses' => 'Api\V1\CustomerController@getCustomerDetail']);
+
 
 
     /*For Admin Only*/

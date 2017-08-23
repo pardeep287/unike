@@ -9,10 +9,11 @@
 
 return [
 
-    'success_login'     => 'Welcome to paytrack admin panel',
+    'success_login'     => 'Welcome to UnikPipe admin panel',
     'failed_login'      => 'Invalid login credentials',
     'logout'            => 'Logout successfully',
     '404_error'         => 'Invalid request, Page not found',
     'auth_required'		=> 'Invalid request, Authorization required',
-    'failed'      => 'Invalid login credentials',
+    'failed'            => 'Invalid login credentials',
+    'customer_not_accessible'  => 'Customer Not Accessible',
 ];

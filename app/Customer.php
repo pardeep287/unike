@@ -203,21 +203,56 @@ class Customer extends Model
      * @param bool $id
      * @return mixed
      */
-    public function getCustomer($search = [], $id = null )
+    public function getCustomer($search = null, $skip, $perPage )
     {
-         if ($id) {
-            $result = $this->find($id);
-         } else {
-             $filter = 1;
-             if( count($search) > 0 && is_array( $search ) ) {
-                 $filter.= (array_key_exists('keyword', $search) && $search['keyword'] != "") ?
-                     " AND customer_name LIKE '" . addslashes(trim($search['keyword'])) . "%'":"";
-             }
-             $result = $this
-                        ->whereRaw($filter)
-                        ->UserId()
-                        ->get();
-         }
+        trimInputs();
+        $take = ((int)$perPage > 0) ? $perPage : 20;
+        $fields = [
+            'id',
+            'salutation',
+            'customer_name',
+            'customer_code',
+            'mobile_no',
+            'email',
+            'pan_number',
+            'gst_number',
+            'address',
+            'alternate_address',
+            'country',
+            'state_id',
+            'city',
+            'pin_code',
+            'status',
+        ];
+        $sortBy = [
+
+            'customer_name' => 'customer_name',
+            //'order_date' => 'order_date',
+        ];
+
+        $orderEntity = 'id';
+        $orderAction = 'desc';
+
+        if (isset($search['sort_action']) && $search['sort_action'] != "") {
+            $orderAction = ($search['sort_action'] == 1) ? 'desc' : 'asc';
+        }
+
+        if (isset($search['sort_entity']) && $search['sort_entity'] != "") {
+            $orderEntity = (array_key_exists($search['sort_entity'], $sortBy)) ? $sortBy[$search['sort_entity']] : $orderEntity;
+        }
+
+        $filter = 1;
+        if( count($search) > 0 && is_array( $search ) ) {
+         $filter.= (array_key_exists('keyword', $search) && $search['keyword'] != "") ?
+             " AND customer_name LIKE '" . addslashes(trim($search['keyword'])) . "%'":"";
+        }
+         $result =
+             $this->whereRaw($filter)
+                  //->UserId()
+                  ->whereRaw($filter)
+                  ->orderBy($orderEntity, $orderAction)
+                  ->skip($skip)->take($take)
+                  ->get($fields);
          return $result;
     }
 
